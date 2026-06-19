@@ -62,7 +62,7 @@ export default function Home() {
             AI styling studio
           </div>
           <h1 className="bg-gradient-to-br from-white to-white/50 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
-            StyleGlance
+            Looksy
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-balance text-white/60">
             Upload a selfie, pick a vibe or describe a look, and see

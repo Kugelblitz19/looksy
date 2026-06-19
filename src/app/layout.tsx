@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "StyleGlance — See yourself in any look",
+  title: "Looksy — See yourself in any look",
   description:
     "Upload a selfie, pick a vibe, describe a look — and see AI-generated photos of you wearing it.",
 };

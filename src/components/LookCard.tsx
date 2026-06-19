@@ -12,7 +12,7 @@ export default function LookCard({ look }: { look: GeneratedLook }) {
   const download = () => {
     const a = document.createElement("a");
     a.href = look.imageUrl;
-    a.download = `styleglance-${look.id}.png`;
+    a.download = `looksy-${look.id}.png`;
     a.click();
   };
 

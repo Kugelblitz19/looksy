@@ -1,4 +1,4 @@
-# StyleGlance
+# Looksy
 
 A Glance-AI-style web app: upload a selfie, pick a vibe (streetwear, party, old
 money, workout, techwear…) or describe a look, and get photorealistic AI images
