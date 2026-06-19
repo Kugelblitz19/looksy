@@ -1,19 +1,23 @@
 # Looksy
 
-A Glance-AI-style web app: upload a selfie, pick a vibe (streetwear, party, old
-money, workout, techwear…) or describe a look, and get photorealistic AI images
-of **you** wearing it.
+**Looksy — see yourself in any look.** Upload a selfie, pick a vibe (streetwear,
+party, old money, workout, techwear…) or describe an outfit, and get
+photorealistic AI images of **you** wearing it.
 
 Built with **Next.js (App Router) + Tailwind**, with image generation powered by
 **Google Gemini 2.5 Flash Image ("Nano Banana")**. The Gemini call runs in a
-server-side API route so your key never reaches the browser — and so the native
-iOS/Android apps can reuse the same `/api/generate` endpoint later.
+server-side API route so your key never reaches the browser — and so the planned
+native iOS/Android apps can reuse the same `/api/generate` endpoint later.
+
+> Inspired by the Glance AI selfie-to-styled-feed experience.
 
 ## Quick start
 
 ```bash
+git clone https://github.com/Kugelblitz19/looksy.git
+cd looksy
 npm install
-cp .env.local.example .env.local   # then paste your key into .env.local
+cp .env.local.example .env.local   # then paste your Gemini key into .env.local
 npm run dev
 ```
 
