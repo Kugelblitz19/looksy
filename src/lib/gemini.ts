@@ -24,10 +24,13 @@ export async function generateStyledImage(opts: {
     throw new Error("NO_API_KEY");
   }
 
-  const parts: Array<Record<string, unknown>> = [{ text: opts.prompt }];
+  // Reference photo(s) first, then the instruction — the "here is the person,
+  // now dress them" ordering gives Nano Banana the best identity preservation.
+  const parts: Array<Record<string, unknown>> = [];
   for (const img of opts.images) {
     parts.push({ inlineData: { mimeType: img.mimeType, data: img.base64 } });
   }
+  parts.push({ text: opts.prompt });
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 

@@ -40,25 +40,25 @@ export function buildPrompt({
 
   if (hasPhotos) {
     parts.push(
-      "Using the provided reference photo(s) of a person, generate a new, photorealistic fashion image of the SAME person. " +
-        "Faithfully preserve their face, hairstyle, skin tone, body type and overall identity — it must clearly look like the same individual.",
+      "VIRTUAL TRY-ON. The reference photo(s) show ONE real person. Generate a new, photorealistic photograph of THAT EXACT SAME person. " +
+        "Keep their face, facial features, expression, skin tone, hair and body type identical to the reference so they are immediately recognizable as the same individual — do NOT beautify, slim, age, lighten or otherwise change their face or body. Only change their clothing and the surroundings.",
     );
   } else {
     parts.push(
-      "Generate a photorealistic fashion image of a stylish model.",
+      "Generate a photorealistic full-body fashion photograph of a stylish model.",
     );
   }
 
   if (styleDescriptors.length > 0) {
-    parts.push(`Dress them in ${styleDescriptors.join("; blended with ")}.`);
+    parts.push(`Dress this person in ${styleDescriptors.join("; blended with ")}.`);
   }
 
   if (userPrompt.trim()) {
-    parts.push(`Specific request from the user: ${userPrompt.trim()}.`);
+    parts.push(`Also incorporate these details: ${userPrompt.trim()}.`);
   }
 
   parts.push(
-    `Composition: ${framing}. High-end editorial fashion photography, realistic fabric textures and natural lighting, sharp focus, 4k, vertical aspect ratio. Do not add text, watermarks or logos.`,
+    `Show the complete outfit clearly on the person. Composition: ${framing}. High-end editorial fashion photography, true-to-life proportions, realistic fabric textures and natural lighting, sharp focus, vertical 3:4 portrait. Exactly one person. No text, watermarks, logos or borders.`,
   );
 
   return parts.join(" ");
