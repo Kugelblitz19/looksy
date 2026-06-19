@@ -21,7 +21,21 @@ cp .env.local.example .env.local   # then paste your Gemini key into .env.local
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. You'll land on a **login / signup** screen — create
+an account and you're taken to the studio.
+
+## Accounts (login / signup)
+
+Looksy gates the studio behind a simple email + password account:
+
+- Sign up / log in at `/signup` and `/login`; the home page (`/`) redirects
+  there until you're authenticated.
+- Passwords are hashed (scrypt) and the session is a signed, HttpOnly cookie.
+  Set a `SESSION_SECRET` in `.env.local` (see `.env.local.example`).
+- Users are stored in a local JSON file (`data/`, gitignored) via
+  `src/lib/auth/users.ts`. **This file store works for local dev only — swap it
+  for a real database (Postgres/Supabase) before deploying to serverless.**
+- The image/shop APIs require a logged-in session.
 
 ### Demo mode (no key needed)
 

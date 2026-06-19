@@ -12,6 +12,9 @@
 .DS_Store
 *.pem
 
+# local user store (file-based auth — swap for a DB in production)
+/data
+
 # debug
 npm-debug.log*
 

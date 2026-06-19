@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { detectGarments, demoGarments } from "@/lib/detect";
 import { buildShopLinks, searchProducts, activeProductProvider } from "@/lib/products";
 import { affiliateConfigured } from "@/lib/affiliate";
+import { getSessionUser } from "@/lib/auth/session";
 import type { DetectedGarment, ShoppableGarment } from "@/lib/garments";
 
 export const runtime = "nodejs";
@@ -9,6 +10,10 @@ export const maxDuration = 45;
 
 export async function POST(req: NextRequest) {
   try {
+    if (!(await getSessionUser())) {
+      return NextResponse.json({ error: "Please log in first." }, { status: 401 });
+    }
+
     const body = await req.json();
     const imageDataUrl: unknown = body?.imageDataUrl;
     const aesthetics: string[] = Array.isArray(body?.aesthetics)

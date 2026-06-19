@@ -6,6 +6,14 @@ const nextConfig = {
       bodySizeLimit: "12mb",
     },
   },
+  // Don't let the dev watcher recompile when the file-based user store writes.
+  webpack: (config) => {
+    config.watchOptions = {
+      ...(config.watchOptions || {}),
+      ignored: ["**/node_modules/**", "**/data/**"],
+    };
+    return config;
+  },
 };
 
 export default nextConfig;
