@@ -62,12 +62,22 @@ Every generated look is shoppable. Click **🛍 Shop this look** on a card and:
 2. **`src/lib/detect.ts`** uses Gemini vision to extract each garment as a
    structured search query (e.g. "men beige cargo pants"). In demo mode it
    derives items from the chosen vibe instead.
-3. **`src/lib/merchants.ts`** turns each query into real search links on Myntra,
-   Flipkart, Ajio and Amazon.in.
+3. A **product provider** (`src/lib/products.ts`) returns buyable items:
+   - `searchlinks` (default) — merchant search-link chips, no API.
+   - `mock` — fake demo product cards to preview the v2 UI.
+   - `amazon` — real products (title, price, image, buy URL) via the Amazon
+     Creators API (`src/lib/providers/amazon.ts`).
 4. **`src/lib/affiliate.ts`** wraps every link so purchases earn you commission.
+
+Set the provider with `LOOKSY_PRODUCT_PROVIDER` (see `.env.local.example`).
 
 > Note: AI-generated garments are synthetic, so links go to *visually similar*
 > real products ("shop similar") — the standard approach for shoppable-AI apps.
+>
+> The Amazon provider is built to the Creators API spec with defensive response
+> parsing, but its exact field shapes should be confirmed against a live
+> response once you have approved credentials (Creators API replaces PA-API,
+> which retires ~May 15 2026). Until then it fails safe to the search links.
 
 ### Turning on commissions
 

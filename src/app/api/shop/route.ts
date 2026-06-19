@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { detectGarments, demoGarments } from "@/lib/detect";
-import { buildShopLinks } from "@/lib/products";
+import { buildShopLinks, searchProducts, activeProductProvider } from "@/lib/products";
 import { affiliateConfigured } from "@/lib/affiliate";
 import type { DetectedGarment, ShoppableGarment } from "@/lib/garments";
 
@@ -38,15 +38,19 @@ export async function POST(req: NextRequest) {
       garments = demoGarments(aesthetics);
     }
 
-    const shoppable: ShoppableGarment[] = garments.map((g) => ({
-      ...g,
-      shopLinks: buildShopLinks(g),
-    }));
+    const shoppable: ShoppableGarment[] = await Promise.all(
+      garments.map(async (g) => ({
+        ...g,
+        products: await searchProducts(g, { count: 3 }),
+        shopLinks: buildShopLinks(g),
+      })),
+    );
 
     return NextResponse.json({
       garments: shoppable,
       demo: !hasKey,
       monetized: affiliateConfigured(),
+      productProvider: activeProductProvider(),
     });
   } catch (err) {
     const message =

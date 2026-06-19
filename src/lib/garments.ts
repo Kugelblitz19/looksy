@@ -17,7 +17,23 @@ export interface ShopLink {
   url: string;
 }
 
+/** A real, buyable product returned by a product-data provider. */
+export interface Product {
+  title: string;
+  merchant: string;
+  /** Pre-formatted price, e.g. "₹1,299". */
+  priceDisplay?: string;
+  price?: number;
+  currency?: string;
+  imageUrl?: string;
+  /** Affiliate-wrapped product page URL. */
+  buyUrl: string;
+}
+
 export interface ShoppableGarment extends DetectedGarment {
+  /** Real product cards (when a product provider is configured). */
+  products: Product[];
+  /** Fallback "shop similar" merchant search links. */
   shopLinks: ShopLink[];
 }
 
@@ -26,5 +42,7 @@ export interface ShopResponse {
   demo?: boolean;
   /** True when buy-links are monetized via an affiliate template. */
   monetized?: boolean;
+  /** Which product-data provider produced the cards (searchlinks|mock|amazon). */
+  productProvider?: string;
   error?: string;
 }

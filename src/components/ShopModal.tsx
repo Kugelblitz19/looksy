@@ -123,19 +123,54 @@ export default function ShopModal({
                         {g.color ? ` · ${g.color}` : ""}
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {g.shopLinks.map((link) => (
-                        <a
-                          key={link.merchantId}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer nofollow sponsored"
-                          className="rounded-lg border border-line bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-white/40 hover:text-white"
-                        >
-                          {link.merchant} ↗
-                        </a>
-                      ))}
-                    </div>
+
+                    {g.products && g.products.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-2">
+                        {g.products.map((p, pi) => (
+                          <a
+                            key={`${p.buyUrl}-${pi}`}
+                            href={p.buyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer nofollow sponsored"
+                            className="group/card overflow-hidden rounded-lg border border-line bg-white/5 transition hover:border-white/40"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={p.imageUrl}
+                              alt={p.title}
+                              className="aspect-[4/5] w-full object-cover"
+                            />
+                            <div className="p-2">
+                              <div className="text-[10px] uppercase tracking-wide text-white/40">
+                                {p.merchant}
+                              </div>
+                              <div className="line-clamp-2 text-xs text-white/80">
+                                {p.title}
+                              </div>
+                              {p.priceDisplay && (
+                                <div className="mt-1 text-sm font-semibold">
+                                  {p.priceDisplay}
+                                </div>
+                              )}
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {g.shopLinks.map((link) => (
+                          <a
+                            key={link.merchantId}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer nofollow sponsored"
+                            className="rounded-lg border border-line bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-white/40 hover:text-white"
+                          >
+                            {link.merchant} ↗
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
