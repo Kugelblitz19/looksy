@@ -54,6 +54,33 @@ GEMINI_IMAGE_MODEL=gemini-2.5-flash-image
 4. **`src/lib/gemini.ts`** — sends the prompt + reference photos to Gemini and
    returns the generated image(s).
 
+## Shop the Look (monetization)
+
+Every generated look is shoppable. Click **🛍 Shop this look** on a card and:
+
+1. **`POST /api/shop`** (`src/app/api/shop/route.ts`) reads the look.
+2. **`src/lib/detect.ts`** uses Gemini vision to extract each garment as a
+   structured search query (e.g. "men beige cargo pants"). In demo mode it
+   derives items from the chosen vibe instead.
+3. **`src/lib/merchants.ts`** turns each query into real search links on Myntra,
+   Flipkart, Ajio and Amazon.in.
+4. **`src/lib/affiliate.ts`** wraps every link so purchases earn you commission.
+
+> Note: AI-generated garments are synthetic, so links go to *visually similar*
+> real products ("shop similar") — the standard approach for shoppable-AI apps.
+
+### Turning on commissions
+
+Sign up with an affiliate network that covers Indian fashion merchants
+(Cuelinks, EarnKaro, INRDeals, Admitad…), then paste its deep-link template —
+with a literal `{url}` placeholder — into `.env.local`:
+
+```
+LOOKSY_AFFILIATE_TEMPLATE=https://linksredirect.com/?cid=XXXXX&source=looksy&url={url}
+```
+
+With no template set, links still work — they're just not monetized yet.
+
 ## Roadmap toward native apps
 
 The backend is a plain HTTP JSON/multipart endpoint, so the planned React

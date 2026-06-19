@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       .filter((f): f is File => f instanceof File)
       .slice(0, MAX_PHOTOS);
 
-    const images = [];
+    const images: { mimeType: string; base64: string }[] = [];
     for (const f of files) {
       const buf = Buffer.from(await f.arrayBuffer());
       images.push({

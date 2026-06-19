@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { getAesthetic } from "@/lib/aesthetics";
 import type { GeneratedLook } from "@/lib/types";
+import ShopModal from "./ShopModal";
 
 export default function LookCard({ look }: { look: GeneratedLook }) {
+  const [shopOpen, setShopOpen] = useState(false);
+
   const labels = look.aesthetics
     .map(getAesthetic)
     .filter(Boolean)
@@ -32,7 +36,7 @@ export default function LookCard({ look }: { look: GeneratedLook }) {
       )}
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3 pt-10">
-        <div className="flex flex-wrap gap-1.5">
+        <div className="mb-2 flex flex-wrap gap-1.5">
           {labels.map((l) => (
             <span
               key={l}
@@ -42,6 +46,13 @@ export default function LookCard({ look }: { look: GeneratedLook }) {
             </span>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={() => setShopOpen(true)}
+          className="pointer-events-auto w-full rounded-lg bg-white py-2 text-sm font-semibold text-black transition hover:bg-white/90"
+        >
+          🛍 Shop this look
+        </button>
       </div>
 
       <button
@@ -51,6 +62,8 @@ export default function LookCard({ look }: { look: GeneratedLook }) {
       >
         ↓ Save
       </button>
+
+      {shopOpen && <ShopModal look={look} onClose={() => setShopOpen(false)} />}
     </div>
   );
 }
