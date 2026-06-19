@@ -77,13 +77,24 @@ export default function Studio({
   }
 
   return (
-    <main className="aurora min-h-screen">
-      {/* Top bar */}
-      <nav className="sticky top-0 z-40 border-b border-line bg-ink/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link href="/" className="text-lg font-bold tracking-tight">
-            Looksy
-          </Link>
+    <main className="relative min-h-screen">
+      {/* Floating gradient backdrop */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="absolute -left-24 -top-24 h-[26rem] w-[26rem] animate-float rounded-full bg-[#5f27cd]/25 blur-[120px]" />
+        <div className="absolute -bottom-32 -right-24 h-[26rem] w-[26rem] animate-float-slow rounded-full bg-[#0abde3]/20 blur-[120px]" />
+        <div className="absolute left-1/3 top-1/2 h-80 w-80 animate-float rounded-full bg-[#ff6b6b]/12 blur-[130px]" />
+      </div>
+
+      <div className="relative z-10">
+        {/* Top bar */}
+        <nav className="sticky top-0 z-40 border-b border-white/10 bg-ink/70 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm shadow ring-1 ring-white/10">
+                ✨
+              </span>
+              <span className="text-lg font-bold tracking-tight">Looksy</span>
+            </Link>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-white/55 sm:inline">
               Hi, {userName || userEmail}
@@ -123,7 +134,7 @@ export default function Studio({
         </header>
 
         {/* Composer */}
-        <section className="mx-auto max-w-2xl rounded-3xl border border-line bg-panel/70 p-5 backdrop-blur sm:p-7">
+        <section className="mx-auto max-w-2xl rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl sm:p-7">
           <div className="space-y-6">
             <PhotoUpload photos={photos} onChange={setPhotos} />
 
@@ -217,6 +228,7 @@ export default function Studio({
             </p>
           )}
         </section>
+      </div>
       </div>
     </main>
   );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import AuthShell from "@/components/auth/AuthShell";
 import { Field, Submit, Notice } from "@/components/auth/fields";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -42,7 +43,13 @@ export default function ForgotPasswordForm() {
         </Link>
       }
     >
-      {sent ? (
+      {!isSupabaseConfigured ? (
+        <Notice kind="success">
+          Email password reset turns on as soon as Supabase is connected. Once
+          your keys are set, entering your email here sends a reset link to that
+          address.
+        </Notice>
+      ) : sent ? (
         <Notice kind="success">
           If an account exists for <strong>{email}</strong>, a reset link is on
           its way. Check your inbox and follow the link to set a new password.

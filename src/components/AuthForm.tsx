@@ -85,6 +85,16 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
           autoComplete={isSignup ? "new-password" : "current-password"}
           required
         />
+        {!isSignup && (
+          <div className="text-right">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-white/55 underline-offset-4 hover:text-white hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        )}
         {error && <Notice kind="error">{error}</Notice>}
         <Submit loading={loading}>
           {isSignup ? "Create account" : "Log in"}
