@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { toDisplayUrl } from "@/lib/supabase/storage";
 import SavedLooksGrid from "@/components/SavedLooksGrid";
 import type { GeneratedLook } from "@/lib/types";
 
@@ -19,12 +20,14 @@ export default async function SavedLooksPage() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  const looks: GeneratedLook[] = (data ?? []).map((row) => ({
-    id: row.id as string,
-    imageUrl: row.image_url as string,
-    prompt: (row.prompt as string) ?? "",
-    aesthetics: (row.aesthetics as string[]) ?? [],
-  }));
+  const looks: GeneratedLook[] = await Promise.all(
+    (data ?? []).map(async (row) => ({
+      id: row.id as string,
+      imageUrl: await toDisplayUrl(row.image_url as string),
+      prompt: (row.prompt as string) ?? "",
+      aesthetics: (row.aesthetics as string[]) ?? [],
+    })),
+  );
 
   return (
     <main className="relative min-h-screen">

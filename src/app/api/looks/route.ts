@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { uploadDataUrl, toDisplayUrl } from "@/lib/supabase/storage";
 
 export const runtime = "nodejs";
 
@@ -24,7 +25,14 @@ export async function GET() {
     .select("*")
     .order("created_at", { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ looks: data });
+
+  const looks = await Promise.all(
+    (data ?? []).map(async (row) => ({
+      ...row,
+      image_url: await toDisplayUrl(row.image_url as string),
+    })),
+  );
+  return NextResponse.json({ looks });
 }
 
 export async function POST(req: NextRequest) {
@@ -43,13 +51,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing image." }, { status: 400 });
   }
 
-  // NOTE: stores the image as a data URL for now. Upgrade: upload to Supabase
-  // Storage and persist the public URL instead, to keep rows small.
+  // Upload the image to the private bucket and store its path (keeps DB rows
+  // small + access-controlled). Fall back to inline storage if upload fails.
+  let stored = imageUrl;
+  if (imageUrl.startsWith("data:")) {
+    try {
+      stored = await uploadDataUrl(user.id, imageUrl);
+    } catch {
+      stored = imageUrl;
+    }
+  }
+
   const { data, error } = await supabase
     .from("saved_looks")
     .insert({
       user_id: user.id,
-      image_url: imageUrl,
+      image_url: stored,
       prompt: typeof body?.prompt === "string" ? body.prompt : null,
       aesthetics: Array.isArray(body?.aesthetics) ? body.aesthetics : [],
     })

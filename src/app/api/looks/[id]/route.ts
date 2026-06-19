@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { removeStored } from "@/lib/supabase/storage";
 
 export const runtime = "nodejs";
 
@@ -17,6 +18,14 @@ export async function DELETE(
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Please log in." }, { status: 401 });
 
+  // Look up the row (RLS-scoped) so we can also clean up its stored image.
+  const { data: row } = await supabase
+    .from("saved_looks")
+    .select("image_url")
+    .eq("id", params.id)
+    .eq("user_id", user.id)
+    .single();
+
   // RLS already restricts deletes to the owner; eq(user_id) is belt-and-braces.
   const { error } = await supabase
     .from("saved_looks")
@@ -24,5 +33,7 @@ export async function DELETE(
     .eq("id", params.id)
     .eq("user_id", user.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (row?.image_url) await removeStored(row.image_url as string);
   return NextResponse.json({ ok: true });
 }
