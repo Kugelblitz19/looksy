@@ -142,11 +142,20 @@ export default function ShopModal({
             )}
           </div>
 
-          {demo && (
-            <p className="border-t border-line p-3 text-center text-[11px] text-amber-300/80">
-              Demo items from your chosen vibe. With a Gemini key, items are read
-              from the actual generated photo.
-            </p>
+          {!loading && garments.length > 0 && (
+            <div className="border-t border-line p-3 text-center">
+              <p className="text-[11px] text-white/45">
+                {monetized
+                  ? "As an affiliate, Looksy may earn a commission on qualifying purchases."
+                  : "Links open similar real products. Set an affiliate template to monetize them."}
+              </p>
+              {demo && (
+                <p className="mt-1 text-[11px] text-amber-300/80">
+                  Demo items from your chosen vibe — with a Gemini key, items are
+                  read from the actual generated photo.
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
