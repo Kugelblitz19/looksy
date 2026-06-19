@@ -96,6 +96,14 @@ export default function Studio({
               <span className="text-lg font-bold tracking-tight">Looksy</span>
             </Link>
           <div className="flex items-center gap-3">
+            {supabaseAuth && (
+              <Link
+                href="/studio/saved"
+                className="rounded-lg px-3 py-1.5 text-sm text-white/70 transition hover:text-white"
+              >
+                My looks
+              </Link>
+            )}
             <span className="hidden text-sm text-white/55 sm:inline">
               Hi, {userName || userEmail}
             </span>
@@ -209,7 +217,7 @@ export default function Studio({
                   />
                 ))}
               {looks.map((look) => (
-                <LookCard key={look.id} look={look} />
+                <LookCard key={look.id} look={look} saveable={supabaseAuth} />
               ))}
             </div>
           )}

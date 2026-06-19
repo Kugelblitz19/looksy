@@ -31,9 +31,19 @@ function itemIcon(g: { name: string; searchQuery: string; category: string }): s
   }
 }
 
-export default function LookCard({ look }: { look: GeneratedLook }) {
+export default function LookCard({
+  look,
+  saveable = false,
+  onRemove,
+}: {
+  look: GeneratedLook;
+  saveable?: boolean;
+  onRemove?: (id: string) => void;
+}) {
   const [garments, setGarments] = useState<ShoppableGarment[]>([]);
   const [loadingShop, setLoadingShop] = useState(true);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  const [removing, setRemoving] = useState(false);
 
   const labels = look.aesthetics
     .map(getAesthetic)
@@ -74,6 +84,37 @@ export default function LookCard({ look }: { look: GeneratedLook }) {
     a.click();
   };
 
+  async function saveLook() {
+    if (saveState !== "idle") return;
+    setSaveState("saving");
+    try {
+      const res = await fetch("/api/looks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageUrl: look.imageUrl,
+          prompt: look.prompt,
+          aesthetics: look.aesthetics,
+        }),
+      });
+      setSaveState(res.ok ? "saved" : "idle");
+    } catch {
+      setSaveState("idle");
+    }
+  }
+
+  async function removeLook() {
+    if (removing) return;
+    setRemoving(true);
+    try {
+      const res = await fetch(`/api/looks/${look.id}`, { method: "DELETE" });
+      if (res.ok) onRemove?.(look.id);
+      else setRemoving(false);
+    } catch {
+      setRemoving(false);
+    }
+  }
+
   return (
     <div className="animate-fade-up overflow-hidden rounded-3xl border border-line bg-panel">
       {/* The look photo */}
@@ -104,13 +145,39 @@ export default function LookCard({ look }: { look: GeneratedLook }) {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={download}
-          className="absolute right-3 top-3 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur transition group-hover:opacity-100"
-        >
-          ↓ Save
-        </button>
+        <div className="absolute right-3 top-3 flex gap-2">
+          {saveable && (
+            <button
+              type="button"
+              onClick={saveLook}
+              disabled={saveState !== "idle"}
+              className="rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:bg-black/80"
+            >
+              {saveState === "saved"
+                ? "✓ Saved"
+                : saveState === "saving"
+                  ? "Saving…"
+                  : "♡ Save"}
+            </button>
+          )}
+          {onRemove && (
+            <button
+              type="button"
+              onClick={removeLook}
+              disabled={removing}
+              className="rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:bg-red-500/80"
+            >
+              {removing ? "Removing…" : "✕ Remove"}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={download}
+            className="rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur transition hover:bg-black/80 group-hover:opacity-100"
+          >
+            ↓ Download
+          </button>
+        </div>
       </div>
 
       {/* Shop the look — inline, right under the photo */}
