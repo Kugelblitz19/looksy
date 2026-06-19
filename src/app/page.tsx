@@ -8,6 +8,12 @@ import type { GeneratedLook, GenerateResponse } from "@/lib/types";
 
 const COUNT_OPTIONS = [1, 2, 4];
 
+const STEPS = [
+  { icon: "📸", text: "Add your photo" },
+  { icon: "🎨", text: "Pick a style" },
+  { icon: "🛍️", text: "Shop the look" },
+];
+
 export default function Home() {
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [aesthetics, setAesthetics] = useState<string[]>([]);
@@ -54,23 +60,31 @@ export default function Home() {
 
   return (
     <main className="aurora min-h-screen">
-      <div className="mx-auto max-w-6xl px-4 pb-24 pt-10 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6">
         {/* Header */}
-        <header className="mb-10 text-center">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-line bg-white/5 px-3 py-1 text-xs text-white/60">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            AI styling studio
-          </div>
+        <header className="mb-8 text-center">
           <h1 className="bg-gradient-to-br from-white to-white/50 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
             Looksy
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-balance text-white/60">
-            Upload a selfie, pick a vibe or describe a look, and see
-            photorealistic images of <em>you</em> wearing it.
+          <p className="mx-auto mt-3 max-w-md text-balance text-white/60">
+            See yourself in any outfit — then tap to buy what you’re wearing.
           </p>
+
+          {/* How it works — plain, 3 steps */}
+          <div className="mx-auto mt-6 flex max-w-lg items-center justify-center gap-2 text-sm text-white/70">
+            {STEPS.map((s, i) => (
+              <div key={s.text} className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white/5 px-3 py-1.5">
+                  <span>{s.icon}</span>
+                  <span className="hidden sm:inline">{s.text}</span>
+                </span>
+                {i < STEPS.length - 1 && <span className="text-white/30">→</span>}
+              </div>
+            ))}
+          </div>
         </header>
 
-        {/* Studio composer */}
+        {/* Composer */}
         <section className="mx-auto max-w-2xl rounded-3xl border border-line bg-panel/70 p-5 backdrop-blur sm:p-7">
           <div className="space-y-6">
             <PhotoUpload photos={photos} onChange={setPhotos} />
@@ -79,21 +93,21 @@ export default function Home() {
 
             <div>
               <label className="mb-2 block text-sm font-medium text-white/80">
-                Describe the look{" "}
+                Add any details{" "}
                 <span className="text-white/40">(optional)</span>
               </label>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                rows={3}
-                placeholder="e.g. olive cargo pants, cropped black puffer, white retro sneakers, golden-hour rooftop…"
+                rows={2}
+                placeholder="e.g. black jacket, blue jeans, white sneakers, on a city street"
                 className="w-full resize-none rounded-xl border border-line bg-black/30 p-3.5 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"
               />
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-white/60">Looks:</span>
+                <span className="text-sm text-white/60">How many?</span>
                 {COUNT_OPTIONS.map((n) => (
                   <button
                     key={n}
@@ -115,11 +129,17 @@ export default function Home() {
                 type="button"
                 onClick={generate}
                 disabled={!canGenerate}
-                className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-xl bg-white px-6 py-3 text-base font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {loading ? "Generating…" : "✨ Generate looks"}
+                {loading ? "Creating your looks…" : "✨ Create my looks"}
               </button>
             </div>
+
+            {!canGenerate && !loading && (
+              <p className="text-center text-xs text-white/40">
+                Pick a style above (or type details) to get started.
+              </p>
+            )}
 
             {error && (
               <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
@@ -132,12 +152,12 @@ export default function Home() {
         {/* Feed */}
         <section className="mt-12">
           {(loading || looks.length > 0) && (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               {loading &&
                 Array.from({ length: count }).map((_, i) => (
                   <div
                     key={`sk-${i}`}
-                    className="skeleton aspect-[3/4] animate-shimmer rounded-2xl"
+                    className="skeleton h-[32rem] animate-shimmer rounded-3xl"
                   />
                 ))}
               {looks.map((look) => (
@@ -147,9 +167,17 @@ export default function Home() {
           )}
 
           {!loading && looks.length === 0 && (
-            <div className="mx-auto max-w-md rounded-2xl border border-dashed border-line p-10 text-center text-white/40">
-              Your generated looks will appear here.
+            <div className="mx-auto max-w-md rounded-3xl border border-dashed border-line p-10 text-center text-white/40">
+              Your looks will show up here — each one with buy links for
+              everything you’re wearing.
             </div>
+          )}
+
+          {looks.length > 0 && (
+            <p className="mt-8 text-center text-xs text-white/35">
+              Looksy may earn a small commission from purchases made through
+              these links.
+            </p>
           )}
         </section>
       </div>

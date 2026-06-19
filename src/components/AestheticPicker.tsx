@@ -11,7 +11,7 @@ export default function AestheticPicker({ selected, onToggle }: Props) {
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-white/80">
-        Pick your vibe
+        Pick a style
       </label>
       <div className="flex flex-wrap gap-2">
         {AESTHETICS.map((a) => {
