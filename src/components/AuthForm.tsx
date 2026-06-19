@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import AuthShell from "@/components/auth/AuthShell";
+import { Field, Submit, Notice } from "@/components/auth/fields";
 
 export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const router = useRouter();
@@ -35,75 +37,14 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
   }
 
   return (
-    <main className="aurora flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <h1 className="bg-gradient-to-br from-white to-white/50 bg-clip-text text-4xl font-bold tracking-tight text-transparent">
-            Looksy
-          </h1>
-          <p className="mt-2 text-sm text-white/55">
-            {isSignup
-              ? "Create an account to start styling."
-              : "Welcome back — log in to your looks."}
-          </p>
-        </div>
-
-        <form
-          onSubmit={submit}
-          className="space-y-4 rounded-3xl border border-line bg-panel/70 p-6 backdrop-blur"
-        >
-          {isSignup && (
-            <Field
-              label="Your name"
-              optional
-              type="text"
-              value={name}
-              autoComplete="name"
-              placeholder="e.g. Priya"
-              onChange={setName}
-            />
-          )}
-
-          <Field
-            label="Email"
-            type="email"
-            value={email}
-            autoComplete="email"
-            placeholder="you@example.com"
-            required
-            onChange={setEmail}
-          />
-
-          <Field
-            label="Password"
-            type="password"
-            value={password}
-            autoComplete={isSignup ? "new-password" : "current-password"}
-            placeholder={isSignup ? "At least 6 characters" : "Your password"}
-            required
-            onChange={setPassword}
-          />
-
-          {error && (
-            <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-2.5 text-sm text-red-300">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-white py-3 text-base font-semibold text-black transition hover:bg-white/90 disabled:opacity-50"
-          >
-            {loading
-              ? "Please wait…"
-              : isSignup
-                ? "Create account"
-                : "Log in"}
-          </button>
-        </form>
-
-        <p className="mt-5 text-center text-sm text-white/50">
+    <AuthShell
+      subtitle={
+        isSignup
+          ? "Create an account to start styling."
+          : "Welcome back — log in to your looks."
+      }
+      footer={
+        <>
           {isSignup ? "Already have an account? " : "New to Looksy? "}
           <Link
             href={isSignup ? "/login" : "/signup"}
@@ -111,46 +52,44 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
           >
             {isSignup ? "Log in" : "Create one"}
           </Link>
-        </p>
-      </div>
-    </main>
-  );
-}
-
-function Field({
-  label,
-  type,
-  value,
-  onChange,
-  placeholder,
-  autoComplete,
-  required,
-  optional,
-}: {
-  label: string;
-  type: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  autoComplete?: string;
-  required?: boolean;
-  optional?: boolean;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-white/80">
-        {label}{" "}
-        {optional && <span className="text-white/40">(optional)</span>}
-      </span>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        required={required}
-        className="w-full rounded-xl border border-line bg-black/30 p-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"
-      />
-    </label>
+        </>
+      }
+    >
+      <form onSubmit={submit} className="space-y-3">
+        {isSignup && (
+          <Field
+            label="Your name"
+            optional
+            type="text"
+            value={name}
+            onChange={setName}
+            placeholder="e.g. Priya"
+            autoComplete="name"
+          />
+        )}
+        <Field
+          label="Email"
+          type="email"
+          value={email}
+          onChange={setEmail}
+          placeholder="you@example.com"
+          autoComplete="email"
+          required
+        />
+        <Field
+          label="Password"
+          type="password"
+          value={password}
+          onChange={setPassword}
+          placeholder={isSignup ? "At least 6 characters" : "Your password"}
+          autoComplete={isSignup ? "new-password" : "current-password"}
+          required
+        />
+        {error && <Notice kind="error">{error}</Notice>}
+        <Submit loading={loading}>
+          {isSignup ? "Create account" : "Log in"}
+        </Submit>
+      </form>
+    </AuthShell>
   );
 }

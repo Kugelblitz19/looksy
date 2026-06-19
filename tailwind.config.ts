@@ -21,10 +21,16 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-22px)" },
+        },
       },
       animation: {
         shimmer: "shimmer 1.4s linear infinite",
         "fade-up": "fade-up 0.4s ease-out both",
+        float: "float 13s ease-in-out infinite",
+        "float-slow": "float 18s ease-in-out infinite",
       },
     },
   },
