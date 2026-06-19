@@ -1,24 +1,21 @@
-import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getSessionUser } from "@/lib/auth/session";
-import Studio from "@/components/Studio";
+import Landing from "@/components/Landing";
 
 export default async function Home() {
+  // Public landing page. We only check auth to tailor the call-to-action —
+  // no redirect, so logged-out visitors see the landing.
+  let isAuthed = false;
   if (isSupabaseConfigured) {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
-    const name = (user.user_metadata?.full_name as string) || undefined;
-    return (
-      <Studio userEmail={user.email ?? ""} userName={name} supabaseAuth />
-    );
+    isAuthed = Boolean(user);
+  } else {
+    isAuthed = Boolean(await getSessionUser());
   }
 
-  // Fallback: built-in auth until Supabase keys are set.
-  const user = await getSessionUser();
-  if (!user) redirect("/login");
-  return <Studio userEmail={user.email} userName={user.name} />;
+  return <Landing isAuthed={isAuthed} />;
 }

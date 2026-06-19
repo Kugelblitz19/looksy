@@ -89,7 +89,7 @@ export default function Studio({
         {/* Top bar */}
         <nav className="sticky top-0 z-40 border-b border-white/10 bg-ink/70 backdrop-blur-xl">
           <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/studio" className="flex items-center gap-2">
               <span className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm shadow ring-1 ring-white/10">
                 ✨
               </span>

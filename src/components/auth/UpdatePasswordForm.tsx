@@ -32,7 +32,7 @@ export default function UpdatePasswordForm() {
       if (error) throw error;
       setDone(true);
       setTimeout(() => {
-        router.push("/");
+        router.push("/studio");
         router.refresh();
       }, 1200);
     } catch {

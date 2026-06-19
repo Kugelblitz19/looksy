@@ -28,7 +28,7 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
       });
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(data.error || "Something went wrong.");
-      router.push("/");
+      router.push("/studio");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");

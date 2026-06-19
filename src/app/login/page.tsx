@@ -11,11 +11,11 @@ export default async function LoginPage() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (user) redirect("/");
+    if (user) redirect("/studio");
     return <SupabaseAuthForm mode="login" />;
   }
 
   // Fallback: built-in auth until Supabase keys are set.
-  if (await getSessionUser()) redirect("/");
+  if (await getSessionUser()) redirect("/studio");
   return <AuthForm mode="login" />;
 }

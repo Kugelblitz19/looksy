@@ -31,7 +31,7 @@ export default function SupabaseAuthForm({
   const [notice, setNotice] = useState<string | null>(null);
 
   function done() {
-    router.push("/");
+    router.push("/studio");
     router.refresh();
   }
 
@@ -56,7 +56,7 @@ export default function SupabaseAuthForm({
           password,
           options: {
             data: { full_name: name },
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=/studio`,
           },
         });
         if (error) throw error;
@@ -99,7 +99,9 @@ export default function SupabaseAuthForm({
     withLoading(async () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/studio`,
+        },
       });
       if (error) throw error;
     });
