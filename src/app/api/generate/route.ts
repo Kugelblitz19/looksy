@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateStyledImage } from "@/lib/gemini";
 import { buildPrompt } from "@/lib/stylist";
 import { placeholderDataUrl } from "@/lib/placeholder";
-import { getSessionUser } from "@/lib/auth/session";
+import { isAuthenticated } from "@/lib/auth/current";
 import type { GeneratedLook } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -12,7 +12,7 @@ const MAX_PHOTOS = 4;
 
 export async function POST(req: NextRequest) {
   try {
-    if (!(await getSessionUser())) {
+    if (!(await isAuthenticated())) {
       return NextResponse.json({ error: "Please log in first." }, { status: 401 });
     }
 
