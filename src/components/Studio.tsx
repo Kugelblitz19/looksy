@@ -19,9 +19,11 @@ const STEPS = [
 export default function Studio({
   userEmail,
   userName,
+  supabaseAuth = false,
 }: {
   userEmail: string;
   userName?: string;
+  supabaseAuth?: boolean;
 }) {
   const router = useRouter();
 
@@ -64,7 +66,12 @@ export default function Studio({
   }
 
   async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    if (supabaseAuth) {
+      const { createClient } = await import("@/lib/supabase/client");
+      await createClient().auth.signOut();
+    } else {
+      await fetch("/api/auth/logout", { method: "POST" });
+    }
     router.push("/login");
     router.refresh();
   }

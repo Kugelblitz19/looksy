@@ -26,16 +26,43 @@ an account and you're taken to the studio.
 
 ## Accounts (login / signup)
 
-Looksy gates the studio behind a simple email + password account:
+Auth is built on **Supabase**. The home page (`/`) redirects to `/login` until
+you're signed in; the image/shop APIs require a session.
 
-- Sign up / log in at `/signup` and `/login`; the home page (`/`) redirects
-  there until you're authenticated.
-- Passwords are hashed (scrypt) and the session is a signed, HttpOnly cookie.
-  Set a `SESSION_SECRET` in `.env.local` (see `.env.local.example`).
-- Users are stored in a local JSON file (`data/`, gitignored) via
-  `src/lib/auth/users.ts`. **This file store works for local dev only — swap it
-  for a real database (Postgres/Supabase) before deploying to serverless.**
-- The image/shop APIs require a logged-in session.
+> **Graceful fallback:** until you set Supabase keys, the app falls back to a
+> temporary built-in email/password store (`src/lib/auth/*`, JSON file in
+> `data/`) so it keeps working. Once the keys below are set, the app
+> automatically switches to Supabase (Email + Phone + Google) — no code change.
+
+### Setting up Supabase auth
+
+1. **Keys** — create a project at supabase.com, run [`supabase/schema.sql`](supabase/schema.sql)
+   in the SQL Editor, then put these in `.env.local` (from Project Settings → API):
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   SUPABASE_SERVICE_ROLE_KEY=...      # server-only, never exposed
+   ```
+2. **URL config** (Authentication → URL Configuration): set Site URL and add
+   Redirect URLs `http://localhost:3000/**` and your production domain.
+3. **Email** — Authentication → Providers → Email is on by default. For quick
+   testing, turn **Confirm email OFF** so signup logs you in immediately; turn it
+   back ON for production.
+4. **Google** — create an OAuth client in Google Cloud Console (APIs & Services →
+   Credentials → Web application):
+   - *Authorized JavaScript origins*: `http://localhost:3000` + your domain.
+   - *Authorized redirect URI*: your **Supabase** callback
+     `https://<project-ref>.supabase.co/auth/v1/callback` (not the app URL!).
+   - Paste the Client ID + Secret into Supabase → Providers → Google.
+   - The app redirects back to `/auth/callback` (already built).
+5. **Phone (SMS OTP)** — Authentication → Providers → Phone: enable it and connect
+   an SMS gateway (e.g. **Twilio**: Account SID + Auth Token + Messaging Service
+   SID). ⚠️ **SMS is billed per message by the gateway — not free.** Use E.164
+   numbers (`+919876543210`). Consider enabling CAPTCHA + lowering OTP rate limits
+   to avoid SMS-pumping abuse.
+
+Implementation lives in `src/lib/supabase/*` (clients + middleware),
+`src/components/SupabaseAuthForm.tsx`, and `src/app/auth/callback/route.ts`.
 
 ### Demo mode (no key needed)
 
