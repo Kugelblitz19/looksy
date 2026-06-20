@@ -14,10 +14,12 @@ export default function Studio({
   userEmail,
   userName,
   supabaseAuth = false,
+  realGeneration = false,
 }: {
   userEmail: string;
   userName?: string;
   supabaseAuth?: boolean;
+  realGeneration?: boolean;
 }) {
   const router = useRouter();
 
@@ -118,11 +120,32 @@ export default function Studio({
               <div>
                 <h2 className="text-lg font-semibold">Your profile</h2>
                 <p className="mt-0.5 text-xs text-white/50">
-                  Add a selfie and pick a style — we’ll create looks of you to shop.
+                  {realGeneration
+                    ? "Add a selfie and pick a style — we’ll create looks of you to shop."
+                    : "Pick a style — we’ll create AI looks to preview and shop."}
                 </p>
               </div>
 
-              <PhotoUpload photos={photos} onChange={setPhotos} />
+              {!realGeneration && (
+                <div className="rounded-xl border border-amber-400/20 bg-amber-400/[0.06] p-3 text-xs leading-relaxed text-amber-200/80">
+                  <span className="font-semibold text-amber-200">
+                    🎭 Demo mode
+                  </span>{" "}
+                  — looks show a styled <em>model</em>, not your face. Seeing
+                  <em> your</em> face in outfits needs real generation (a billed
+                  Gemini key). Great for previewing the clothes &amp; vibe.
+                </div>
+              )}
+
+              <PhotoUpload
+                photos={photos}
+                onChange={setPhotos}
+                hint={
+                  realGeneration
+                    ? undefined
+                    : "In demo mode your photo isn’t used — looks are styled on a model. Add a billed Gemini key to put your real face in them."
+                }
+              />
 
               <AestheticPicker selected={aesthetics} onToggle={toggleAesthetic} />
 

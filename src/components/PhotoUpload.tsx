@@ -12,9 +12,10 @@ interface Props {
   photos: UploadedPhoto[];
   onChange: (photos: UploadedPhoto[]) => void;
   max?: number;
+  hint?: string;
 }
 
-export default function PhotoUpload({ photos, onChange, max = 4 }: Props) {
+export default function PhotoUpload({ photos, onChange, max = 4, hint }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const addFiles = useCallback(
@@ -103,8 +104,8 @@ export default function PhotoUpload({ photos, onChange, max = 4 }: Props) {
         }}
       />
       <p className="mt-2 text-xs text-white/40">
-        Add a clear selfie so the looks actually look like you. No photo? We’ll
-        style a model instead.
+        {hint ??
+          "Add a clear selfie so the looks actually look like you. No photo? We’ll style a model instead."}
       </p>
     </div>
   );
