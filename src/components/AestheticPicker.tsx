@@ -13,7 +13,7 @@ export default function AestheticPicker({ selected, onToggle }: Props) {
       <label className="mb-2 block text-sm font-medium text-white/80">
         Pick a style
       </label>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {AESTHETICS.map((a) => {
           const active = selected.includes(a.id);
           return (
@@ -23,13 +23,13 @@ export default function AestheticPicker({ selected, onToggle }: Props) {
               onClick={() => onToggle(a.id)}
               title={a.blurb}
               className={[
-                "rounded-full border px-3.5 py-2 text-sm font-medium transition",
+                "rounded-full border px-2.5 py-1 text-[13px] font-medium transition",
                 active
-                  ? "border-white bg-white text-black"
-                  : "border-line bg-white/5 text-white/70 hover:border-white/40 hover:text-white",
+                  ? "border-transparent bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white shadow-lg shadow-fuchsia-500/20"
+                  : "border-white/10 bg-white/5 text-white/65 hover:border-white/30 hover:text-white",
               ].join(" ")}
             >
-              <span className="mr-1.5">{a.emoji}</span>
+              <span className="mr-1">{a.emoji}</span>
               {a.label}
             </button>
           );

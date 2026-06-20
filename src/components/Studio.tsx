@@ -116,25 +116,16 @@ export default function Studio({
         <div className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6">
           <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
             {/* LEFT: profile + styling controls */}
-            <aside className="self-start space-y-5 rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl lg:sticky lg:top-[84px]">
-              <div>
-                <h2 className="text-lg font-semibold">Your profile</h2>
-                <p className="mt-0.5 text-xs text-white/50">
-                  {realGeneration
-                    ? "Add a selfie and pick a style — we’ll create looks of you to shop."
-                    : "Pick a style — we’ll create AI looks to preview and shop."}
-                </p>
-              </div>
+            <aside className="self-start space-y-4 rounded-3xl border border-white/10 bg-white/[0.04] p-4 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl lg:sticky lg:top-[84px]">
+              <h2 className="text-base font-semibold tracking-tight">
+                ✨ Create a look
+              </h2>
 
               {!realGeneration && (
-                <div className="rounded-xl border border-amber-400/20 bg-amber-400/[0.06] p-3 text-xs leading-relaxed text-amber-200/80">
-                  <span className="font-semibold text-amber-200">
-                    🎭 Demo mode
-                  </span>{" "}
-                  — looks show a styled <em>model</em>, not your face. Seeing
-                  <em> your</em> face in outfits needs real generation (a billed
-                  Gemini key). Great for previewing the clothes &amp; vibe.
-                </div>
+                <p className="rounded-lg border border-amber-400/20 bg-amber-400/[0.06] px-2.5 py-1.5 text-[11px] leading-snug text-amber-200/80">
+                  🎭 Demo styles a model, not your face — your face needs a
+                  billed Gemini key.
+                </p>
               )}
 
               <PhotoUpload
@@ -157,9 +148,9 @@ export default function Studio({
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  rows={3}
-                  placeholder="e.g. black jacket, blue jeans, white sneakers, on a city street"
-                  className="w-full resize-none rounded-xl border border-white/10 bg-black/30 p-3.5 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"
+                  rows={2}
+                  placeholder="e.g. black jacket, blue jeans, white sneakers, city street"
+                  className="w-full resize-none rounded-xl border border-white/10 bg-black/30 p-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"
                 />
               </div>
 
@@ -186,7 +177,7 @@ export default function Studio({
                 type="button"
                 onClick={generate}
                 disabled={!canGenerate}
-                className="w-full rounded-xl bg-white px-6 py-3.5 text-base font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="w-full rounded-xl bg-gradient-to-r from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3.5 text-base font-semibold text-white shadow-[0_0_40px_-8px_rgba(168,85,247,0.7)] transition hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
               >
                 {loading ? "Creating your looks…" : "✨ Create my looks"}
               </button>
