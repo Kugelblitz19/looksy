@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateStyledImage } from "@/lib/gemini";
+import { generateFreeImage } from "@/lib/freeImage";
 import { buildPrompt } from "@/lib/stylist";
 import { placeholderDataUrl } from "@/lib/placeholder";
 import { isAuthenticated } from "@/lib/auth/current";
@@ -64,11 +65,38 @@ export async function POST(req: NextRequest) {
         });
 
         if (!hasKey) {
+          // Free generator (no key/card): a real AI fashion image of a generic
+          // model — text-to-image, so it can't be the user's actual face.
+          const demoPrompt = buildPrompt({
+            aestheticIds,
+            userPrompt,
+            hasPhotos: false,
+            variation: i,
+          });
+          // Stagger calls — the free API rate-limits concurrent requests.
+          if (i > 0) await new Promise((r) => setTimeout(r, i * 5000));
+          for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+              const dataUrl = await generateFreeImage({
+                prompt: demoPrompt,
+                seed: (stamp % 1_000_000) + i * 7919 + attempt * 131,
+              });
+              return {
+                id: `${stamp}-${i}`,
+                imageUrl: dataUrl,
+                aesthetics: aestheticIds,
+                prompt: demoPrompt,
+                demo: true,
+              };
+            } catch {
+              if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
+            }
+          }
           return {
             id: `${stamp}-${i}`,
             imageUrl: placeholderDataUrl(aestheticIds, i),
             aesthetics: aestheticIds,
-            prompt,
+            prompt: demoPrompt,
             demo: true,
           };
         }
