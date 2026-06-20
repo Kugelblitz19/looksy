@@ -40,7 +40,17 @@ export async function generateStyledImage(opts: {
       "Content-Type": "application/json",
       "x-goog-api-key": apiKey,
     },
-    body: JSON.stringify({ contents: [{ parts }] }),
+    body: JSON.stringify({
+      contents: [{ parts }],
+      generationConfig: {
+        // Confirmed supported for gemini-2.5-flash-image. Image-only output,
+        // and a tall portrait ratio so the full outfit fits head-to-toe.
+        responseModalities: ["IMAGE"],
+        imageConfig: {
+          aspectRatio: process.env.GEMINI_ASPECT_RATIO || "4:5",
+        },
+      },
+    }),
   });
 
   if (!res.ok) {

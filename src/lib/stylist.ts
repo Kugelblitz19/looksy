@@ -5,10 +5,10 @@ import { getAesthetic } from "./aesthetics";
  * a diverse set of looks rather than near-duplicates.
  */
 const VARIATIONS = [
-  "full-body fashion shot, straight-on, eye-level",
-  "three-quarter angle, slightly low camera, dynamic pose",
-  "waist-up portrait crop, candid expression",
-  "full-body, side profile turning toward camera",
+  "full-body, straight-on, eye-level, standing",
+  "full-body, three-quarter angle, relaxed confident pose",
+  "full-body, slight low camera angle, walking toward camera",
+  "full-body, turning toward the camera",
 ];
 
 interface BuildPromptOpts {
@@ -40,8 +40,8 @@ export function buildPrompt({
 
   if (hasPhotos) {
     parts.push(
-      "VIRTUAL TRY-ON. The reference photo(s) show ONE real person. Generate a new, photorealistic photograph of THAT EXACT SAME person. " +
-        "Keep their face, facial features, expression, skin tone, hair and body type identical to the reference so they are immediately recognizable as the same individual — do NOT beautify, slim, age, lighten or otherwise change their face or body. Only change their clothing and the surroundings.",
+      "VIRTUAL TRY-ON. The provided photo(s) show ONE real person. Generate a new, photorealistic full-body photograph of the EXACT SAME individual. " +
+        "Preserve their identity precisely: the same face structure, eyes, nose, lips, jawline and skin tone, the same hairstyle and hair colour, their natural body proportions, and natural skin texture and pores. They must be instantly recognizable as the same person.",
     );
   } else {
     parts.push(
@@ -57,8 +57,14 @@ export function buildPrompt({
     parts.push(`Also incorporate these details: ${userPrompt.trim()}.`);
   }
 
+  if (hasPhotos) {
+    parts.push(
+      "Change ONLY their clothing — do not alter the face or body. Do NOT beautify, slim, smooth, retouch, age, or replace them with a different person; no morphing.",
+    );
+  }
+
   parts.push(
-    `Show the complete outfit clearly on the person. Composition: ${framing}. High-end editorial fashion photography, true-to-life proportions, realistic fabric textures and natural lighting, sharp focus, vertical 3:4 portrait. Exactly one person. No text, watermarks, logos or borders.`,
+    `Show the complete outfit head-to-toe on the person. Composition: ${framing}. High-end editorial fashion photography, realistic fabric drape and fit, natural lighting, sharp focus. Exactly one person, full body in frame. No text, watermarks, logos or borders.`,
   );
 
   return parts.join(" ");
