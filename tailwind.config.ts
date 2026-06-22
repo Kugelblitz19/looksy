@@ -12,9 +12,9 @@ const config: Config = {
         ink: "#0a0a0f",
         panel: "#15151f",
         line: "#262633",
-        // Single champagne accent token — the whole Studio redesign leans on this.
-        champagne: { DEFAULT: "#e8d9b0", deep: "#cbb681" },
-        cta: "#ece3cf",
+        // Single champagne-gold accent token — the whole design leans on this.
+        champagne: { DEFAULT: "#ecd6a3", deep: "#c9a85f" },
+        cta: "#efe6cf",
       },
       keyframes: {
         shimmer: {

@@ -175,7 +175,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
             <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-10 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl sm:p-14">
               <h2 className="text-balance font-display text-3xl font-medium tracking-tight sm:text-5xl">
                 Your next outfit is{" "}
-                <span className="bg-gradient-to-r from-[#f5e6c8] via-champagne to-champagne-deep bg-clip-text italic text-transparent">
+                <span className="bg-gradient-to-r from-[#fbf0cf] via-champagne to-champagne-deep bg-clip-text italic text-transparent">
                   one selfie
                 </span>{" "}
                 away.
