@@ -35,10 +35,14 @@ export default function LookCard({
   look,
   saveable = false,
   onRemove,
+  onSaved,
+  onVariation,
 }: {
   look: GeneratedLook;
   saveable?: boolean;
   onRemove?: (id: string) => void;
+  onSaved?: () => void;
+  onVariation?: (look: GeneratedLook) => void;
 }) {
   const [garments, setGarments] = useState<ShoppableGarment[]>([]);
   const [loadingShop, setLoadingShop] = useState(true);
@@ -97,10 +101,41 @@ export default function LookCard({
           aesthetics: look.aesthetics,
         }),
       });
-      setSaveState(res.ok ? "saved" : "idle");
+      if (res.ok) {
+        setSaveState("saved");
+        onSaved?.();
+      } else {
+        setSaveState("idle");
+      }
     } catch {
       setSaveState("idle");
     }
+  }
+
+  async function share() {
+    const caption = `My ${labels[0]?.replace(/^\S+\s/, "") || "new"} look, styled by Looksy ✨`;
+    try {
+      const resp = await fetch(look.imageUrl);
+      const blob = await resp.blob();
+      const file = new File([blob], `looksy-${look.id}.png`, {
+        type: blob.type || "image/png",
+      });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], text: caption });
+        return;
+      }
+      if (navigator.share) {
+        await navigator.share({ text: caption });
+        return;
+      }
+    } catch {
+      /* fall through to WhatsApp web */
+    }
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(caption)}`,
+      "_blank",
+      "noopener",
+    );
   }
 
   async function removeLook() {
@@ -170,14 +205,34 @@ export default function LookCard({
               {removing ? "Removing…" : "✕ Remove"}
             </button>
           )}
+        </div>
+      </div>
+
+      {/* Action row */}
+      <div className="flex flex-wrap gap-2 px-3.5 pt-3.5">
+        {onVariation && (
           <button
             type="button"
-            onClick={download}
-            className="rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur transition hover:bg-black/80 group-hover:opacity-100"
+            onClick={() => onVariation(look)}
+            className="rounded-lg border border-line bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-white/40 hover:text-white"
           >
-            ↓ Download
+            ↻ Variation
           </button>
-        </div>
+        )}
+        <button
+          type="button"
+          onClick={share}
+          className="rounded-lg border border-line bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-white/40 hover:text-white"
+        >
+          ↗ Share
+        </button>
+        <button
+          type="button"
+          onClick={download}
+          className="rounded-lg border border-line bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-white/40 hover:text-white"
+        >
+          ↓ Save image
+        </button>
       </div>
 
       {/* Shop the look — inline, right under the photo */}
