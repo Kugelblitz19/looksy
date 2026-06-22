@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PhotoUpload, { type UploadedPhoto } from "@/components/PhotoUpload";
 import AestheticPicker from "@/components/AestheticPicker";
@@ -35,6 +35,41 @@ export default function Studio({
   const [looks, setLooks] = useState<GeneratedLook[]>([]);
   const [photoOpen, setPhotoOpen] = useState(false);
   const [savedReload, setSavedReload] = useState(0);
+  const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
+
+  // Load any persisted selfie so it powers the avatar (and survives refresh).
+  useEffect(() => {
+    if (!supabaseAuth) return;
+    fetch("/api/selfie")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.url) setSelfieUrl(d.url);
+      })
+      .catch(() => {});
+  }, [supabaseAuth]);
+
+  async function handlePhotoChange(next: UploadedPhoto[]) {
+    setPhotos(next);
+    const first = next[0];
+    if (!first || !supabaseAuth) return;
+    try {
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result as string);
+        r.onerror = reject;
+        r.readAsDataURL(first.file);
+      });
+      const res = await fetch("/api/selfie", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl: dataUrl }),
+      });
+      const d = await res.json();
+      if (res.ok && d?.url) setSelfieUrl(d.url);
+    } catch {
+      /* selfie persistence is best-effort */
+    }
+  }
 
   const toggleAesthetic = (id: string) =>
     setAesthetics((prev) =>
@@ -146,6 +181,7 @@ export default function Studio({
                 userName={userName}
                 userEmail={userEmail}
                 realGeneration={realGeneration}
+                avatarUrl={selfieUrl}
                 onOpenPhoto={() => setPhotoOpen(true)}
                 onScrollToSaved={scrollToSaved}
                 onLogout={logout}
@@ -166,7 +202,9 @@ export default function Studio({
                 onClick={() => setPhotoOpen(true)}
                 className="rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/40 hover:text-white"
               >
-                {photos.length > 0 ? "📸 Photo added" : "📸 Add your photo"}
+                {photos.length > 0 || selfieUrl
+                  ? "📸 Photo added"
+                  : "📸 Add your photo"}
               </button>
             </div>
 
@@ -308,7 +346,7 @@ export default function Studio({
             </div>
             <PhotoUpload
               photos={photos}
-              onChange={setPhotos}
+              onChange={handlePhotoChange}
               hint={
                 realGeneration
                   ? "Add a clear selfie so your looks actually look like you."

@@ -10,6 +10,7 @@ function isPublicPath(pathname: string): boolean {
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/auth") ||
     pathname.startsWith("/api") ||
+    pathname.startsWith("/look") ||
     // Metadata image routes must be reachable by social/crawler bots (no auth).
     pathname.startsWith("/opengraph-image") ||
     pathname.startsWith("/twitter-image") ||

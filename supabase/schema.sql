@@ -62,3 +62,25 @@ create policy "Users can manage their own saved looks"
 
 create index if not exists saved_looks_user_idx
   on public.saved_looks (user_id, created_at desc);
+
+-- 3) SELFIE PERSISTENCE -------------------------------------
+-- Path to the user's persisted selfie (in the private "selfies"
+-- storage bucket) so it powers the avatar and auto-fills generation
+-- without re-uploading every session.
+alter table public.profiles
+  add column if not exists selfie_path text;
+
+-- 4) PUBLIC SHARE PAGES -------------------------------------
+-- Lets a user make a saved look public at /look/<share_token>. The
+-- image is copied into the public "public-looks" bucket and its URL
+-- stored here; all other looks stay private.
+alter table public.saved_looks
+  add column if not exists share_token      text unique,
+  add column if not exists is_public        boolean not null default false,
+  add column if not exists public_image_url text;
+
+-- ============================================================
+-- STORAGE BUCKETS (already created via scripts/make-buckets.mjs):
+--   selfies      — private
+--   public-looks — public
+-- ============================================================

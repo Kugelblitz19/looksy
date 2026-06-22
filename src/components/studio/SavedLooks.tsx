@@ -11,11 +11,15 @@ function CompactLook({
   expanded,
   onRemove,
   onRemix,
+  onShare,
+  shareMsg,
 }: {
   look: GeneratedLook;
   expanded: boolean;
   onRemove: (id: string) => void;
   onRemix: (look: GeneratedLook) => void;
+  onShare: (look: GeneratedLook) => void;
+  shareMsg: string | null;
 }) {
   const chips = look.aesthetics
     .map(getAesthetic)
@@ -37,6 +41,15 @@ function CompactLook({
         loading="lazy"
         className="aspect-[3/4] w-full object-cover"
       />
+
+      <button
+        type="button"
+        onClick={() => onShare(look)}
+        className="absolute left-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-xs text-white backdrop-blur transition hover:bg-white/30"
+        title="Get a public share link"
+      >
+        🔗
+      </button>
       <button
         type="button"
         onClick={() => onRemove(look.id)}
@@ -45,6 +58,13 @@ function CompactLook({
       >
         ✕
       </button>
+
+      {shareMsg && (
+        <div className="absolute inset-x-2 top-11 rounded-lg bg-black/80 px-2 py-1 text-center text-[11px] font-medium text-white backdrop-blur">
+          {shareMsg}
+        </div>
+      )}
+
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/80 to-transparent p-2 pt-8">
         <span className="text-sm">{chips}</span>
         <button
@@ -69,6 +89,9 @@ export default function SavedLooks({
 }) {
   const [looks, setLooks] = useState<GeneratedLook[] | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [shareState, setShareState] = useState<{ id: string; msg: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     let active = true;
@@ -106,6 +129,31 @@ export default function SavedLooks({
     } catch {
       /* already removed optimistically */
     }
+  }
+
+  async function share(look: GeneratedLook) {
+    setShareState({ id: look.id, msg: "Creating link…" });
+    try {
+      const res = await fetch(`/api/looks/${look.id}/share`, { method: "POST" });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d?.error || "Couldn't share");
+      try {
+        await navigator.clipboard.writeText(d.url);
+      } catch {
+        /* clipboard may be blocked */
+      }
+      window.open(d.url, "_blank", "noopener");
+      setShareState({ id: look.id, msg: "Link copied!" });
+    } catch (e) {
+      setShareState({
+        id: look.id,
+        msg: e instanceof Error ? e.message.slice(0, 44) : "Failed",
+      });
+    }
+    setTimeout(
+      () => setShareState((s) => (s?.id === look.id ? null : s)),
+      2800,
+    );
   }
 
   const count = looks?.length ?? 0;
@@ -163,6 +211,8 @@ export default function SavedLooks({
                 expanded={expanded}
                 onRemove={remove}
                 onRemix={onRemix}
+                onShare={share}
+                shareMsg={shareState?.id === look.id ? shareState.msg : null}
               />
             ))}
           </div>

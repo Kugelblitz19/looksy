@@ -44,6 +44,7 @@ export default function ProfileMenu({
   userName,
   userEmail,
   realGeneration,
+  avatarUrl,
   onOpenPhoto,
   onScrollToSaved,
   onLogout,
@@ -51,6 +52,7 @@ export default function ProfileMenu({
   userName?: string;
   userEmail: string;
   realGeneration: boolean;
+  avatarUrl?: string | null;
   onOpenPhoto: () => void;
   onScrollToSaved: () => void;
   onLogout: () => void;
@@ -85,17 +87,27 @@ export default function ProfileMenu({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm font-bold text-white ring-1 ring-white/15 transition hover:brightness-110"
+        className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm font-bold text-white ring-1 ring-white/15 transition hover:brightness-110"
         aria-label="Profile menu"
       >
-        {initial}
+        {avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={avatarUrl} alt="You" className="h-full w-full object-cover" />
+        ) : (
+          initial
+        )}
       </button>
 
       {open && (
         <div className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-white/10 bg-panel/95 shadow-2xl shadow-black/60 ring-1 ring-white/10 backdrop-blur-xl">
           <div className="flex items-center gap-3 border-b border-white/10 p-3.5">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-base font-bold">
-              {initial}
+            <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-base font-bold">
+              {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarUrl} alt="You" className="h-full w-full object-cover" />
+              ) : (
+                initial
+              )}
             </span>
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold">
