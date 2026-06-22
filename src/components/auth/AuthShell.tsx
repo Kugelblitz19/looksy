@@ -15,32 +15,30 @@ export default function AuthShell({
 }) {
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-ink px-4 py-10">
-      {/* Decorative background */}
-      <div className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 animate-float rounded-full bg-[#5f27cd]/40 blur-[100px]" />
-      <div className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 animate-float-slow rounded-full bg-[#0abde3]/30 blur-[100px]" />
-      <div className="pointer-events-none absolute bottom-1/3 left-1/4 h-72 w-72 animate-float rounded-full bg-[#ff6b6b]/20 blur-[110px]" />
+      {/* One warm gallery spotlight */}
+      <div className="studio-light pointer-events-none absolute inset-0" />
 
       <div className="relative z-10 w-full max-w-sm animate-fade-up">
         {/* Brand */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-2xl shadow-lg shadow-indigo-900/40 ring-1 ring-white/10">
+        <div className="mb-9 text-center">
+          <div className="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-2xl shadow-lg shadow-indigo-900/40 ring-1 ring-white/10">
             ✨
           </div>
-          <h1 className="bg-gradient-to-br from-white to-white/50 bg-clip-text text-4xl font-bold tracking-tight text-transparent">
+          <h1 className="font-display text-5xl font-medium tracking-tight">
             Looksy
           </h1>
           {subtitle && (
-            <p className="mt-2 text-sm text-white/55">{subtitle}</p>
+            <p className="mt-3 text-sm text-white/55">{subtitle}</p>
           )}
         </div>
 
         {/* Card */}
-        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 shadow-2xl shadow-black/40 ring-1 ring-white/[0.04] backdrop-blur-xl">
           {children}
         </div>
 
         {footer && (
-          <div className="mt-5 text-center text-sm text-white/50">{footer}</div>
+          <div className="mt-6 text-center text-sm text-white/50">{footer}</div>
         )}
       </div>
     </main>

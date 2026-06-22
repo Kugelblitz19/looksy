@@ -41,9 +41,9 @@ export default function HeroShowcase() {
             alt={`${c.label} look`}
             className="aspect-[3/4] w-full object-cover"
           />
-          <div className="absolute inset-x-0 bottom-0 bg-black/35 px-2.5 py-2 backdrop-blur-md">
-            <div className="truncate text-xs font-medium text-white">
-              {c.emoji} {c.label}
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2.5 pb-2 pt-8">
+            <div className="truncate text-[10px] uppercase tracking-[0.12em] text-champagne">
+              {c.label}
             </div>
             <div className="text-[11px] text-white/70">{c.price} · Shop ↗</div>
           </div>

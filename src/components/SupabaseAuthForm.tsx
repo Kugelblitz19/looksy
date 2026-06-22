@@ -89,7 +89,7 @@ export default function SupabaseAuthForm({
           {isSignup ? "Already have an account? " : "New to Looksy? "}
           <Link
             href={isSignup ? "/login" : "/signup"}
-            className="font-medium text-white underline-offset-4 hover:underline"
+            className="font-medium text-champagne underline-offset-4 hover:underline"
           >
             {isSignup ? "Log in" : "Create one"}
           </Link>
@@ -150,7 +150,7 @@ export default function SupabaseAuthForm({
             <div className="text-right">
               <Link
                 href="/forgot-password"
-                className="text-xs text-white/55 underline-offset-4 hover:text-white hover:underline"
+                className="text-xs text-white/55 underline-offset-4 hover:text-champagne hover:underline"
               >
                 Forgot password?
               </Link>

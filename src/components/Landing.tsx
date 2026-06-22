@@ -24,12 +24,8 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-ink">
-      {/* Ambient backdrop */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -left-40 -top-40 h-[34rem] w-[34rem] animate-float rounded-full bg-[#5f27cd]/30 blur-[150px]" />
-        <div className="absolute -right-40 top-1/3 h-[32rem] w-[32rem] animate-float-slow rounded-full bg-[#0abde3]/20 blur-[150px]" />
-        <div className="absolute bottom-0 left-1/4 h-80 w-80 animate-float rounded-full bg-[#ff6b6b]/14 blur-[150px]" />
-      </div>
+      {/* One warm gallery spotlight */}
+      <div className="studio-light pointer-events-none fixed inset-0 z-0" />
 
       <div className="relative z-10">
         {/* Nav */}
@@ -45,7 +41,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
               {isAuthed ? (
                 <Link
                   href="/studio"
-                  className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/90"
+                  className="rounded-full bg-cta px-4 py-2 text-sm font-medium text-black ring-1 ring-champagne-deep/40 transition duration-300 hover:brightness-105"
                 >
                   Open Studio
                 </Link>
@@ -59,7 +55,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
                   </Link>
                   <Link
                     href="/signup"
-                    className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/90"
+                    className="rounded-full bg-cta px-4 py-2 text-sm font-medium text-black ring-1 ring-champagne-deep/40 transition duration-300 hover:brightness-105"
                   >
                     Get started
                   </Link>
@@ -71,12 +67,12 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
 
         {/* Hero */}
         <section className="mx-auto max-w-6xl px-5 pb-12 pt-16 text-center sm:pt-24">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs tracking-wide text-white/60 backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            AI FASHION STUDIO
+          <div className="mx-auto mb-7 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-white/50 ring-1 ring-white/[0.08]">
+            <span className="h-1.5 w-1.5 rounded-full bg-champagne" />
+            AI Fashion Studio
           </div>
 
-          <h1 className="text-6xl font-bold leading-[1.0] tracking-tight sm:text-8xl">
+          <h1 className="font-display text-6xl font-medium leading-[1.02] tracking-tight sm:text-8xl">
             <span className="block text-white/90">Try on</span>
             <RotatingWord />
           </h1>
@@ -114,7 +110,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         <section className="mx-auto max-w-5xl px-5 py-20">
           <Reveal>
             <div className="mb-10 text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              <h2 className="font-display text-3xl font-medium tracking-tight sm:text-4xl">
                 Real looks, made with Looksy
               </h2>
               <p className="mt-3 text-white/55">
@@ -130,7 +126,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         {/* How it works */}
         <section className="mx-auto max-w-5xl px-5 py-20">
           <Reveal>
-            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="mb-12 text-center font-display text-3xl font-medium tracking-tight sm:text-4xl">
               Three taps to a new look
             </h2>
           </Reveal>
@@ -139,7 +135,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
               <Reveal key={s.n} delay={i * 120}>
                 <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur transition hover:border-white/20">
                   <div className="mb-4 flex items-center gap-3">
-                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-fuchsia-500/30 to-indigo-500/30 text-lg ring-1 ring-white/10">
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-champagne-deep/[0.12] text-lg ring-1 ring-champagne-deep/25">
                       {s.icon}
                     </span>
                     <span className="text-xs font-semibold uppercase tracking-wide text-white/35">
@@ -177,9 +173,9 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         <section className="mx-auto max-w-3xl px-5 py-20 text-center">
           <Reveal>
             <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-10 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl sm:p-14">
-              <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-5xl">
+              <h2 className="text-balance font-display text-3xl font-medium tracking-tight sm:text-5xl">
                 Your next outfit is{" "}
-                <span className="bg-gradient-to-r from-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#f5e6c8] via-champagne to-champagne-deep bg-clip-text italic text-transparent">
                   one selfie
                 </span>{" "}
                 away.

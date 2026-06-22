@@ -32,7 +32,7 @@ export function Field({
         required={required}
         disabled={disabled}
         autoComplete={autoComplete}
-        className="w-full rounded-xl border border-white/10 bg-black/30 px-3.5 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white/40 focus:ring-2 focus:ring-white/10 disabled:opacity-60"
+        className="w-full rounded-xl border border-white/10 bg-black/20 px-3.5 py-3 text-sm text-white outline-none transition duration-300 placeholder:text-white/30 focus:border-champagne-deep/60 focus:ring-2 focus:ring-champagne-deep/10 disabled:opacity-60"
       />
     </label>
   );
@@ -49,7 +49,7 @@ export function Submit({
     <button
       type="submit"
       disabled={loading}
-      className="w-full rounded-xl bg-white py-3 text-base font-semibold text-black transition hover:bg-white/90 active:scale-[0.99] disabled:opacity-50"
+      className="w-full rounded-xl bg-cta py-3 text-base font-medium text-black ring-1 ring-champagne-deep/40 transition duration-300 hover:brightness-105 active:scale-[0.99] disabled:opacity-50"
     >
       {loading ? "Please wait…" : children}
     </button>
