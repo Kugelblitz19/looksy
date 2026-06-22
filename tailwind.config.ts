@@ -25,12 +25,17 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-22px)" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         shimmer: "shimmer 1.4s linear infinite",
         "fade-up": "fade-up 0.4s ease-out both",
         float: "float 13s ease-in-out infinite",
         "float-slow": "float 18s ease-in-out infinite",
+        marquee: "marquee 32s linear infinite",
       },
     },
   },
