@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -9,6 +9,15 @@ import GoogleIcon from "@/components/auth/GoogleIcon";
 import { Field, Submit, Notice } from "@/components/auth/fields";
 
 type Method = "email" | "phone";
+
+/** Normalize to E.164, defaulting bare 10-digit numbers to India (+91). */
+function normalizePhone(raw: string): string {
+  let n = raw.trim().replace(/[\s()-]/g, "");
+  if (n.startsWith("+")) return n;
+  n = n.replace(/^0+/, "");
+  if (n.length === 10) return `+91${n}`;
+  return `+${n}`;
+}
 
 export default function SupabaseAuthForm({
   mode,
@@ -29,6 +38,13 @@ export default function SupabaseAuthForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(id);
+  }, [cooldown]);
 
   function done() {
     router.push("/studio");
@@ -74,14 +90,13 @@ export default function SupabaseAuthForm({
 
   const sendOtp = () =>
     withLoading(async () => {
-      const normalized = phone.trim().startsWith("+")
-        ? phone.trim()
-        : `+${phone.trim()}`;
+      const normalized = normalizePhone(phone);
       const { error } = await supabase.auth.signInWithOtp({ phone: normalized });
       if (error) throw error;
       setPhone(normalized);
       setOtpSent(true);
-      setNotice("We sent a 6-digit code by SMS.");
+      setCooldown(45);
+      setNotice(`We sent a 6-digit code to ${normalized}.`);
     });
 
   const verifyOtp = () =>
@@ -237,7 +252,7 @@ export default function SupabaseAuthForm({
                 label="6-digit code"
                 type="text"
                 value={otp}
-                onChange={setOtp}
+                onChange={(v) => setOtp(v.replace(/\D/g, "").slice(0, 6))}
                 placeholder="123456"
                 autoComplete="one-time-code"
                 required
@@ -247,17 +262,28 @@ export default function SupabaseAuthForm({
               {otpSent ? "Verify code" : "Send code"}
             </Submit>
             {otpSent && (
-              <button
-                type="button"
-                onClick={() => {
-                  setOtpSent(false);
-                  setOtp("");
-                  setNotice(null);
-                }}
-                className="w-full text-center text-xs text-white/50 hover:text-white"
-              >
-                Use a different number
-              </button>
+              <div className="flex items-center justify-between px-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOtpSent(false);
+                    setOtp("");
+                    setNotice(null);
+                    setCooldown(0);
+                  }}
+                  className="text-white/50 hover:text-white"
+                >
+                  Change number
+                </button>
+                <button
+                  type="button"
+                  disabled={cooldown > 0 || loading}
+                  onClick={sendOtp}
+                  className="font-medium text-white/70 transition hover:text-white disabled:opacity-50"
+                >
+                  {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                </button>
+              </div>
             )}
           </form>
         )}
