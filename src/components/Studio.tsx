@@ -150,32 +150,25 @@ export default function Studio({
 
   return (
     <main className="relative min-h-screen">
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -left-24 -top-24 h-[26rem] w-[26rem] animate-float rounded-full bg-[#5f27cd]/25 blur-[120px]" />
-        <div className="absolute -bottom-32 -right-24 h-[26rem] w-[26rem] animate-float-slow rounded-full bg-[#0abde3]/20 blur-[120px]" />
-      </div>
+      <div className="studio-light pointer-events-none fixed inset-0 z-0" />
 
       <div className="relative z-10">
         {/* Top bar */}
-        <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/60 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-8">
-            <div className="flex items-center gap-2">
+        <header className="sticky top-0 z-40 bg-ink/70 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 sm:px-8">
+            <div className="flex items-center gap-2.5">
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm shadow ring-1 ring-white/10">
                 ✨
               </span>
-              <span className="text-lg font-bold tracking-tight">Looksy</span>
+              <span className="text-lg font-semibold tracking-tight">Looksy</span>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span
-                className={[
-                  "hidden rounded-full px-2.5 py-1 text-xs font-medium sm:inline",
-                  realGeneration
-                    ? "bg-emerald-400/10 text-emerald-200"
-                    : "bg-amber-400/10 text-amber-200/90",
-                ].join(" ")}
-              >
-                {realGeneration ? "✨ Real face" : "🎭 Demo"}
+            <div className="flex items-center gap-4">
+              <span className="hidden items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 sm:flex">
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${realGeneration ? "bg-champagne" : "bg-amber-300/70"}`}
+                />
+                {realGeneration ? "Real face" : "Demo"}
               </span>
               <ProfileMenu
                 userName={userName}
@@ -188,51 +181,64 @@ export default function Studio({
               />
             </div>
           </div>
+          {/* Hairline header rule — the only place the brand gradient appears, faintly. */}
+          <div className="relative h-px w-full">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-fuchsia-500/25 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/12 to-transparent" />
+          </div>
         </header>
 
         {/* Create */}
-        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-8">
-          <section className="space-y-6">
-            <div className="flex items-end justify-between gap-3">
-              <h1 className="text-2xl font-bold tracking-tight">
-                ✨ Create a look
-              </h1>
-              <button
-                type="button"
-                onClick={() => setPhotoOpen(true)}
-                className="rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/40 hover:text-white"
-              >
-                {photos.length > 0 || selfieUrl
-                  ? "📸 Photo added"
-                  : "📸 Add your photo"}
-              </button>
-            </div>
-
-            {!realGeneration && (
-              <p className="rounded-lg border border-amber-400/20 bg-amber-400/[0.06] px-2.5 py-1.5 text-[11px] leading-snug text-amber-200/80">
-                🎭 Demo styles a model, not your face — your face needs a billed
-                Gemini key.
+        <div className="mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
+          {/* Masthead */}
+          <div className="mb-10 flex items-end justify-between gap-4">
+            <div>
+              <p className="mb-2.5 text-[11px] uppercase tracking-[0.25em] text-white/35">
+                The Studio
               </p>
-            )}
+              <h1 className="font-display text-4xl font-medium leading-none tracking-tight sm:text-5xl">
+                Create a look
+              </h1>
+            </div>
+            <button
+              type="button"
+              onClick={() => setPhotoOpen(true)}
+              className="shrink-0 rounded-full px-4 py-2 text-sm text-white/60 ring-1 ring-white/[0.08] transition duration-300 hover:text-champagne hover:ring-champagne-deep/40"
+            >
+              {photos.length > 0 || selfieUrl ? "✓ Photo added" : "Add your photo"}
+            </button>
+          </div>
 
-            <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 ring-1 ring-white/5 backdrop-blur-xl">
+          {!realGeneration && (
+            <p className="mb-10 flex items-center gap-2 text-[12px] text-amber-200/55">
+              <span className="h-1 w-1 rounded-full bg-amber-300/70" />
+              Demo mode styles a model, not your face — add a billed Gemini key
+              for your real face.
+            </p>
+          )}
+
+          <div className="space-y-8">
+            <Section letter="A" label="Occasion">
               <OccasionPacks onPick={applyOccasion} />
+            </Section>
 
+            <Section letter="B" label="Style">
               <AestheticPicker selected={aesthetics} onToggle={toggleAesthetic} />
+            </Section>
 
+            <Section letter="C" label="In your words">
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 rows={2}
-                placeholder="Style it your way (optional) — e.g. black jacket, blue jeans, city street"
-                className="w-full resize-none rounded-xl border border-white/10 bg-black/30 p-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"
+                placeholder="Describe your look — e.g. black tailored blazer, ivory silk, city evening"
+                className="w-full resize-none rounded-none border-0 border-b border-white/[0.12] bg-transparent px-0 py-2 text-base leading-relaxed text-white placeholder:text-white/25 focus:border-champagne-deep/60 focus:outline-none focus:ring-0"
               />
-
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px]">
                 <button
                   type="button"
                   onClick={surprise}
-                  className="rounded-full border border-fuchsia-400/30 bg-fuchsia-400/10 px-3 py-1 text-xs font-medium text-fuchsia-200 transition hover:bg-fuchsia-400/20"
+                  className="text-champagne transition hover:text-white"
                 >
                   🎲 Surprise me
                 </button>
@@ -241,81 +247,96 @@ export default function Studio({
                     key={idea}
                     type="button"
                     onClick={() => appendIdea(idea)}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60 transition hover:border-white/30 hover:text-white"
+                    className="text-white/40 transition hover:text-champagne"
                   >
                     + {idea}
                   </button>
                 ))}
               </div>
+            </Section>
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-white/55">How many?</span>
-                  {COUNT_OPTIONS.map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => setCount(n)}
-                      className={[
-                        "h-8 w-8 rounded-lg border text-sm font-medium transition",
-                        count === n
-                          ? "border-white bg-white text-black"
-                          : "border-white/10 bg-white/5 text-white/70 hover:text-white",
-                      ].join(" ")}
-                    >
-                      {n}
-                    </button>
-                  ))}
+            <Section letter="D" label="Render">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-[11px] uppercase tracking-[0.18em] text-white/35">
+                    Quantity
+                  </span>
+                  <div className="flex gap-1.5">
+                    {COUNT_OPTIONS.map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setCount(n)}
+                        className={[
+                          "h-9 w-9 rounded-full text-sm transition duration-300",
+                          count === n
+                            ? "bg-cta font-medium text-black"
+                            : "text-white/55 ring-1 ring-white/[0.08] hover:text-white",
+                        ].join(" ")}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={generate}
                   disabled={!canGenerate}
-                  className="rounded-xl bg-gradient-to-r from-fuchsia-500 via-violet-500 to-indigo-500 px-6 py-3 text-base font-semibold text-white shadow-[0_0_40px_-8px_rgba(168,85,247,0.7)] transition hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                  className="group relative overflow-hidden rounded-full bg-cta px-8 py-3.5 text-base font-medium text-black shadow-[0_0_50px_-12px_rgba(232,227,207,0.5)] ring-1 ring-champagne-deep/40 transition duration-300 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
                 >
-                  {loading ? "Creating…" : "✨ Create my looks"}
+                  <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                  <span className="relative">
+                    {loading ? "Creating…" : "Create my looks"}
+                  </span>
                 </button>
               </div>
 
               {error && (
-                <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-                  {error}
-                </p>
+                <p className="mt-4 text-sm text-red-300/80">{error}</p>
               )}
-            </div>
+            </Section>
+          </div>
 
-            {(loading || looks.length > 0) && (
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                {loading &&
-                  Array.from({ length: count }).map((_, i) => (
-                    <div
-                      key={`sk-${i}`}
-                      className="skeleton h-[30rem] animate-shimmer rounded-3xl"
-                    />
-                  ))}
-                {looks.map((look) => (
-                  <LookCard
-                    key={look.id}
-                    look={look}
-                    saveable={supabaseAuth}
-                    onSaved={() => setSavedReload((x) => x + 1)}
-                    onVariation={makeVariation}
+          {/* Results */}
+          {(loading || looks.length > 0) && (
+            <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {loading &&
+                Array.from({ length: count }).map((_, i) => (
+                  <div
+                    key={`sk-${i}`}
+                    className="skeleton h-[34rem] animate-shimmer rounded-2xl"
                   />
                 ))}
-              </div>
-            )}
+              {looks.map((look) => (
+                <LookCard
+                  key={look.id}
+                  look={look}
+                  saveable={supabaseAuth}
+                  onSaved={() => setSavedReload((x) => x + 1)}
+                  onVariation={makeVariation}
+                />
+              ))}
+            </div>
+          )}
 
-            {!loading && looks.length === 0 && (
-              <div className="grid place-items-center rounded-3xl border border-dashed border-white/10 p-12 text-center text-white/40 sm:min-h-[18rem]">
-                <div>
-                  <div className="mb-3 text-4xl">🪄</div>
-                  Pick a style and hit Create — your looks (with buy links) show
-                  up here.
+          {!loading && looks.length === 0 && (
+            <div className="mt-16 grid place-items-center border-t border-white/[0.07] py-20 text-center">
+              <div className="max-w-xs">
+                <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full text-lg text-champagne ring-1 ring-champagne-deep/25">
+                  ✦
                 </div>
+                <p className="font-display text-xl text-white/80">
+                  Your gallery is empty
+                </p>
+                <p className="mt-2 text-sm text-white/40">
+                  Choose a style and create — your looks, with shoppable pieces,
+                  appear here.
+                </p>
               </div>
-            )}
-          </section>
+            </div>
+          )}
         </div>
 
         {/* Saved looks (bottom) */}
@@ -327,19 +348,19 @@ export default function Studio({
       {/* Photo modal */}
       {photoOpen && (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-md"
           onClick={() => setPhotoOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-3xl border border-white/10 bg-panel p-5 shadow-2xl shadow-black/60"
+            className="w-full max-w-md animate-fade-up rounded-2xl border border-white/[0.08] bg-ink/95 p-6 ring-1 ring-white/[0.04]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold tracking-tight">📸 Your photo</h2>
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="font-display text-xl font-medium">Your photo</h2>
               <button
                 type="button"
                 onClick={() => setPhotoOpen(false)}
-                className="grid h-8 w-8 place-items-center rounded-full bg-white/5 text-white/60 transition hover:bg-white/10 hover:text-white"
+                className="grid h-8 w-8 place-items-center rounded-full text-white/50 ring-1 ring-white/[0.08] transition hover:text-white"
               >
                 ✕
               </button>
@@ -357,5 +378,27 @@ export default function Studio({
         </div>
       )}
     </main>
+  );
+}
+
+/** An editorial section: a lettered micro-label in the gutter + content. */
+function Section({
+  letter,
+  label,
+  children,
+}: {
+  letter: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="grid gap-4 border-t border-white/[0.07] pt-8 sm:grid-cols-[7rem_1fr] sm:gap-8">
+      <div className="text-[11px] uppercase tracking-[0.2em] text-white/35">
+        <span className="text-champagne-deep">{letter}</span>
+        <span className="px-1.5 text-white/20">·</span>
+        {label}
+      </div>
+      <div>{children}</div>
+    </section>
   );
 }

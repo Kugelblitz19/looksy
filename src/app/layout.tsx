@@ -1,5 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
+
+// High-contrast editorial serif for display headings (the Studio's magazine feel).
+const display = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -34,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={display.variable}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

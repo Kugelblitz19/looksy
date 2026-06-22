@@ -21,12 +21,12 @@ function MenuItem({
       disabled={soon}
       onClick={onClick}
       className={[
-        "flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition",
+        "flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition duration-300",
         soon
-          ? "cursor-default text-white/35"
+          ? "cursor-default text-white/30"
           : danger
-            ? "text-white/75 hover:bg-red-500/10 hover:text-red-300"
-            : "text-white/85 hover:bg-white/5 hover:text-white",
+            ? "text-white/60 hover:text-red-300"
+            : "text-white/75 hover:text-champagne",
       ].join(" ")}
     >
       <span className="text-base leading-none">{icon}</span>
@@ -87,7 +87,7 @@ export default function ProfileMenu({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm font-bold text-white ring-1 ring-white/15 transition hover:brightness-110"
+        className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm font-bold text-white ring-1 ring-white/10 transition duration-300 hover:ring-champagne-deep/40"
         aria-label="Profile menu"
       >
         {avatarUrl ? (
@@ -99,8 +99,8 @@ export default function ProfileMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-white/10 bg-panel/95 shadow-2xl shadow-black/60 ring-1 ring-white/10 backdrop-blur-xl">
-          <div className="flex items-center gap-3 border-b border-white/10 p-3.5">
+        <div className="absolute right-0 z-50 mt-3 w-64 overflow-hidden rounded-xl border border-white/[0.08] bg-ink/95 shadow-2xl shadow-black/60 ring-1 ring-white/[0.04] backdrop-blur-xl">
+          <div className="flex items-center gap-3 border-b border-white/[0.06] p-3.5">
             <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-base font-bold">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -110,29 +110,21 @@ export default function ProfileMenu({
               )}
             </span>
             <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">
+              <div className="truncate text-sm font-medium">
                 {userName || "Your account"}
               </div>
-              <div className="truncate text-xs text-white/50">{userEmail}</div>
+              <div className="truncate text-xs text-white/45">{userEmail}</div>
             </div>
           </div>
 
-          <div className="border-b border-white/10 p-3">
-            {realGeneration ? (
-              <div className="rounded-lg bg-emerald-400/10 px-2.5 py-1.5 text-xs text-emerald-200">
-                ✨ Real-face mode is on
-              </div>
-            ) : (
-              <div className="rounded-lg bg-amber-400/10 px-2.5 py-1.5 text-xs leading-snug text-amber-200/90">
-                🎭 Demo mode — styles a model.
-                <span className="block text-amber-200/55">
-                  Add a billed Gemini key for your real face.
-                </span>
-              </div>
-            )}
+          <div className="flex items-center gap-2 border-b border-white/[0.06] px-3.5 py-2.5 text-[11px] uppercase tracking-[0.15em] text-white/40">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${realGeneration ? "bg-champagne" : "bg-amber-300/70"}`}
+            />
+            {realGeneration ? "Real-face mode on" : "Demo mode · model only"}
           </div>
 
-          <nav className="p-1.5">
+          <nav className="divide-y divide-white/[0.05] p-1.5">
             <MenuItem icon="📸" label="Your photo" onClick={act(onOpenPhoto)} />
             <MenuItem
               icon="🤍"
@@ -144,7 +136,7 @@ export default function ProfileMenu({
             <MenuItem icon="⚙️" label="Settings" soon />
           </nav>
 
-          <div className="border-t border-white/10 p-1.5">
+          <div className="border-t border-white/[0.06] p-1.5">
             <MenuItem icon="⎋" label="Log out" onClick={act(onLogout)} danger />
           </div>
         </div>

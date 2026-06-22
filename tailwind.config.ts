@@ -6,11 +6,15 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
       colors: {
         ink: "#0a0a0f",
         panel: "#15151f",
         line: "#262633",
+        // Single champagne accent token — the whole Studio redesign leans on this.
+        champagne: { DEFAULT: "#e8d9b0", deep: "#cbb681" },
+        cta: "#ece3cf",
       },
       keyframes: {
         shimmer: {
