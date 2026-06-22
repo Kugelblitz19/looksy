@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -23,6 +23,20 @@ export default function SupabaseAuthForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  // Only show "Continue with Google" when the provider is actually enabled in
+  // Supabase — avoids the "provider is not enabled" dead-end. Auto-appears the
+  // moment Google is switched on in the dashboard.
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+
+  useEffect(() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return;
+    fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
+      .then((r) => r.json())
+      .then((d) => setGoogleEnabled(Boolean(d?.external?.google)))
+      .catch(() => {});
+  }, []);
 
   function done() {
     router.push("/studio");
@@ -97,18 +111,22 @@ export default function SupabaseAuthForm({
       }
     >
       <div className="space-y-4">
-        <button
-          onClick={signInWithGoogle}
-          disabled={loading}
-          className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-white py-3 text-sm font-semibold text-black transition hover:bg-white/90 active:scale-[0.99] disabled:opacity-50"
-        >
-          <GoogleIcon /> Continue with Google
-        </button>
+        {googleEnabled && (
+          <>
+            <button
+              onClick={signInWithGoogle}
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-white py-3 text-sm font-semibold text-black transition hover:bg-white/90 active:scale-[0.99] disabled:opacity-50"
+            >
+              <GoogleIcon /> Continue with Google
+            </button>
 
-        <div className="flex items-center gap-3 text-xs text-white/30">
-          <span className="h-px flex-1 bg-white/10" /> or
-          <span className="h-px flex-1 bg-white/10" />
-        </div>
+            <div className="flex items-center gap-3 text-xs text-white/30">
+              <span className="h-px flex-1 bg-white/10" /> or
+              <span className="h-px flex-1 bg-white/10" />
+            </div>
+          </>
+        )}
 
         <form
           onSubmit={(e) => {
