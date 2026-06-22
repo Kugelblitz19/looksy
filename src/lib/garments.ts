@@ -24,10 +24,30 @@ export interface Product {
   /** Pre-formatted price, e.g. "₹1,299". */
   priceDisplay?: string;
   price?: number;
+  /** Original ("MRP") price before discount, when on sale. */
+  mrp?: number;
   currency?: string;
   imageUrl?: string;
   /** Affiliate-wrapped product page URL. */
   buyUrl: string;
+}
+
+/**
+ * Build the shop search phrase for a garment, prefixing gender when known so
+ * results match (a top reason shop clicks bounce). Size will fold in here once
+ * the Style profile lands.
+ */
+export function searchQueryFor(g: DetectedGarment): string {
+  const q = g.searchQuery.trim();
+  const gender = g.gender?.toLowerCase();
+  if (
+    (gender === "men" || gender === "women") &&
+    !new RegExp(`\\b${gender}\\b`, "i").test(q) &&
+    !/\b(unisex|women|men)\b/i.test(q)
+  ) {
+    return `${gender} ${q}`;
+  }
+  return q;
 }
 
 export interface ShoppableGarment extends DetectedGarment {

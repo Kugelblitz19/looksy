@@ -1,4 +1,4 @@
-import type { DetectedGarment, Product } from "../garments";
+import { searchQueryFor, type DetectedGarment, type Product } from "../garments";
 import { MERCHANTS } from "../merchants";
 import { toAffiliateUrl } from "../affiliate";
 
@@ -43,6 +43,7 @@ export function searchMock(
   opts?: { count?: number },
 ): Product[] {
   const count = opts?.count ?? 3;
+  const query = searchQueryFor(garment);
   const base = hash(garment.searchQuery);
 
   return Array.from({ length: count }).map((_, i) => {
@@ -50,15 +51,21 @@ export function searchMock(
     const brand = BRANDS[seed % BRANDS.length];
     const merchant = MERCHANTS[seed % MERCHANTS.length];
     const price = 599 + (seed % 38) * 50; // ₹599 – ₹2449, deterministic
+    // ~3 of every 4 items are "on sale" with a higher MRP (deterministic).
+    const onSale = seed % 4 !== 0;
+    const mrp = onSale
+      ? Math.round((price * (125 + (seed % 8) * 5)) / 100 / 10) * 10 // 25–60% markup
+      : undefined;
     const title = `${brand} ${garment.name}`;
     return {
       title,
       merchant: merchant.name,
       price,
+      mrp,
       currency: "INR",
       priceDisplay: `₹${price.toLocaleString("en-IN")}`,
       imageUrl: placeholderImage(title, seed),
-      buyUrl: toAffiliateUrl(merchant.search(garment.searchQuery)),
+      buyUrl: toAffiliateUrl(merchant.search(query)),
     };
   });
 }

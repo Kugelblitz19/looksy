@@ -150,6 +150,21 @@ export default function LookCard({
     }
   }
 
+  // "Shop the whole look": cheapest real product per garment, summed.
+  const cheapest = garments
+    .filter((g) => g.products.length > 0)
+    .map((g) =>
+      g.products.reduce((a, b) =>
+        (b.price ?? Infinity) < (a.price ?? Infinity) ? b : a,
+      ),
+    )
+    .filter((p) => typeof p.price === "number");
+  const bundleTotal = cheapest.reduce((s, p) => s + (p.price ?? 0), 0);
+
+  function openAll() {
+    cheapest.forEach((p) => window.open(p.buyUrl, "_blank", "noopener"));
+  }
+
   return (
     <div className="animate-fade-up overflow-hidden rounded-3xl border border-line bg-panel">
       {/* The look photo */}
@@ -241,6 +256,37 @@ export default function LookCard({
           🛍️ Shop this look
         </h3>
 
+        {!loadingShop && cheapest.length > 1 && (
+          <div className="mb-3 flex items-center justify-between gap-2 rounded-xl border border-fuchsia-400/20 bg-fuchsia-400/[0.06] px-3 py-2">
+            <div className="min-w-0">
+              <div className="text-sm font-semibold">🧥 Shop the whole look</div>
+              <div className="text-xs text-white/55">
+                {cheapest.length} pieces · from ₹
+                {bundleTotal.toLocaleString("en-IN")}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={openAll}
+              className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-black transition hover:bg-white/90"
+            >
+              Open all →
+            </button>
+          </div>
+        )}
+
+        {!loadingShop && garments.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-1.5 text-[11px] text-white/50">
+            <span className="rounded-full bg-white/5 px-2 py-0.5">💵 COD</span>
+            <span className="rounded-full bg-white/5 px-2 py-0.5">
+              🏦 No-cost EMI
+            </span>
+            <span className="rounded-full bg-white/5 px-2 py-0.5">
+              ↩️ Easy returns
+            </span>
+          </div>
+        )}
+
         {loadingShop ? (
           <div className="space-y-2">
             {[0, 1, 2].map((i) => (
@@ -266,8 +312,13 @@ export default function LookCard({
                         href={p.buyUrl}
                         target="_blank"
                         rel="noopener noreferrer nofollow sponsored"
-                        className="w-24 shrink-0 overflow-hidden rounded-lg border border-line bg-white/5 transition hover:border-white/40"
+                        className="relative w-24 shrink-0 overflow-hidden rounded-lg border border-line bg-white/5 transition hover:border-white/40"
                       >
+                        {p.mrp && p.price && p.mrp > p.price && (
+                          <span className="absolute left-1 top-1 z-10 rounded bg-emerald-500 px-1 py-0.5 text-[9px] font-bold text-white">
+                            -{Math.round((1 - p.price / p.mrp) * 100)}%
+                          </span>
+                        )}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={p.imageUrl}
@@ -279,8 +330,15 @@ export default function LookCard({
                             {p.merchant}
                           </div>
                           {p.priceDisplay && (
-                            <div className="text-xs font-semibold">
-                              {p.priceDisplay}
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-xs font-semibold">
+                                {p.priceDisplay}
+                              </span>
+                              {p.mrp && p.price && p.mrp > p.price && (
+                                <span className="text-[9px] text-white/40 line-through">
+                                  ₹{p.mrp.toLocaleString("en-IN")}
+                                </span>
+                              )}
                             </div>
                           )}
                         </div>

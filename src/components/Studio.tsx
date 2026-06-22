@@ -7,6 +7,8 @@ import AestheticPicker from "@/components/AestheticPicker";
 import LookCard from "@/components/LookCard";
 import ProfileMenu from "@/components/studio/ProfileMenu";
 import SavedLooks from "@/components/studio/SavedLooks";
+import OccasionPacks from "@/components/studio/OccasionPacks";
+import { OCCASIONS, PROMPT_IDEAS, type Occasion } from "@/lib/occasions";
 import type { GeneratedLook, GenerateResponse } from "@/lib/types";
 
 const COUNT_OPTIONS = [1, 2, 4];
@@ -84,6 +86,16 @@ export default function Studio({
     setAesthetics(look.aesthetics);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const applyOccasion = (o: Occasion) => {
+    setAesthetics(o.aesthetics);
+    setPrompt(o.prompt);
+  };
+
+  const appendIdea = (idea: string) =>
+    setPrompt((p) => (p.trim() ? `${p.trim()}, ${idea}` : idea));
+
+  const surprise = () => applyOccasion(OCCASIONS[Math.floor(Math.random() * OCCASIONS.length)]);
 
   async function logout() {
     if (supabaseAuth) {
@@ -166,6 +178,8 @@ export default function Studio({
             )}
 
             <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 ring-1 ring-white/5 backdrop-blur-xl">
+              <OccasionPacks onPick={applyOccasion} />
+
               <AestheticPicker selected={aesthetics} onToggle={toggleAesthetic} />
 
               <textarea
@@ -175,6 +189,26 @@ export default function Studio({
                 placeholder="Style it your way (optional) — e.g. black jacket, blue jeans, city street"
                 className="w-full resize-none rounded-xl border border-white/10 bg-black/30 p-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"
               />
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={surprise}
+                  className="rounded-full border border-fuchsia-400/30 bg-fuchsia-400/10 px-3 py-1 text-xs font-medium text-fuchsia-200 transition hover:bg-fuchsia-400/20"
+                >
+                  🎲 Surprise me
+                </button>
+                {PROMPT_IDEAS.map((idea) => (
+                  <button
+                    key={idea}
+                    type="button"
+                    onClick={() => appendIdea(idea)}
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60 transition hover:border-white/30 hover:text-white"
+                  >
+                    + {idea}
+                  </button>
+                ))}
+              </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2">

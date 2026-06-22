@@ -2,7 +2,7 @@ import { MERCHANTS } from "./merchants";
 import { toAffiliateUrl } from "./affiliate";
 import { searchMock } from "./providers/mock";
 import { searchAmazon } from "./providers/amazon";
-import type { DetectedGarment, Product, ShopLink } from "./garments";
+import { searchQueryFor, type DetectedGarment, type Product, type ShopLink } from "./garments";
 
 /**
  * For a detected garment, build one affiliate-wrapped "shop similar" link per
@@ -10,10 +10,11 @@ import type { DetectedGarment, Product, ShopLink } from "./garments";
  * provider returns real product cards.
  */
 export function buildShopLinks(garment: DetectedGarment): ShopLink[] {
+  const query = searchQueryFor(garment);
   return MERCHANTS.map((m) => ({
     merchantId: m.id,
     merchant: m.name,
-    url: toAffiliateUrl(m.search(garment.searchQuery)),
+    url: toAffiliateUrl(m.search(query)),
   }));
 }
 
