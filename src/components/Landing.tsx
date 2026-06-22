@@ -2,6 +2,9 @@ import Link from "next/link";
 import RotatingWord from "@/components/RotatingWord";
 import HeroShowcase from "@/components/HeroShowcase";
 import StyleMarquee from "@/components/StyleMarquee";
+import LookGallery from "@/components/LookGallery";
+import Reveal from "@/components/Reveal";
+import GlowButton from "@/components/GlowButton";
 
 const STEPS = [
   { n: "1", icon: "📸", title: "Add your selfie", body: "One clear photo — or skip it and we’ll style a model." },
@@ -83,16 +86,11 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
           </p>
 
           <div className="mt-9 flex items-center justify-center gap-3">
-            <Link
-              href={primaryHref}
-              className="rounded-full bg-white px-7 py-3.5 text-base font-semibold text-black shadow-[0_0_55px_-10px_rgba(255,255,255,0.6)] transition hover:scale-[1.02] hover:bg-white/90 active:scale-[0.99]"
-            >
-              {primaryLabel} →
-            </Link>
+            <GlowButton href={primaryHref}>{primaryLabel} →</GlowButton>
             {!isAuthed && (
               <Link
                 href="/login"
-                className="rounded-full border border-white/15 px-7 py-3.5 text-base text-white/80 transition hover:border-white/40 hover:text-white"
+                className="rounded-full border border-white/15 px-7 py-4 text-base text-white/80 transition hover:border-white/40 hover:text-white"
               >
                 Log in
               </Link>
@@ -112,30 +110,48 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
           <StyleMarquee />
         </section>
 
+        {/* Real looks gallery */}
+        <section className="mx-auto max-w-5xl px-5 py-20">
+          <Reveal>
+            <div className="mb-10 text-center">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                Real looks, made with Looksy
+              </h2>
+              <p className="mt-3 text-white/55">
+                Every one is AI-generated — and every piece is shoppable.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={120}>
+            <LookGallery />
+          </Reveal>
+        </section>
+
         {/* How it works */}
         <section className="mx-auto max-w-5xl px-5 py-20">
-          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight sm:text-4xl">
-            Three taps to a new look
-          </h2>
+          <Reveal>
+            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight sm:text-4xl">
+              Three taps to a new look
+            </h2>
+          </Reveal>
           <div className="grid gap-4 sm:grid-cols-3">
-            {STEPS.map((s) => (
-              <div
-                key={s.n}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur transition hover:border-white/20"
-              >
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-fuchsia-500/30 to-indigo-500/30 text-lg ring-1 ring-white/10">
-                    {s.icon}
-                  </span>
-                  <span className="text-xs font-semibold uppercase tracking-wide text-white/35">
-                    Step {s.n}
-                  </span>
+            {STEPS.map((s, i) => (
+              <Reveal key={s.n} delay={i * 120}>
+                <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur transition hover:border-white/20">
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-fuchsia-500/30 to-indigo-500/30 text-lg ring-1 ring-white/10">
+                      {s.icon}
+                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-white/35">
+                      Step {s.n}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold">{s.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-white/55">
+                    {s.body}
+                  </p>
                 </div>
-                <h3 className="text-lg font-semibold">{s.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-white/55">
-                  {s.body}
-                </p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -143,38 +159,38 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         {/* Features */}
         <section className="mx-auto max-w-5xl px-5 pb-20">
           <div className="grid gap-4 sm:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div
-                key={f.title}
-                className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-transparent p-6"
-              >
-                <div className="text-3xl">{f.icon}</div>
-                <h3 className="mt-3 text-lg font-semibold">{f.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-white/55">
-                  {f.body}
-                </p>
-              </div>
+            {FEATURES.map((f, i) => (
+              <Reveal key={f.title} delay={i * 120}>
+                <div className="h-full rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-transparent p-6">
+                  <div className="text-3xl">{f.icon}</div>
+                  <h3 className="mt-3 text-lg font-semibold">{f.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-white/55">
+                    {f.body}
+                  </p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
         {/* Final CTA */}
         <section className="mx-auto max-w-3xl px-5 py-20 text-center">
-          <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-10 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl sm:p-14">
-            <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-5xl">
-              Your next outfit is{" "}
-              <span className="bg-gradient-to-r from-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
-                one selfie
-              </span>{" "}
-              away.
-            </h2>
-            <Link
-              href={primaryHref}
-              className="mt-8 inline-block rounded-full bg-white px-8 py-4 text-base font-semibold text-black shadow-[0_0_55px_-10px_rgba(255,255,255,0.6)] transition hover:scale-[1.02] hover:bg-white/90 active:scale-[0.99]"
-            >
-              {isAuthed ? "Open Studio" : "Create your first look"} →
-            </Link>
-          </div>
+          <Reveal>
+            <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-10 shadow-2xl shadow-black/40 ring-1 ring-white/5 backdrop-blur-xl sm:p-14">
+              <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-5xl">
+                Your next outfit is{" "}
+                <span className="bg-gradient-to-r from-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
+                  one selfie
+                </span>{" "}
+                away.
+              </h2>
+              <div className="mt-8">
+                <GlowButton href={primaryHref}>
+                  {isAuthed ? "Open Studio" : "Create your first look"} →
+                </GlowButton>
+              </div>
+            </div>
+          </Reveal>
         </section>
 
         {/* Footer */}
