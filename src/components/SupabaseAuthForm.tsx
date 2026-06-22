@@ -1,23 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import AuthShell from "@/components/auth/AuthShell";
 import GoogleIcon from "@/components/auth/GoogleIcon";
 import { Field, Submit, Notice } from "@/components/auth/fields";
-
-type Method = "email" | "phone";
-
-/** Normalize to E.164, defaulting bare 10-digit numbers to India (+91). */
-function normalizePhone(raw: string): string {
-  let n = raw.trim().replace(/[\s()-]/g, "");
-  if (n.startsWith("+")) return n;
-  n = n.replace(/^0+/, "");
-  if (n.length === 10) return `+91${n}`;
-  return `+${n}`;
-}
 
 export default function SupabaseAuthForm({
   mode,
@@ -28,23 +17,12 @@ export default function SupabaseAuthForm({
   const supabase = createClient();
   const isSignup = mode === "signup";
 
-  const [method, setMethod] = useState<Method>("email");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [cooldown, setCooldown] = useState(0);
-
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const id = setTimeout(() => setCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(id);
-  }, [cooldown]);
 
   function done() {
     router.push("/studio");
@@ -86,28 +64,6 @@ export default function SupabaseAuthForm({
         if (error) throw error;
         done();
       }
-    });
-
-  const sendOtp = () =>
-    withLoading(async () => {
-      const normalized = normalizePhone(phone);
-      const { error } = await supabase.auth.signInWithOtp({ phone: normalized });
-      if (error) throw error;
-      setPhone(normalized);
-      setOtpSent(true);
-      setCooldown(45);
-      setNotice(`We sent a 6-digit code to ${normalized}.`);
-    });
-
-  const verifyOtp = () =>
-    withLoading(async () => {
-      const { error } = await supabase.auth.verifyOtp({
-        phone,
-        token: otp,
-        type: "sms",
-      });
-      if (error) throw error;
-      done();
     });
 
   const signInWithGoogle = () =>
@@ -154,139 +110,56 @@ export default function SupabaseAuthForm({
           <span className="h-px flex-1 bg-white/10" />
         </div>
 
-        {/* Segmented method toggle */}
-        <div className="grid grid-cols-2 gap-1 rounded-xl bg-black/30 p-1">
-          {(["email", "phone"] as Method[]).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => {
-                setMethod(m);
-                setError(null);
-                setNotice(null);
-              }}
-              className={[
-                "rounded-lg py-2 text-sm font-medium transition",
-                method === m
-                  ? "bg-white text-black shadow"
-                  : "text-white/60 hover:text-white",
-              ].join(" ")}
-            >
-              {m === "email" ? "📧 Email" : "📱 Phone"}
-            </button>
-          ))}
-        </div>
-
-        {method === "email" ? (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              submitEmail();
-            }}
-            className="space-y-3"
-          >
-            {isSignup && (
-              <Field
-                label="Your name"
-                optional
-                type="text"
-                value={name}
-                onChange={setName}
-                placeholder="e.g. Priya"
-                autoComplete="name"
-              />
-            )}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitEmail();
+          }}
+          className="space-y-3"
+        >
+          {isSignup && (
             <Field
-              label="Email"
-              type="email"
-              value={email}
-              onChange={setEmail}
-              placeholder="you@example.com"
-              autoComplete="email"
-              required
+              label="Your name"
+              optional
+              type="text"
+              value={name}
+              onChange={setName}
+              placeholder="e.g. Priya"
+              autoComplete="name"
             />
-            <Field
-              label="Password"
-              type="password"
-              value={password}
-              onChange={setPassword}
-              placeholder={isSignup ? "At least 6 characters" : "Your password"}
-              autoComplete={isSignup ? "new-password" : "current-password"}
-              required
-            />
-            {!isSignup && (
-              <div className="text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-white/55 underline-offset-4 hover:text-white hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            )}
-            <Submit loading={loading}>
-              {isSignup ? "Create account" : "Log in"}
-            </Submit>
-          </form>
-        ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (otpSent) verifyOtp();
-              else sendOtp();
-            }}
-            className="space-y-3"
-          >
-            <Field
-              label="Phone number"
-              type="tel"
-              value={phone}
-              onChange={setPhone}
-              placeholder="+91 98765 43210"
-              autoComplete="tel"
-              required
-              disabled={otpSent}
-            />
-            {otpSent && (
-              <Field
-                label="6-digit code"
-                type="text"
-                value={otp}
-                onChange={(v) => setOtp(v.replace(/\D/g, "").slice(0, 6))}
-                placeholder="123456"
-                autoComplete="one-time-code"
-                required
-              />
-            )}
-            <Submit loading={loading}>
-              {otpSent ? "Verify code" : "Send code"}
-            </Submit>
-            {otpSent && (
-              <div className="flex items-center justify-between px-1 text-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtpSent(false);
-                    setOtp("");
-                    setNotice(null);
-                    setCooldown(0);
-                  }}
-                  className="text-white/50 hover:text-white"
-                >
-                  Change number
-                </button>
-                <button
-                  type="button"
-                  disabled={cooldown > 0 || loading}
-                  onClick={sendOtp}
-                  className="font-medium text-white/70 transition hover:text-white disabled:opacity-50"
-                >
-                  {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
-                </button>
-              </div>
-            )}
-          </form>
-        )}
+          )}
+          <Field
+            label="Email"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            placeholder="you@example.com"
+            autoComplete="email"
+            required
+          />
+          <Field
+            label="Password"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            placeholder={isSignup ? "At least 6 characters" : "Your password"}
+            autoComplete={isSignup ? "new-password" : "current-password"}
+            required
+          />
+          {!isSignup && (
+            <div className="text-right">
+              <Link
+                href="/forgot-password"
+                className="text-xs text-white/55 underline-offset-4 hover:text-white hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          )}
+          <Submit loading={loading}>
+            {isSignup ? "Create account" : "Log in"}
+          </Submit>
+        </form>
 
         {notice && <Notice kind="success">{notice}</Notice>}
         {error && <Notice kind="error">{error}</Notice>}
