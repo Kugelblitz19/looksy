@@ -20,6 +20,9 @@ export async function POST(req: NextRequest) {
     const form = await req.formData();
 
     const userPrompt = (form.get("prompt") as string) || "";
+    const genderRaw = (form.get("gender") as string) || "";
+    const gender =
+      genderRaw === "man" || genderRaw === "woman" ? genderRaw : undefined;
     let aestheticIds: string[] = [];
     try {
       aestheticIds = JSON.parse((form.get("aesthetics") as string) || "[]");
@@ -61,6 +64,7 @@ export async function POST(req: NextRequest) {
           aestheticIds,
           userPrompt,
           hasPhotos: images.length > 0,
+          gender,
           variation: i,
         });
 
@@ -71,6 +75,7 @@ export async function POST(req: NextRequest) {
             aestheticIds,
             userPrompt,
             hasPhotos: false,
+            gender,
             variation: i,
           });
           // Stagger calls — the free API rate-limits concurrent requests.
@@ -86,6 +91,7 @@ export async function POST(req: NextRequest) {
                 imageUrl: dataUrl,
                 aesthetics: aestheticIds,
                 prompt: demoPrompt,
+                gender,
                 demo: true,
               };
             } catch {
@@ -97,6 +103,7 @@ export async function POST(req: NextRequest) {
             imageUrl: placeholderDataUrl(aestheticIds, i),
             aesthetics: aestheticIds,
             prompt: demoPrompt,
+            gender,
             demo: true,
           };
         }
@@ -107,6 +114,7 @@ export async function POST(req: NextRequest) {
           imageUrl: `data:${out.mimeType};base64,${out.base64}`,
           aesthetics: aestheticIds,
           prompt,
+          gender,
         };
       }),
     );

@@ -8,12 +8,17 @@ export interface Aesthetic {
   prompt: string;
 }
 
+/** Who the look is styled for — drives the model in demo mode and shop queries. */
+export type Gender = "woman" | "man";
+
 export interface GeneratedLook {
   id: string;
   /** Data URL of the generated (or placeholder) image. */
   imageUrl: string;
   aesthetics: string[];
   prompt: string;
+  /** Who the look was styled for, so shopping links match. */
+  gender?: Gender;
   /** True when produced by the demo fallback (no API key set). */
   demo?: boolean;
 }

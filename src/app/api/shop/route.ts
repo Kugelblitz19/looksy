@@ -3,6 +3,7 @@ import { detectGarments, demoGarments } from "@/lib/detect";
 import { buildShopLinks, searchProducts, activeProductProvider } from "@/lib/products";
 import { affiliateConfigured } from "@/lib/affiliate";
 import { isAuthenticated } from "@/lib/auth/current";
+import { withPreferredGender } from "@/lib/garments";
 import type { DetectedGarment, ShoppableGarment } from "@/lib/garments";
 
 export const runtime = "nodejs";
@@ -19,6 +20,9 @@ export async function POST(req: NextRequest) {
     const aesthetics: string[] = Array.isArray(body?.aesthetics)
       ? body.aesthetics
       : [];
+    const genderRaw = typeof body?.gender === "string" ? body.gender : "";
+    const gender =
+      genderRaw === "man" || genderRaw === "woman" ? genderRaw : undefined;
 
     const hasKey = Boolean(process.env.GEMINI_API_KEY);
 
@@ -42,6 +46,8 @@ export async function POST(req: NextRequest) {
       // Demo mode (or placeholder image): synthesize from chosen aesthetics.
       garments = demoGarments(aesthetics);
     }
+
+    garments = withPreferredGender(garments, gender);
 
     const shoppable: ShoppableGarment[] = await Promise.all(
       garments.map(async (g) => ({

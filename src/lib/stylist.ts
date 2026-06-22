@@ -1,4 +1,5 @@
 import { getAesthetic } from "./aesthetics";
+import type { Gender } from "./types";
 
 /**
  * Slightly varies framing/angle between variations so a single request returns
@@ -15,6 +16,8 @@ interface BuildPromptOpts {
   aestheticIds: string[];
   userPrompt: string;
   hasPhotos: boolean;
+  /** Who to style — used only when there's no photo to take identity from. */
+  gender?: Gender;
   variation?: number;
 }
 
@@ -27,6 +30,7 @@ export function buildPrompt({
   aestheticIds,
   userPrompt,
   hasPhotos,
+  gender,
   variation = 0,
 }: BuildPromptOpts): string {
   const styleDescriptors = aestheticIds
@@ -44,8 +48,12 @@ export function buildPrompt({
         "Preserve their identity precisely: the same face structure, eyes, nose, lips, jawline and skin tone, the same hairstyle and hair colour, their natural body proportions, and natural skin texture and pores. They must be instantly recognizable as the same person.",
     );
   } else {
+    // No photo → text-to-image picks the model, so we must state the gender
+    // explicitly (otherwise it defaults to a woman every time).
+    const who =
+      gender === "man" ? "man" : gender === "woman" ? "woman" : "person";
     parts.push(
-      "Generate a photorealistic full-body fashion photograph of a stylish model.",
+      `Generate a photorealistic full-body fashion photograph of a stylish ${who} model.`,
     );
   }
 

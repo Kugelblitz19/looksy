@@ -66,6 +66,7 @@ export default function LookCard({
             imageDataUrl: look.imageUrl,
             aesthetics: look.aesthetics,
             prompt: look.prompt,
+            gender: look.gender,
           }),
         });
         const data: ShopResponse = await res.json();

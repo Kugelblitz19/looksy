@@ -50,6 +50,23 @@ export function searchQueryFor(g: DetectedGarment): string {
   return q;
 }
 
+/**
+ * Bias a garment list toward the look's gender so shop searches return men's /
+ * women's products. Only fills unisex or unknown items — explicit gendered
+ * items are left as detected.
+ */
+export function withPreferredGender(
+  garments: DetectedGarment[],
+  gender?: "man" | "woman",
+): DetectedGarment[] {
+  if (gender !== "man" && gender !== "woman") return garments;
+  const target = gender === "man" ? "men" : "women";
+  return garments.map((g) => {
+    const cur = g.gender?.toLowerCase();
+    return !cur || cur === "unisex" ? { ...g, gender: target } : g;
+  });
+}
+
 export interface ShoppableGarment extends DetectedGarment {
   /** Real product cards (when a product provider is configured). */
   products: Product[];
