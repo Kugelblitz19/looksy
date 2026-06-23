@@ -29,6 +29,55 @@ body {
     radial-gradient(120% 120% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
 }
 
+/* ── Maison Lumière — virtual fitting room ───────────────────────── */
+
+/* Deep showroom ambience: warm centre column, rich violet corner depth,
+   three-point studio lighting with floor pedestal glow. */
+.fitting-room {
+  background:
+    radial-gradient(24% 95% at 50% 15%, rgba(255, 248, 220, 0.19), transparent 60%),
+    radial-gradient(36% 30% at 50% -4%, rgba(255, 252, 238, 0.26), transparent 50%),
+    radial-gradient(15% 74% at -4% 34%, rgba(240, 215, 150, 0.10), transparent 66%),
+    radial-gradient(15% 74% at 104% 34%, rgba(240, 215, 150, 0.10), transparent 66%),
+    radial-gradient(48% 24% at 50% 108%, rgba(215, 182, 100, 0.17), transparent 62%),
+    radial-gradient(68% 70% at -8% 5%, rgba(48, 22, 108, 0.62), transparent 60%),
+    radial-gradient(68% 70% at 108% 5%, rgba(48, 22, 108, 0.62), transparent 60%),
+    radial-gradient(38% 30% at 0% 0%, rgba(15, 10, 55, 0.52), transparent 50%),
+    radial-gradient(38% 30% at 100% 0%, rgba(15, 10, 55, 0.52), transparent 50%),
+    radial-gradient(26% 36% at 10% 94%, rgba(0, 148, 158, 0.055), transparent 62%),
+    radial-gradient(26% 36% at 90% 94%, rgba(0, 148, 158, 0.055), transparent 62%),
+    radial-gradient(148% 135% at 50% 0%, transparent 34%, rgba(0, 0, 0, 0.88) 100%);
+  animation: room-breathe 13s ease-in-out infinite;
+}
+
+/* Ceiling coffers — architectural vertical lines fading downward. */
+.showroom-walls {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.011) 0px,
+    rgba(255, 255, 255, 0.011) 1px,
+    transparent 1px,
+    transparent 90px
+  );
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 50%);
+  mask-image: linear-gradient(to bottom, black 0%, transparent 50%);
+}
+
+/* Polished lacquer floor — warm reflection at the base. */
+.showroom-floor {
+  background:
+    radial-gradient(58% 90% at 50% 100%, rgba(225, 195, 130, 0.065) 0%, transparent 68%),
+    linear-gradient(to top, rgba(205, 175, 95, 0.042) 0%, transparent 55%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.60) 0%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  mask-image: linear-gradient(to top, black 0%, transparent 100%);
+}
+
+@keyframes room-breathe {
+  0%, 100% { opacity: 0.90; }
+  50% { opacity: 1; }
+}
+
 .skeleton {
   background: linear-gradient(
     90deg,
