@@ -7,6 +7,7 @@ import SiteFooter from "@/components/SiteFooter";
 import LandingNav from "@/components/LandingNav";
 import HoloCard from "@/components/HoloCard";
 import Typeset from "@/components/Typeset";
+import IntroCover from "@/components/IntroCover";
 import { issueLabel } from "@/lib/issue";
 
 const CONTENTS = [
@@ -21,6 +22,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
 
   return (
     <main className="min-h-screen bg-paper text-ink">
+      <IntroCover issue={issue} />
       <div className="mx-auto max-w-6xl edge-rules">
         {/* Masthead nav */}
         <LandingNav isAuthed={isAuthed} issue={issue} primaryHref={primaryHref} />

@@ -187,6 +187,17 @@ body {
   animation: stamp 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
 }
 
+/* The title sequence lifts away like turning the cover. */
+@keyframes intro-out {
+  to { opacity: 0; transform: translateY(-26px); }
+}
+.intro-out {
+  animation: intro-out 0.5s cubic-bezier(0.6, 0, 0.4, 1) forwards;
+}
+@keyframes seal-spin {
+  to { transform: rotate(360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
