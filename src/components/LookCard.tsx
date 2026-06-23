@@ -21,6 +21,7 @@ export default function LookCard({
 }) {
   const [garments, setGarments] = useState<ShoppableGarment[]>([]);
   const [loadingShop, setLoadingShop] = useState(true);
+  const [lookScore, setLookScore] = useState<number | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [removing, setRemoving] = useState(false);
 
@@ -50,7 +51,10 @@ export default function LookCard({
           }),
         });
         const data: ShopResponse = await res.json();
-        if (active && res.ok && data.garments) setGarments(data.garments);
+        if (active && res.ok && data.garments) {
+          setGarments(data.garments);
+          if (typeof data.lookMatch === "number") setLookScore(data.lookMatch);
+        }
       } catch {
         /* leave list empty on failure */
       } finally {
@@ -241,7 +245,17 @@ export default function LookCard({
 
       {/* Credits — get the look */}
       <div className="mt-4 border-t border-ink/12 px-1 pt-4">
-        <p className="kicker mb-3">Credits — get the look</p>
+        <div className="mb-3 flex items-baseline justify-between gap-2">
+          <p className="kicker">Credits — get the look</p>
+          {lookScore != null && (
+            <span
+              title="How closely the surfaced products match the detected colour, fabric & cut."
+              className="font-mono text-[11px] font-semibold tracking-tight text-ink"
+            >
+              {lookScore}% match
+            </span>
+          )}
+        </div>
 
         {!loadingShop && cheapest.length > 1 && (
           <button
@@ -283,10 +297,17 @@ export default function LookCard({
             {garments.map((g, i) => (
               <li key={`${g.searchQuery}-${i}`}>
                 <div className="mb-1.5 flex items-baseline justify-between gap-2 border-b border-ink/10 pb-1">
-                  <span className="font-serif text-sm text-ink">{g.name}</span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-30">
-                    {g.category}
+                  <span className="font-serif text-sm text-ink">
+                    {g.name}
+                    <span className="ml-2 font-sans text-[10px] uppercase tracking-[0.12em] text-ink-30">
+                      {g.category}
+                    </span>
                   </span>
+                  {typeof g.match === "number" && (
+                    <span className="shrink-0 font-mono text-[11px] tracking-tight text-ink-60">
+                      {g.match}% match
+                    </span>
+                  )}
                 </div>
 
                 {g.products && g.products.length > 0 ? (

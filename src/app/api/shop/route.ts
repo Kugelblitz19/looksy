@@ -4,6 +4,7 @@ import { buildShopLinks, searchProducts, activeProductProvider } from "@/lib/pro
 import { affiliateConfigured } from "@/lib/affiliate";
 import { isAuthenticated } from "@/lib/auth/current";
 import { withPreferredGender } from "@/lib/garments";
+import { rankByMatch, bestMatch, lookMatch } from "@/lib/match";
 import type { DetectedGarment, ShoppableGarment } from "@/lib/garments";
 
 export const runtime = "nodejs";
@@ -50,11 +51,23 @@ export async function POST(req: NextRequest) {
     garments = withPreferredGender(garments, gender);
 
     const shoppable: ShoppableGarment[] = await Promise.all(
-      garments.map(async (g) => ({
-        ...g,
-        products: await searchProducts(g, { count: 3 }),
-        shopLinks: buildShopLinks(g),
-      })),
+      garments.map(async (g) => {
+        // Rank the real products closest-match-first, so the most exact item
+        // surfaces, and stamp the garment with its best match score.
+        const products = rankByMatch(g, await searchProducts(g, { count: 3 }));
+        return {
+          ...g,
+          products,
+          shopLinks: buildShopLinks(g),
+          match: bestMatch(products),
+        };
+      }),
+    );
+
+    const overall = lookMatch(
+      shoppable
+        .map((g) => g.match)
+        .filter((m): m is number => typeof m === "number"),
     );
 
     return NextResponse.json({
@@ -62,6 +75,7 @@ export async function POST(req: NextRequest) {
       demo: !hasKey,
       monetized: affiliateConfigured(),
       productProvider: activeProductProvider(),
+      lookMatch: overall,
     });
   } catch (err) {
     const message =

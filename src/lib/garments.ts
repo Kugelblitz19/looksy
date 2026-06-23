@@ -4,6 +4,12 @@ export interface DetectedGarment {
   /** top | bottom | outerwear | dress | footwear | accessory | other */
   category: string;
   color?: string;
+  /** Fabric, e.g. "cotton", "fleece", "denim" — sharpens the match. */
+  material?: string;
+  /** Print / texture, e.g. "ribbed", "checked", "floral". */
+  pattern?: string;
+  /** Cut, e.g. "oversized", "slim", "relaxed". */
+  fit?: string;
   /** men | women | unisex */
   gender?: string;
   /** Concise phrase used to search shopping sites for a similar product. */
@@ -30,6 +36,10 @@ export interface Product {
   imageUrl?: string;
   /** Affiliate-wrapped product page URL. */
   buyUrl: string;
+  /** 0–100 closeness to the detected garment (set by the matcher). */
+  match?: number;
+  /** Garment attributes this product covered (for explainability). */
+  matched?: string[];
 }
 
 /**
@@ -38,7 +48,12 @@ export interface Product {
  * the Style profile lands.
  */
 export function searchQueryFor(g: DetectedGarment): string {
-  const q = g.searchQuery.trim();
+  let q = g.searchQuery.trim();
+  // Fold in colour & fabric so the link lands on a more exact product.
+  for (const extra of [g.material, g.color]) {
+    const e = extra?.trim().toLowerCase();
+    if (e && !q.toLowerCase().includes(e)) q = `${e} ${q}`;
+  }
   const gender = g.gender?.toLowerCase();
   if (
     (gender === "men" || gender === "women") &&
@@ -72,6 +87,8 @@ export interface ShoppableGarment extends DetectedGarment {
   products: Product[];
   /** Fallback "shop similar" merchant search links. */
   shopLinks: ShopLink[];
+  /** Closest product match for this piece, 0–100. */
+  match?: number;
 }
 
 export interface ShopResponse {
@@ -81,5 +98,7 @@ export interface ShopResponse {
   monetized?: boolean;
   /** Which product-data provider produced the cards (searchlinks|mock|amazon). */
   productProvider?: string;
+  /** Overall closeness of the surfaced products to the look, 0–100. */
+  lookMatch?: number;
   error?: string;
 }
