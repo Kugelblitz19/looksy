@@ -51,8 +51,14 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         </header>
 
         {/* Cover */}
-        <section className="grid grid-cols-1 gap-8 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-12 lg:gap-6 lg:pb-24 lg:pt-16">
-          <div className="lg:col-span-7">
+        <section className="relative isolate grid grid-cols-1 gap-8 overflow-hidden px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-12 lg:gap-6 lg:pb-24 lg:pt-16">
+          <span
+            aria-hidden
+            className="ghost-masthead pointer-events-none absolute left-1/2 top-[34%] z-0 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-display text-[24vw] font-semibold leading-none tracking-tighter"
+          >
+            LOOKSY
+          </span>
+          <div className="relative z-10 lg:col-span-7">
             <p className="kicker mb-6">An AI fashion weekly · Shot in India</p>
             <h1 className="font-display font-medium leading-[0.92] tracking-tight text-[clamp(3rem,10vw,7.5rem)]">
               <span className="block">Try on</span>
@@ -78,7 +84,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
           </div>
 
           {/* The one full cover — the only colour on the page */}
-          <div className="lg:col-span-5">
+          <div className="relative z-10 lg:col-span-5">
             <div className="relative border border-ink/15 bg-paper-2 p-2">
               <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
                 <span className="bg-paper/85 px-2 py-0.5 font-display text-xs tracking-tight">

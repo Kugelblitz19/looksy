@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter_Tight, Newsreader, Azeret_Mono } from "next/font/google";
+import Pressroom from "@/components/Pressroom";
 import "./globals.css";
 
 // Fraunces — the high-contrast bracketed serif masthead. Instant Condé-Nast.
@@ -71,7 +72,10 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}
     >
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <Pressroom />
+        {children}
+      </body>
     </html>
   );
 }
