@@ -48,12 +48,13 @@ export function buildPrompt({
         "Preserve their identity precisely: the same face structure, eyes, nose, lips, jawline and skin tone, the same hairstyle and hair colour, their natural body proportions, and natural skin texture and pores. They must be instantly recognizable as the same person.",
     );
   } else {
-    // No photo → text-to-image picks the model, so we must state the gender
-    // explicitly (otherwise it defaults to a woman every time).
+    // No photo → text-to-image picks the model. State gender explicitly
+    // (otherwise it defaults to a woman every time) and Indian ethnicity, since
+    // Looksy is India-first — without this the model defaults to Western.
     const who =
       gender === "man" ? "man" : gender === "woman" ? "woman" : "person";
     parts.push(
-      `Generate a photorealistic full-body fashion photograph of a stylish ${who} model.`,
+      `Generate a photorealistic full-body fashion photograph of a stylish young Indian ${who} model with South Asian features and warm brown skin.`,
     );
   }
 
