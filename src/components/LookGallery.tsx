@@ -9,16 +9,16 @@ const GALLERY = [
   { id: "casual", label: "Everyday", price: "₹1,299" },
 ];
 
-/** A grid of real, AI-generated example looks — tilt on hover, shoppable feel. */
+/** A grid of real, AI-generated example looks — this week's plates, shoppable. */
 export default function LookGallery() {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
       {GALLERY.map((g) => (
         <TiltCard
           key={g.id}
-          className="group relative overflow-hidden rounded-2xl bg-[#101015] p-2 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/[0.06]"
+          className="group border border-ink/12 bg-paper-2 p-2"
         >
-          <div className="relative overflow-hidden rounded-xl ring-1 ring-white/[0.08]">
+          <div className="relative overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/examples/${g.id}.jpg`}
@@ -26,13 +26,12 @@ export default function LookGallery() {
               loading="lazy"
               className="aspect-[3/4] w-full object-cover transition duration-500 group-hover:scale-[1.04]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3">
-              <span className="text-[11px] uppercase tracking-[0.15em] text-champagne drop-shadow">
-                {g.label}
-              </span>
-              <span className="text-[11px] text-white/75">{g.price} · Shop ↗</span>
-            </div>
+          </div>
+          <div className="mt-2 flex items-baseline justify-between gap-2 border-t border-ink/10 pt-2">
+            <span className="text-[12px] text-ink">{g.label}</span>
+            <span className="font-mono text-[11px] text-ink-60">
+              {g.price} &rarr;
+            </span>
           </div>
         </TiltCard>
       ))}

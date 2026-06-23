@@ -1,18 +1,36 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Space_Grotesk } from "next/font/google";
+import { Fraunces, Inter_Tight, Newsreader, Azeret_Mono } from "next/font/google";
 import "./globals.css";
 
-const display = Syne({
+// Fraunces — the high-contrast bracketed serif masthead. Instant Condé-Nast.
+const display = Fraunces({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
 
-const body = Space_Grotesk({
+// Inter Tight — quiet, neutral UI chrome so the serif carries the personality.
+const body = Inter_Tight({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
   variable: "--font-body",
+  display: "swap",
+});
+
+// Newsreader — editorial running copy: captions, credits, the style note.
+const serif = Newsreader({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["400", "500"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+// Azeret Mono — the ticket-stub texture, reserved for issue/plate numbers + prices.
+const mono = Azeret_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -20,25 +38,25 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3020",
   ),
-  title: "Looksy — See yourself in any look",
+  title: "Looksy — The Issue",
   description:
-    "Upload a selfie, pick a vibe, describe a look — and see AI-generated photos of you wearing it. Instantly shoppable.",
+    "Upload a selfie, pick a vibe, get a cover so good it's basically a personality — instantly shoppable. An AI fashion weekly, shot in India.",
   openGraph: {
-    title: "Looksy — See yourself in any look",
+    title: "Looksy — The Issue",
     description:
-      "Your selfie, restyled by AI — and instantly shoppable. Try on streetwear, old money, party, festive and more.",
+      "Your selfie. This week's cover. One tap to post, one tap to cop. An AI fashion weekly.",
     siteName: "Looksy",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Looksy — See yourself in any look",
-    description: "Your selfie, restyled by AI — and instantly shoppable.",
+    title: "Looksy — The Issue",
+    description: "Your selfie. This week's cover. One tap to post, one tap to cop.",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0f",
+  themeColor: "#FBFAF7",
   width: "device-width",
   initialScale: 1,
 };
@@ -49,7 +67,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}
+    >
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

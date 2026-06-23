@@ -37,7 +37,7 @@ export default function ForgotPasswordForm() {
       footer={
         <Link
           href="/login"
-          className="font-medium text-white underline-offset-4 hover:underline"
+          className="font-medium text-ink underline-offset-4 transition hover:text-vermilion hover:underline"
         >
           ← Back to login
         </Link>
@@ -56,7 +56,7 @@ export default function ForgotPasswordForm() {
         </Notice>
       ) : (
         <form onSubmit={submit} className="space-y-3">
-          <p className="text-sm text-white/60">
+          <p className="text-sm text-ink-60">
             Enter your email and we’ll send you a link to set a new password.
           </p>
           <Field

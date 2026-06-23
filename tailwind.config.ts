@@ -5,15 +5,32 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
+        // Inter Tight carries all UI chrome; Fraunces is the magazine masthead;
+        // Newsreader sets editorial running copy; Azeret Mono is the ticket-stub
+        // texture reserved for issue/plate numbers and prices.
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       colors: {
-        ink: "#0a0a0f",
-        panel: "#15151f",
-        line: "#262633",
-        champagne: { DEFAULT: "#c4b5fd", deep: "#a78bfa" },
-        cta: "#e0d8ff",
+        // Warm press-stock palette. All channels are CSS vars so the Night
+        // Edition can invert paper↔ink by overriding :root under [data-theme].
+        paper: {
+          DEFAULT: "rgb(var(--c-paper) / <alpha-value>)",
+          2: "rgb(var(--c-paper-2) / <alpha-value>)",
+        },
+        ink: {
+          DEFAULT: "rgb(var(--c-ink) / <alpha-value>)",
+          60: "rgb(var(--c-ink-60) / <alpha-value>)",
+          30: "rgb(var(--c-ink-30) / <alpha-value>)",
+        },
+        rule: "rgb(var(--c-rule) / <alpha-value>)",
+        // The single rationed accent — masthead red, used like Vogue uses it.
+        vermilion: {
+          DEFAULT: "rgb(var(--c-vermilion) / <alpha-value>)",
+          ink: "rgb(var(--c-vermilion-ink) / <alpha-value>)",
+        },
       },
       keyframes: {
         shimmer: {
@@ -26,7 +43,7 @@ const config: Config = {
         },
         float: {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-22px)" },
+          "50%": { transform: "translateY(-18px)" },
         },
         marquee: {
           "0%": { transform: "translateX(0)" },
@@ -35,7 +52,7 @@ const config: Config = {
       },
       animation: {
         shimmer: "shimmer 1.4s linear infinite",
-        "fade-up": "fade-up 0.4s ease-out both",
+        "fade-up": "fade-up 0.45s ease-out both",
         float: "float 13s ease-in-out infinite",
         "float-slow": "float 18s ease-in-out infinite",
         marquee: "marquee 32s linear infinite",

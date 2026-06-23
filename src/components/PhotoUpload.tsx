@@ -47,10 +47,10 @@ export default function PhotoUpload({ photos, onChange, max = 4, hint }: Props) 
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <label className="text-sm font-medium text-white/80">
+        <label className="text-sm font-medium text-ink-60">
           Your photo{photos.length > 1 ? "s" : ""}
         </label>
-        <span className="text-xs text-white/40">
+        <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-30">
           {photos.length}/{max} · optional
         </span>
       </div>
@@ -59,7 +59,7 @@ export default function PhotoUpload({ photos, onChange, max = 4, hint }: Props) 
         {photos.map((p) => (
           <div
             key={p.id}
-            className="group relative h-24 w-24 overflow-hidden rounded-xl border border-line"
+            className="group relative h-24 w-24 overflow-hidden border border-ink/15"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -70,7 +70,7 @@ export default function PhotoUpload({ photos, onChange, max = 4, hint }: Props) 
             <button
               type="button"
               onClick={() => remove(p.id)}
-              className="absolute right-1 top-1 grid h-6 w-6 place-items-center rounded-full bg-black/70 text-white opacity-0 transition group-hover:opacity-100"
+              className="absolute right-1 top-1 grid h-6 w-6 place-items-center bg-paper/85 text-ink opacity-0 transition group-hover:opacity-100"
               aria-label="Remove photo"
             >
               ✕
@@ -82,7 +82,7 @@ export default function PhotoUpload({ photos, onChange, max = 4, hint }: Props) 
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="grid h-24 w-24 place-items-center rounded-xl border border-dashed border-line bg-white/5 text-center text-xs text-white/50 transition hover:border-white/40 hover:text-white/80"
+            className="grid h-24 w-24 place-items-center border border-dashed border-ink/25 bg-paper-2 text-center text-xs text-ink-30 transition hover:border-ink hover:text-ink-60"
           >
             <span>
               <span className="block text-2xl">＋</span>
@@ -103,9 +103,9 @@ export default function PhotoUpload({ photos, onChange, max = 4, hint }: Props) 
           e.target.value = "";
         }}
       />
-      <p className="mt-2 text-xs text-white/40">
+      <p className="mt-2 font-serif text-xs italic text-ink-30">
         {hint ??
-          "Add a clear selfie so the looks actually look like you. No photo? We’ll style a model instead."}
+          "Add a clear selfie so the looks actually look like you. No photo? We’ll cast a model instead."}
       </p>
     </div>
   );

@@ -2,117 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────────────
+   LOOKSY — THE COVER
+   A fashion magazine that shoots you. Warm paper, ink, and one rationed
+   vermilion. Color channels are CSS vars so a Night Edition can invert
+   paper↔ink wholesale via [data-theme="night"].
+   ──────────────────────────────────────────────────────────────────── */
+
 :root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  /* Daylight edition (default) — warm press stock + warm near-black ink */
+  --c-paper: 251 250 247;     /* #FBFAF7 */
+  --c-paper-2: 242 240 234;   /* #F2F0EA */
+  --c-ink: 20 17 15;          /* #14110F */
+  --c-ink-60: 92 86 79;       /* #5C564F */
+  --c-ink-30: 168 162 154;    /* #A8A29A */
+  --c-rule: 26 23 20;         /* #1A1714 */
+  --c-vermilion: 229 52 27;   /* #E5341B */
+  --c-vermilion-ink: 184 38 16; /* #B82610 */
+}
+
+[data-theme="night"] {
+  /* Night edition — warm black newsprint, bone ink, same vermilion */
+  --c-paper: 21 17 13;        /* #15110D */
+  --c-paper-2: 32 27 21;
+  --c-ink: 237 232 223;       /* #EDE8DF */
+  --c-ink-60: 176 168 156;
+  --c-ink-30: 110 104 95;
+  --c-rule: 237 232 223;
 }
 
 html,
 body {
-  background-color: #0a0a0f;
-  color: #f5f5f7;
+  background-color: rgb(var(--c-paper));
+  color: rgb(var(--c-ink));
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Subtle ambient glow behind the studio. */
-.aurora {
-  background:
-    radial-gradient(60% 50% at 20% 10%, rgba(95, 39, 205, 0.28), transparent 70%),
-    radial-gradient(50% 45% at 85% 5%, rgba(10, 189, 227, 0.22), transparent 70%),
-    radial-gradient(45% 40% at 60% 90%, rgba(255, 107, 107, 0.16), transparent 70%);
+/* A kicker — the small uppercase editor's label above headlines. */
+.kicker {
+  font-family: var(--font-body), system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: rgb(var(--c-ink-60));
 }
 
-/* Studio "gallery": one warm champagne track-light from top-center + a vignette. */
-.studio-light {
-  background:
-    radial-gradient(70% 50% at 50% -10%, rgba(245, 230, 200, 0.07), transparent 60%),
-    radial-gradient(120% 120% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+/* The page frame — thin rules down the left & right margins of a column,
+   so every screen reads like a printed page. */
+.edge-rules {
+  border-left: 1px solid rgb(var(--c-rule) / 0.12);
+  border-right: 1px solid rgb(var(--c-rule) / 0.12);
 }
 
-/* ── Maison Lumière — virtual fitting room ───────────────────────── */
-
-/* Electric showroom ambience: bright white centre, deep electric-indigo
-   corner depth, purple/cyan side mirrors, teal floor glow. */
-.fitting-room {
-  background:
-    radial-gradient(22% 98% at 50% 12%, rgba(255, 252, 245, 0.22), transparent 58%),
-    radial-gradient(34% 28% at 50% -4%, rgba(255, 255, 255, 0.30), transparent 48%),
-    radial-gradient(72% 74% at -8% 4%, rgba(68, 8, 186, 0.72), transparent 60%),
-    radial-gradient(72% 74% at 108% 4%, rgba(68, 8, 186, 0.72), transparent 60%),
-    radial-gradient(36% 28% at 0% 0%, rgba(8, 4, 42, 0.62), transparent 50%),
-    radial-gradient(36% 28% at 100% 0%, rgba(8, 4, 42, 0.62), transparent 50%),
-    radial-gradient(58% 30% at 50% 112%, rgba(0, 200, 220, 0.10), transparent 62%),
-    radial-gradient(14% 72% at -4% 34%, rgba(140, 80, 255, 0.09), transparent 68%),
-    radial-gradient(14% 72% at 104% 34%, rgba(0, 180, 240, 0.09), transparent 68%),
-    radial-gradient(150% 138% at 50% 0%, transparent 32%, rgba(0, 0, 0, 0.90) 100%);
-  animation: room-breathe 13s ease-in-out infinite;
+/* Leader dots between a contents label and its page/plate number. */
+.leader {
+  flex: 1 1 auto;
+  margin: 0 0.6rem;
+  border-bottom: 1px dotted rgb(var(--c-ink-30) / 0.7);
+  transform: translateY(-0.25rem);
 }
 
-/* Drifting jewel-tone orbs — purple, cyan, magenta */
-.vibe-a {
-  background: radial-gradient(ellipse 42% 52% at 16% 36%, rgba(140, 0, 255, 0.14), transparent 70%);
-  animation: vibe-drift-a 18s ease-in-out infinite;
+/* ── The Cover Reveal ────────────────────────────────────────────────
+   A generated look doesn't fade in — it DEVELOPS like a cover going to
+   print: from grayscale + slightly zoomed to full color, the only moment
+   color "turns on" in the whole UI. */
+@keyframes cover-develop {
+  0% {
+    filter: grayscale(1) brightness(0.92) contrast(1.05);
+    transform: scale(1.04);
+    opacity: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    filter: grayscale(0) brightness(1) contrast(1);
+    transform: scale(1);
+    opacity: 1;
+  }
 }
-.vibe-b {
-  background: radial-gradient(ellipse 42% 52% at 84% 36%, rgba(0, 210, 255, 0.12), transparent 70%);
-  animation: vibe-drift-b 22s ease-in-out infinite;
-}
-.vibe-c {
-  background: radial-gradient(ellipse 52% 32% at 50% 94%, rgba(220, 0, 160, 0.08), transparent 68%);
-  animation: vibe-drift-c 28s ease-in-out infinite;
-}
-
-@keyframes vibe-drift-a {
-  0%, 100% { opacity: 0.65; transform: translate(0, 0) scale(1); }
-  35% { opacity: 1; transform: translate(4%, 7%) scale(1.12); }
-  70% { opacity: 0.50; transform: translate(-5%, -4%) scale(0.93); }
-}
-@keyframes vibe-drift-b {
-  0%, 100% { opacity: 0.60; transform: translate(0, 0) scale(1); }
-  40% { opacity: 1; transform: translate(-5%, 5%) scale(1.10); }
-  72% { opacity: 0.45; transform: translate(6%, -5%) scale(0.94); }
-}
-@keyframes vibe-drift-c {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 0.85; }
+.cover-develop {
+  animation: cover-develop 1100ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-/* Ceiling coffers — architectural vertical lines fading downward. */
-.showroom-walls {
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.011) 0px,
-    rgba(255, 255, 255, 0.011) 1px,
-    transparent 1px,
-    transparent 90px
-  );
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 50%);
-  mask-image: linear-gradient(to bottom, black 0%, transparent 50%);
+/* A single vermilion rule sweeping down the plate as it develops. */
+@keyframes rule-sweep {
+  0% { transform: translateY(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(2200%); opacity: 0; }
+}
+.rule-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: rgb(var(--c-vermilion));
+  animation: rule-sweep 1100ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  pointer-events: none;
 }
 
-/* Polished lacquer floor — warm reflection at the base. */
-.showroom-floor {
-  background:
-    radial-gradient(58% 90% at 50% 100%, rgba(225, 195, 130, 0.065) 0%, transparent 68%),
-    linear-gradient(to top, rgba(205, 175, 95, 0.042) 0%, transparent 55%),
-    linear-gradient(to top, rgba(0, 0, 0, 0.60) 0%, transparent 85%);
-  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
-  mask-image: linear-gradient(to top, black 0%, transparent 100%);
-}
-
-@keyframes room-breathe {
-  0%, 100% { opacity: 0.90; }
-  50% { opacity: 1; }
-}
-
+/* Quiet shimmer for skeleton placeholders, paper-toned. */
 .skeleton {
   background: linear-gradient(
     90deg,
-    #1a1a26 0%,
-    #24243a 50%,
-    #1a1a26 100%
+    rgb(var(--c-paper-2)) 0%,
+    rgb(var(--c-ink) / 0.06) 50%,
+    rgb(var(--c-paper-2)) 100%
   );
   background-size: 800px 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-develop,
+  .rule-sweep::after,
+  .animate-float,
+  .animate-float-slow,
+  .animate-marquee {
+    animation: none !important;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -120,6 +129,9 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a2a3a;
+  background: rgb(var(--c-ink) / 0.18);
   border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--c-ink) / 0.3);
 }

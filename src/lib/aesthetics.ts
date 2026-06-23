@@ -34,7 +34,7 @@ export const AESTHETICS: Aesthetic[] = [
     id: "oldmoney",
     label: "Old Money",
     emoji: "🥂",
-    blurb: "Quiet luxury, tailored, refined",
+    blurb: "Quiet luxury, tailored restraint",
     prompt:
       "old-money quiet-luxury aesthetic — tailored neutral-tone classics, cashmere knit or a crisp blazer, well-pressed trousers, leather loafers and understated gold details; set at a country club, yacht or grand estate with warm afternoon light",
   },
@@ -69,6 +69,14 @@ export const AESTHETICS: Aesthetic[] = [
     blurb: "Traditional, ornate, celebratory",
     prompt:
       "festive traditional ethnic wear — an elegant ornate outfit in rich jewel-toned fabrics with intricate embroidery and tasteful jewelry; set in a warmly-lit celebration with marigold and fairy-light decor",
+  },
+  {
+    id: "desi",
+    label: "Contemporary Desi",
+    emoji: "🌸",
+    blurb: "Indo-western fusion, modern silhouettes",
+    prompt:
+      "contemporary Indo-western fusion fashion — a sharply tailored bandhgala or a draped fusion silhouette that marries modern cuts with traditional craft, handloom textiles and fine zardozi or threadwork embroidery in a restrained palette, paired with sleek minimal jewelry; set in a warm modern Indian space of jali screens, terracotta and brass with soft golden light",
   },
   {
     id: "casual",

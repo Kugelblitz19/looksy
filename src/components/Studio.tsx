@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PhotoUpload, { type UploadedPhoto } from "@/components/PhotoUpload";
 import AestheticPicker from "@/components/AestheticPicker";
@@ -8,8 +8,8 @@ import LookCard from "@/components/LookCard";
 import ProfileMenu from "@/components/studio/ProfileMenu";
 import SavedLooks from "@/components/studio/SavedLooks";
 import OccasionPacks from "@/components/studio/OccasionPacks";
-import ClosetBackdrop from "@/components/studio/ClosetBackdrop";
 import { OCCASIONS, PROMPT_IDEAS, type Occasion } from "@/lib/occasions";
+import { issueLabel } from "@/lib/issue";
 import type { Gender, GeneratedLook, GenerateResponse } from "@/lib/types";
 
 const COUNT_OPTIONS = [1, 2, 4];
@@ -42,6 +42,8 @@ export default function Studio({
   const [photoOpen, setPhotoOpen] = useState(false);
   const [savedReload, setSavedReload] = useState(0);
   const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const issue = issueLabel();
 
   // Load any persisted selfie so it powers the avatar (and survives refresh).
   useEffect(() => {
@@ -103,6 +105,8 @@ export default function Studio({
   }) {
     setLoading(true);
     setError(null);
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
     try {
       const form = new FormData();
       form.set("prompt", opts.prompt);
@@ -111,14 +115,23 @@ export default function Studio({
       form.set("gender", gender);
       for (const p of photos) form.append("photos", p.file);
 
-      const res = await fetch("/api/generate", { method: "POST", body: form });
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        body: form,
+        signal: ctrl.signal,
+      });
       const data: GenerateResponse = await res.json();
       if (!res.ok || data.error)
         throw new Error(data.error || "Generation failed.");
       setLooks((prev) => [...(data.looks ?? []), ...prev]);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong.");
+      if (e instanceof DOMException && e.name === "AbortError") {
+        /* user stopped the shoot — no error */
+      } else {
+        setError(e instanceof Error ? e.message : "Something went wrong.");
+      }
     } finally {
+      abortRef.current = null;
       setLoading(false);
     }
   }
@@ -127,6 +140,8 @@ export default function Studio({
     if (!canGenerate) return;
     runGenerate({ prompt, aesthetics, count });
   };
+
+  const stop = () => abortRef.current?.abort();
 
   const makeVariation = (look: GeneratedLook) => {
     if (loading) return;
@@ -148,7 +163,8 @@ export default function Studio({
   const appendIdea = (idea: string) =>
     setPrompt((p) => (p.trim() ? `${p.trim()}, ${idea}` : idea));
 
-  const surprise = () => applyOccasion(OCCASIONS[Math.floor(Math.random() * OCCASIONS.length)]);
+  const surprise = () =>
+    applyOccasion(OCCASIONS[Math.floor(Math.random() * OCCASIONS.length)]);
 
   async function logout() {
     if (supabaseAuth) {
@@ -162,31 +178,27 @@ export default function Studio({
   }
 
   const scrollToSaved = () =>
-    document
-      .getElementById("saved-looks")
-      ?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("saved-looks")?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <main className="relative min-h-screen">
-      <ClosetBackdrop />
-
-      <div className="relative z-10">
-        {/* Top bar */}
-        <header className="sticky top-0 z-40 bg-ink/70 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 sm:px-8">
-            <div className="flex items-center gap-2.5">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm shadow ring-1 ring-white/10">
-                ✨
-              </span>
-              <span className="bg-gradient-to-r from-violet-300 via-fuchsia-200 to-cyan-300 bg-clip-text text-lg font-bold tracking-tight text-transparent">
+    <main className="min-h-screen bg-paper text-ink">
+      <div className="mx-auto max-w-5xl edge-rules">
+        {/* Masthead */}
+        <header className="sticky top-0 z-40 bg-paper/85 backdrop-blur-sm">
+          <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
+            <div className="flex items-baseline gap-3">
+              <span className="font-display text-2xl font-semibold tracking-tight">
                 Looksy
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-vermilion">
+                The Issue {issue}
               </span>
             </div>
 
             <div className="flex items-center gap-4">
-              <span className="hidden items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 sm:flex">
+              <span className="hidden items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-30 sm:flex">
                 <span
-                  className={`h-1.5 w-1.5 rounded-full ${realGeneration ? "bg-champagne" : "bg-amber-300/70"}`}
+                  className={`h-1.5 w-1.5 rounded-full ${realGeneration ? "bg-vermilion" : "bg-ink-30"}`}
                 />
                 {realGeneration ? "Real face" : "Demo"}
               </span>
@@ -201,24 +213,22 @@ export default function Studio({
               />
             </div>
           </div>
-          {/* Hairline header rule — the only place the brand gradient appears, faintly. */}
-          <div className="relative h-px w-full">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-fuchsia-500/25 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/12 to-transparent" />
-          </div>
+          <div className="h-px w-full bg-ink/15" />
         </header>
 
-        {/* Create — one calm centered column */}
-        <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
-          {/* Masthead */}
-          <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
-            <h1 className="bg-gradient-to-r from-violet-200 via-white to-cyan-200 bg-clip-text font-display text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-              Create a look
-            </h1>
+        {/* The Layout Desk */}
+        <div className="px-5 py-12 sm:px-8 sm:py-16">
+          <div className="mx-auto flex max-w-xl items-end justify-between gap-4">
+            <div>
+              <p className="kicker mb-2">The Layout Desk</p>
+              <h1 className="font-display text-4xl font-medium tracking-tight sm:text-5xl">
+                Shoot your cover.
+              </h1>
+            </div>
             <button
               type="button"
               onClick={() => setPhotoOpen(true)}
-              className="shrink-0 rounded-full px-4 py-2 text-sm text-white/60 ring-1 ring-white/[0.08] transition duration-300 hover:text-champagne hover:ring-champagne-deep/40"
+              className="shrink-0 border border-ink/15 px-4 py-2 text-sm text-ink-60 transition hover:border-ink hover:text-ink"
             >
               {photos.length > 0 || selfieUrl ? "✓ Photo" : "Add photo"}
             </button>
@@ -226,36 +236,42 @@ export default function Studio({
 
           {/* Composer */}
           <div className="mx-auto mt-12 max-w-xl space-y-10">
-            <Group label="Occasion">
+            <Group label="The Edit">
               <OccasionPacks onPick={applyOccasion} />
             </Group>
 
-            <Group label="Style">
+            <Group label="Vibe">
               <AestheticPicker selected={aesthetics} onToggle={toggleAesthetic} />
             </Group>
 
-            <Group label="Describe it — optional">
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                rows={2}
-                placeholder="e.g. black tailored blazer, ivory silk, city evening"
-                className="w-full resize-none rounded-none border-0 border-b border-white/[0.12] bg-transparent px-0 py-2 text-base leading-relaxed text-white placeholder:text-white/25 focus:border-champagne-deep/60 focus:outline-none focus:ring-0"
-              />
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px]">
+            <Group label="Style note — optional">
+              <div className="flex items-baseline gap-2 border-b border-ink/20 focus-within:border-vermilion">
+                <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-30">
+                  Note —
+                </span>
+                <textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  rows={2}
+                  placeholder="black tailored blazer, ivory silk, city evening…"
+                  style={{ caretColor: "rgb(var(--c-vermilion))" }}
+                  className="w-full resize-none border-0 bg-transparent px-0 py-2 font-serif text-base italic leading-relaxed text-ink placeholder:not-italic placeholder:text-ink-30 focus:outline-none focus:ring-0"
+                />
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px]">
                 <button
                   type="button"
                   onClick={surprise}
-                  className="text-champagne transition hover:text-white"
+                  className="font-medium text-vermilion transition hover:text-vermilion-ink"
                 >
-                  🎲 Surprise me
+                  Surprise me
                 </button>
                 {PROMPT_IDEAS.slice(0, 3).map((idea) => (
                   <button
                     key={idea}
                     type="button"
                     onClick={() => appendIdea(idea)}
-                    className="text-white/40 transition hover:text-champagne"
+                    className="text-ink-60 transition hover:text-ink"
                   >
                     + {idea}
                   </button>
@@ -263,9 +279,9 @@ export default function Studio({
               </div>
             </Group>
 
-            {/* Control deck — model, quantity and the one action, grouped */}
-            <div className="flex flex-col gap-5 rounded-2xl bg-white/[0.025] p-5 ring-1 ring-white/[0.06] sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+            {/* Control deck */}
+            <div className="flex flex-col gap-6 border-t border-ink/15 pt-7 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
                 <Control label="Model">
                   {GENDER_OPTIONS.map((g) => (
                     <Pill
@@ -277,7 +293,7 @@ export default function Studio({
                     </Pill>
                   ))}
                 </Control>
-                <Control label="Count">
+                <Control label="Plates">
                   {COUNT_OPTIONS.map((n) => (
                     <Pill key={n} active={count === n} onClick={() => setCount(n)} round>
                       {n}
@@ -286,37 +302,52 @@ export default function Studio({
                 </Control>
               </div>
 
-              <button
-                type="button"
-                onClick={generate}
-                disabled={!canGenerate}
-                className="group relative shrink-0 overflow-hidden rounded-full bg-cta px-7 py-3 text-base font-medium text-black shadow-[0_0_50px_-12px_rgba(167,139,250,0.5)] ring-1 ring-champagne-deep/40 transition duration-300 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
-              >
-                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
-                <span className="relative">
-                  {loading ? "Creating…" : "Create"}
-                </span>
-              </button>
+              <div className="flex flex-col items-start gap-2 sm:items-end">
+                <div className="flex items-center gap-4">
+                  {loading && (
+                    <button
+                      type="button"
+                      onClick={stop}
+                      className="text-sm text-ink-60 underline-offset-4 transition hover:text-vermilion hover:underline"
+                    >
+                      Stop
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={generate}
+                    disabled={!canGenerate}
+                    className="bg-vermilion px-7 py-3.5 text-sm font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    {loading ? "Developing…" : "Shoot the cover →"}
+                  </button>
+                </div>
+                {!canGenerate && !loading && (
+                  <p className="text-[12px] text-ink-30">
+                    Pick a vibe, or write a style note.
+                  </p>
+                )}
+              </div>
             </div>
 
             {!realGeneration && (
-              <p className="text-center text-[12px] text-white/30">
-                Demo styles a model, not your face.
+              <p className="text-center font-serif text-[13px] italic text-ink-30">
+                Demo styles a model, not your face yet.
               </p>
             )}
             {error && (
-              <p className="text-center text-sm text-red-300/80">{error}</p>
+              <p className="text-center text-sm text-vermilion-ink">{error}</p>
             )}
           </div>
 
-          {/* Results */}
+          {/* The plates */}
           {(loading || looks.length > 0) && (
             <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2">
               {loading &&
                 Array.from({ length: count }).map((_, i) => (
                   <div
                     key={`sk-${i}`}
-                    className="skeleton h-[34rem] animate-shimmer rounded-2xl"
+                    className="skeleton aspect-[3/4] w-full animate-shimmer border border-ink/10"
                   />
                 ))}
               {looks.map((look) => (
@@ -332,20 +363,18 @@ export default function Studio({
           )}
         </div>
 
-        {/* Saved looks (bottom) */}
-        {supabaseAuth && (
-          <SavedLooks reloadToken={savedReload} onRemix={remix} />
-        )}
+        {/* Contents (saved looks) */}
+        {supabaseAuth && <SavedLooks reloadToken={savedReload} onRemix={remix} />}
       </div>
 
       {/* Photo modal */}
       {photoOpen && (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4 backdrop-blur-sm"
           onClick={() => setPhotoOpen(false)}
         >
           <div
-            className="w-full max-w-md animate-fade-up rounded-2xl border border-white/[0.08] bg-ink/95 p-6 ring-1 ring-white/[0.04]"
+            className="w-full max-w-md animate-fade-up border border-ink/15 bg-paper p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-5 flex items-center justify-between">
@@ -353,7 +382,7 @@ export default function Studio({
               <button
                 type="button"
                 onClick={() => setPhotoOpen(false)}
-                className="grid h-8 w-8 place-items-center rounded-full text-white/50 ring-1 ring-white/[0.08] transition hover:text-white"
+                className="grid h-8 w-8 place-items-center border border-ink/15 text-ink-60 transition hover:border-ink hover:text-ink"
               >
                 ✕
               </button>
@@ -363,8 +392,8 @@ export default function Studio({
               onChange={handlePhotoChange}
               hint={
                 realGeneration
-                  ? "Add a clear selfie so your looks actually look like you."
-                  : "In demo mode your photo isn’t used yet — add a billed Gemini key to put your real face in the looks."
+                  ? "Add a clear selfie so your covers actually look like you."
+                  : "In demo mode your photo isn’t used yet — add a billed Gemini key to put your real face on the cover."
               }
             />
           </div>
@@ -374,43 +403,27 @@ export default function Studio({
   );
 }
 
-/** A calm group: just a quiet label and its content — no dividers or gutters. */
-function Group({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+/** A calm group: a quiet editorial kicker and its content. */
+function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <section>
-      <p className="mb-3.5 text-[11px] uppercase tracking-[0.2em] text-white/30">
-        {label}
-      </p>
+      <p className="kicker mb-3.5">{label}</p>
       {children}
     </section>
   );
 }
 
-/** A labelled cluster of pills inside the control deck. */
-function Control({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+/** A labelled cluster of toggles in the control deck. */
+function Control({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <span className="text-[11px] uppercase tracking-[0.18em] text-white/35">
-        {label}
-      </span>
+    <div className="flex items-center gap-3">
+      <span className="kicker">{label}</span>
       <div className="flex gap-1.5">{children}</div>
     </div>
   );
 }
 
-/** A single selectable pill — text by default, circular when `round`. */
+/** A single selectable toggle — ink fill when active, hairline when not. */
 function Pill({
   active,
   onClick,
@@ -426,12 +439,13 @@ function Pill({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={[
-        "h-9 text-sm transition duration-300",
-        round ? "w-9 rounded-full" : "rounded-full px-4",
+        "h-9 font-sans text-sm transition",
+        round ? "grid w-9 place-items-center" : "px-4",
         active
-          ? "bg-cta font-medium text-black"
-          : "text-white/55 ring-1 ring-white/[0.08] hover:text-white",
+          ? "bg-ink text-paper"
+          : "border border-ink/15 text-ink-60 hover:border-ink hover:text-ink",
       ].join(" ")}
     >
       {children}

@@ -103,7 +103,7 @@ export default function SupabaseAuthForm({
           {isSignup ? "Already have an account? " : "New to Looksy? "}
           <Link
             href={isSignup ? "/login" : "/signup"}
-            className="font-medium text-champagne underline-offset-4 hover:underline"
+            className="font-medium text-ink-60 underline-offset-4 hover:text-vermilion hover:underline"
           >
             {isSignup ? "Log in" : "Create one"}
           </Link>
@@ -116,14 +116,14 @@ export default function SupabaseAuthForm({
             <button
               onClick={signInWithGoogle}
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-white py-3 text-sm font-semibold text-black transition hover:bg-white/90 active:scale-[0.99] disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2.5 rounded-sm border border-ink/20 bg-paper py-3 text-sm font-medium text-ink transition hover:border-ink active:scale-[0.99] disabled:opacity-50"
             >
               <GoogleIcon /> Continue with Google
             </button>
 
-            <div className="flex items-center gap-3 text-xs text-white/30">
-              <span className="h-px flex-1 bg-white/10" /> or
-              <span className="h-px flex-1 bg-white/10" />
+            <div className="flex items-center gap-3 text-xs text-ink-30">
+              <span className="h-px flex-1 bg-ink/15" /> or
+              <span className="h-px flex-1 bg-ink/15" />
             </div>
           </>
         )}
@@ -168,7 +168,7 @@ export default function SupabaseAuthForm({
             <div className="text-right">
               <Link
                 href="/forgot-password"
-                className="text-xs text-white/55 underline-offset-4 hover:text-champagne hover:underline"
+                className="text-xs text-ink-60 underline-offset-4 hover:text-vermilion hover:underline"
               >
                 Forgot password?
               </Link>

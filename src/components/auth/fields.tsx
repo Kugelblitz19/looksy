@@ -21,8 +21,13 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-white/75">
-        {label} {optional && <span className="text-white/35">(optional)</span>}
+      <span className="mb-1.5 block text-sm font-medium text-ink-60">
+        {label}{" "}
+        {optional && (
+          <span className="text-ink-30 uppercase tracking-[0.22em] text-[11px]">
+            optional
+          </span>
+        )}
       </span>
       <input
         type={type}
@@ -32,7 +37,8 @@ export function Field({
         required={required}
         disabled={disabled}
         autoComplete={autoComplete}
-        className="w-full rounded-xl border border-white/10 bg-black/20 px-3.5 py-3 text-sm text-white outline-none transition duration-300 placeholder:text-white/30 focus:border-champagne-deep/60 focus:ring-2 focus:ring-champagne-deep/10 disabled:opacity-60"
+        style={{ caretColor: "rgb(var(--c-vermilion))" }}
+        className="w-full rounded-sm border border-ink/15 bg-paper px-3.5 py-3 text-sm text-ink outline-none transition duration-200 placeholder:text-ink-30 focus:border-vermilion focus:ring-0 disabled:opacity-50"
       />
     </label>
   );
@@ -49,7 +55,7 @@ export function Submit({
     <button
       type="submit"
       disabled={loading}
-      className="w-full rounded-xl bg-cta py-3 text-base font-medium text-black ring-1 ring-champagne-deep/40 transition duration-300 hover:brightness-105 active:scale-[0.99] disabled:opacity-50"
+      className="w-full rounded-sm bg-vermilion py-3 text-sm font-medium uppercase tracking-wide text-paper transition duration-200 hover:bg-vermilion-ink disabled:opacity-50"
     >
       {loading ? "Please wait…" : children}
     </button>
@@ -65,9 +71,9 @@ export function Notice({
 }) {
   const styles =
     kind === "error"
-      ? "border-red-500/30 bg-red-500/10 text-red-300"
-      : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300";
+      ? "border-vermilion/40 bg-vermilion/5 text-vermilion-ink"
+      : "border-ink/20 bg-paper text-ink-60";
   return (
-    <p className={`rounded-xl border p-2.5 text-sm ${styles}`}>{children}</p>
+    <p className={`rounded-sm border p-2.5 text-sm ${styles}`}>{children}</p>
   );
 }

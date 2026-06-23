@@ -2,34 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { getAesthetic } from "@/lib/aesthetics";
+import { issueLabel, plateLabel } from "@/lib/issue";
 import type { GeneratedLook } from "@/lib/types";
 import type { ShoppableGarment, ShopResponse } from "@/lib/garments";
-
-/** Friendly icon for each item so non-technical users grok it at a glance. */
-function itemIcon(g: { name: string; searchQuery: string; category: string }): string {
-  const n = `${g.name} ${g.searchQuery}`.toLowerCase();
-  if (/watch/.test(n)) return "⌚";
-  if (/sunglass|glass|shades/.test(n)) return "🕶️";
-  if (/bag|backpack|purse/.test(n)) return "👜";
-  if (/cap|hat|beanie/.test(n)) return "🧢";
-  if (/jutti|heel|sandal/.test(n)) return "👡";
-  switch (g.category) {
-    case "footwear":
-      return "👟";
-    case "bottom":
-      return "👖";
-    case "outerwear":
-      return "🧥";
-    case "dress":
-      return "👗";
-    case "accessory":
-      return "💍";
-    case "top":
-      return "👕";
-    default:
-      return "🛍️";
-  }
-}
 
 export default function LookCard({
   look,
@@ -52,7 +27,12 @@ export default function LookCard({
   const labels = look.aesthetics
     .map(getAesthetic)
     .filter(Boolean)
-    .map((a) => `${a!.emoji} ${a!.label}`);
+    .map((a) => a!.label);
+  const plate = plateLabel(look.id);
+  const issue = issueLabel();
+  const caption = labels.length
+    ? `${labels.join(" · ")} — photographed by Looksy.`
+    : "Photographed by Looksy.";
 
   // Auto-detect what the person is wearing and surface buy links inline.
   useEffect(() => {
@@ -85,7 +65,7 @@ export default function LookCard({
   const download = () => {
     const a = document.createElement("a");
     a.href = look.imageUrl;
-    a.download = `looksy-${look.id}.png`;
+    a.download = `looksy-cover-${look.id}.png`;
     a.click();
   };
 
@@ -114,11 +94,11 @@ export default function LookCard({
   }
 
   async function share() {
-    const caption = `My ${labels[0]?.replace(/^\S+\s/, "") || "new"} look, styled by Looksy ✨`;
+    const caption = `My ${labels[0] || "new"} cover, shot by Looksy — The Issue ${issue}`;
     try {
       const resp = await fetch(look.imageUrl);
       const blob = await resp.blob();
-      const file = new File([blob], `looksy-${look.id}.png`, {
+      const file = new File([blob], `looksy-cover-${look.id}.png`, {
         type: blob.type || "image/png",
       });
       if (navigator.canShare?.({ files: [file] })) {
@@ -151,7 +131,7 @@ export default function LookCard({
     }
   }
 
-  // "Shop the whole look": cheapest real product per garment, summed.
+  // "Cop the whole cover": cheapest real product per garment, summed.
   const cheapest = garments
     .filter((g) => g.products.length > 0)
     .map((g) =>
@@ -167,123 +147,123 @@ export default function LookCard({
   }
 
   return (
-    <div className="group animate-fade-up rounded-2xl bg-[#101015] p-2.5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/[0.06] transition duration-500 hover:-translate-y-1">
-      {/* The look photo — matted like a framed print */}
-      <div className="relative overflow-hidden rounded-xl ring-1 ring-white/[0.08]">
+    <div className="group animate-fade-up border border-ink/15 bg-paper-2 p-2.5">
+      {/* The plate — develops like a cover going to print */}
+      <div className="rule-sweep relative overflow-hidden border border-ink/10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={look.imageUrl}
-          alt="Your look"
-          className="aspect-[3/4] w-full object-cover"
+          alt="Your cover"
+          className="cover-develop aspect-[3/4] w-full object-cover"
         />
 
+        {/* Baked masthead strip */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-3">
+          <div className="flex items-center gap-1.5">
+            <span className="bg-paper/85 px-2 py-0.5 font-display text-xs tracking-tight text-ink">
+              LOOKSY
+            </span>
+            <span className="bg-paper/85 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-vermilion">
+              {issue}
+            </span>
+          </div>
+          <span className="bg-paper/85 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-ink-60">
+            Plate {plate}
+          </span>
+        </div>
+
         {look.demo && (
-          <span className="absolute left-3 top-3 rounded-full bg-black/50 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.15em] text-champagne backdrop-blur">
+          <span className="absolute bottom-3 left-3 bg-paper/85 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-ink-60">
             Demo
           </span>
         )}
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-3 pt-12">
-          <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {labels.map((l) => (
-              <span
-                key={l}
-                className="text-[10px] uppercase tracking-[0.15em] text-champagne"
-              >
-                {l}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="absolute right-3 top-3 flex gap-2">
-          {saveable && (
-            <button
-              type="button"
-              onClick={saveLook}
-              disabled={saveState !== "idle"}
-              className="rounded-full bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:text-champagne"
-            >
-              {saveState === "saved"
-                ? "✓ Saved"
-                : saveState === "saving"
-                  ? "Saving…"
-                  : "♡ Save"}
-            </button>
-          )}
-          {onRemove && (
-            <button
-              type="button"
-              onClick={removeLook}
-              disabled={removing}
-              className="rounded-full bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition hover:text-red-300"
-            >
-              {removing ? "Removing…" : "✕ Remove"}
-            </button>
-          )}
-        </div>
       </div>
 
-      {/* Action row */}
-      <div className="flex flex-wrap gap-2 px-1.5 pt-3.5">
+      {/* Editor's caption */}
+      <p className="px-1 pt-3 font-serif text-sm italic text-ink-60">{caption}</p>
+
+      {/* Post this cover — the hero action */}
+      <button
+        type="button"
+        onClick={share}
+        className="mt-3 w-full bg-vermilion py-2.5 text-sm font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink"
+      >
+        Post this cover →
+      </button>
+
+      {/* Secondary actions — plain ink links */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-1 pt-3 text-xs text-ink-60">
         {onVariation && (
           <button
             type="button"
             onClick={() => onVariation(look)}
-            className="rounded-full px-3 py-1.5 text-xs text-white/70 ring-1 ring-white/[0.08] transition duration-300 hover:text-champagne hover:ring-champagne-deep/40"
+            className="transition hover:text-vermilion"
           >
             ↻ Variation
           </button>
         )}
-        <button
-          type="button"
-          onClick={share}
-          className="rounded-full px-3 py-1.5 text-xs text-white/70 ring-1 ring-white/[0.08] transition duration-300 hover:text-champagne hover:ring-champagne-deep/40"
-        >
-          ↗ Share
-        </button>
+        {saveable && (
+          <button
+            type="button"
+            onClick={saveLook}
+            disabled={saveState !== "idle"}
+            className={
+              saveState === "saved"
+                ? "font-medium text-vermilion"
+                : "transition hover:text-vermilion"
+            }
+          >
+            {saveState === "saved"
+              ? "✓ Saved"
+              : saveState === "saving"
+                ? "Saving…"
+                : "♡ Save"}
+          </button>
+        )}
         <button
           type="button"
           onClick={download}
-          className="rounded-full px-3 py-1.5 text-xs text-white/70 ring-1 ring-white/[0.08] transition duration-300 hover:text-champagne hover:ring-champagne-deep/40"
+          className="transition hover:text-vermilion"
         >
-          ↓ Save image
+          ↓ Image
         </button>
+        {onRemove && (
+          <button
+            type="button"
+            onClick={removeLook}
+            disabled={removing}
+            className="transition hover:text-vermilion-ink"
+          >
+            {removing ? "Removing…" : "✕ Remove"}
+          </button>
+        )}
       </div>
 
-      {/* Shop the look — inline, right under the photo */}
-      <div className="px-1.5 pb-1 pt-4">
-        <h3 className="mb-3 text-[11px] uppercase tracking-[0.18em] text-white/40">
-          Shop this look
-        </h3>
+      {/* Credits — get the look */}
+      <div className="mt-4 border-t border-ink/12 px-1 pt-4">
+        <p className="kicker mb-3">Credits — get the look</p>
 
         {!loadingShop && cheapest.length > 1 && (
-          <div className="mb-3 flex items-center justify-between gap-2 rounded-xl bg-champagne-deep/[0.06] px-3 py-2 ring-1 ring-champagne-deep/20">
-            <div className="min-w-0">
-              <div className="text-sm font-medium text-champagne">
-                Shop the whole look
-              </div>
-              <div className="text-xs text-white/55">
-                {cheapest.length} pieces · from ₹
-                {bundleTotal.toLocaleString("en-IN")}
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={openAll}
-              className="shrink-0 rounded-full bg-cta px-3 py-1.5 text-xs font-medium text-black transition hover:brightness-105"
-            >
-              Open all →
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={openAll}
+            className="mb-3 flex w-full items-center justify-between gap-2 bg-vermilion px-3 py-2 text-left text-paper transition hover:bg-vermilion-ink"
+          >
+            <span className="text-sm font-medium uppercase tracking-wide">
+              Cop the whole cover
+            </span>
+            <span className="font-mono text-xs">
+              {cheapest.length} pcs · ₹{bundleTotal.toLocaleString("en-IN")} →
+            </span>
+          </button>
         )}
 
         {!loadingShop && garments.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/40">
+          <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-30">
             <span>COD</span>
-            <span className="text-white/20">·</span>
+            <span>·</span>
             <span>No-cost EMI</span>
-            <span className="text-white/20">·</span>
+            <span>·</span>
             <span>Easy returns</span>
           </div>
         )}
@@ -291,18 +271,22 @@ export default function LookCard({
         {loadingShop ? (
           <div className="space-y-2">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="skeleton h-12 animate-shimmer rounded-xl" />
+              <div key={i} className="skeleton h-12 animate-shimmer border border-ink/10" />
             ))}
           </div>
         ) : garments.length === 0 ? (
-          <p className="text-xs text-white/40">Couldn’t find items for this look.</p>
+          <p className="font-serif text-sm italic text-ink-30">
+            No credits found for this cover.
+          </p>
         ) : (
-          <ul className="space-y-2.5">
+          <ul className="space-y-3">
             {garments.map((g, i) => (
               <li key={`${g.searchQuery}-${i}`}>
-                <div className="mb-1.5 flex items-center gap-2">
-                  <span className="text-lg leading-none">{itemIcon(g)}</span>
-                  <span className="text-sm font-medium text-white/85">{g.name}</span>
+                <div className="mb-1.5 flex items-baseline justify-between gap-2 border-b border-ink/10 pb-1">
+                  <span className="font-serif text-sm text-ink">{g.name}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-30">
+                    {g.category}
+                  </span>
                 </div>
 
                 {g.products && g.products.length > 0 ? (
@@ -313,10 +297,10 @@ export default function LookCard({
                         href={p.buyUrl}
                         target="_blank"
                         rel="noopener noreferrer nofollow sponsored"
-                        className="relative w-24 shrink-0 overflow-hidden rounded-lg bg-white/[0.03] ring-1 ring-white/[0.06] transition duration-300 hover:ring-champagne-deep/40"
+                        className="relative w-24 shrink-0 overflow-hidden border border-ink/12 bg-paper transition hover:border-ink"
                       >
                         {p.mrp && p.price && p.mrp > p.price && (
-                          <span className="absolute left-1 top-1 z-10 rounded bg-champagne-deep px-1 py-0.5 text-[9px] font-bold text-black">
+                          <span className="absolute left-1 top-1 z-10 bg-vermilion px-1 py-0.5 font-mono text-[9px] font-bold text-paper">
                             -{Math.round((1 - p.price / p.mrp) * 100)}%
                           </span>
                         )}
@@ -327,16 +311,16 @@ export default function LookCard({
                           className="aspect-[4/5] w-full object-cover"
                         />
                         <div className="p-1.5">
-                          <div className="text-[9px] uppercase tracking-wide text-white/40">
+                          <div className="font-mono text-[9px] uppercase tracking-wide text-ink-30">
                             {p.merchant}
                           </div>
                           {p.priceDisplay && (
                             <div className="flex items-baseline gap-1">
-                              <span className="text-xs font-semibold">
+                              <span className="font-mono text-xs font-semibold text-ink">
                                 {p.priceDisplay}
                               </span>
                               {p.mrp && p.price && p.mrp > p.price && (
-                                <span className="text-[9px] text-white/40 line-through">
+                                <span className="font-mono text-[9px] text-ink-30 line-through">
                                   ₹{p.mrp.toLocaleString("en-IN")}
                                 </span>
                               )}
@@ -354,7 +338,7 @@ export default function LookCard({
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer nofollow sponsored"
-                        className="rounded-full px-3 py-1.5 text-xs text-white/70 ring-1 ring-white/[0.08] transition duration-300 hover:text-champagne hover:ring-champagne-deep/40"
+                        className="border border-ink/15 px-3 py-1.5 text-xs text-ink-60 transition hover:border-ink hover:text-ink"
                       >
                         {link.merchant}
                       </a>

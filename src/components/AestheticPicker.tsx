@@ -17,15 +17,15 @@ export default function AestheticPicker({ selected, onToggle }: Props) {
             key={a.id}
             type="button"
             onClick={() => onToggle(a.id)}
+            aria-pressed={active}
             title={a.blurb}
             className={[
-              "rounded-full px-3 py-1.5 text-sm transition duration-300",
+              "rounded-sm px-3 py-1.5 text-sm transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-vermilion",
               active
-                ? "bg-champagne-deep/[0.08] text-champagne ring-1 ring-champagne-deep/30"
-                : "text-white/55 hover:bg-white/[0.04] hover:text-white",
+                ? "bg-ink text-paper"
+                : "text-ink-60 border-b border-transparent hover:border-ink hover:text-ink",
             ].join(" ")}
           >
-            <span className="mr-1.5">{a.emoji}</span>
             {a.label}
           </button>
         );

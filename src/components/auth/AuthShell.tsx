@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
+import { issueLabel } from "@/lib/issue";
 
 /**
- * Shared, polished visual shell for all auth screens (login, signup, forgot,
- * reset). Floating gradient orbs + a glass card keep every auth page on-brand.
+ * Shared editorial shell for all auth screens (login, signup, forgot, reset).
+ * "THE COVER" subscription card: warm printed paper, ink, one rationed
+ * vermilion accent. An issue strip runs along the top; the brand block and a
+ * hairline-ruled paper card sit centered beneath it.
  */
 export default function AuthShell({
   subtitle,
@@ -14,32 +17,38 @@ export default function AuthShell({
   footer?: ReactNode;
 }) {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-ink px-4 py-10">
-      {/* One warm gallery spotlight */}
-      <div className="studio-light pointer-events-none absolute inset-0" />
+    <main className="relative flex min-h-screen flex-col bg-paper">
+      {/* Issue strip */}
+      <div className="px-6 pt-5">
+        <div className="flex items-baseline justify-between">
+          <span className="font-display text-lg text-ink">LOOKSY</span>
+          <span className="font-mono text-xs text-vermilion">
+            {issueLabel()} · ₹FREE
+          </span>
+        </div>
+      </div>
+      <div className="mt-4 h-px bg-ink/15" />
 
-      <div className="relative z-10 w-full max-w-sm animate-fade-up">
-        {/* Brand */}
-        <div className="mb-9 text-center">
-          <div className="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-2xl shadow-lg shadow-indigo-900/40 ring-1 ring-white/10">
-            ✨
+      {/* Subscription card */}
+      <div className="flex flex-1 items-center justify-center px-4 py-10">
+        <div className="w-full max-w-sm animate-fade-up">
+          {/* Brand block */}
+          <div className="mb-9 text-center">
+            <h1 className="font-display text-5xl font-medium tracking-tight text-ink">
+              Looksy
+            </h1>
+            <p className="kicker mt-4 text-ink-30">
+              {subtitle ?? "Subscribe — it's free"}
+            </p>
           </div>
-          <h1 className="font-display text-5xl font-medium tracking-tight">
-            Looksy
-          </h1>
-          {subtitle && (
-            <p className="mt-3 text-sm text-white/55">{subtitle}</p>
+
+          {/* Card */}
+          <div className="border border-ink/15 bg-paper-2 p-6">{children}</div>
+
+          {footer && (
+            <div className="mt-6 text-center text-sm text-ink-60">{footer}</div>
           )}
         </div>
-
-        {/* Card */}
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 shadow-2xl shadow-black/40 ring-1 ring-white/[0.04] backdrop-blur-xl">
-          {children}
-        </div>
-
-        {footer && (
-          <div className="mt-6 text-center text-sm text-white/50">{footer}</div>
-        )}
       </div>
     </main>
   );
