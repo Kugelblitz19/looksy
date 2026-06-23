@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display } from "next/font/google";
+import { Syne, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-// High-contrast editorial serif for display headings (the Studio's magazine feel).
-const display = Playfair_Display({
+const display = Syne({
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["600", "700", "800"],
   variable: "--font-display",
+  display: "swap",
+});
+
+const body = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -43,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={display.variable}>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

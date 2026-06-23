@@ -8,6 +8,7 @@ import LookCard from "@/components/LookCard";
 import ProfileMenu from "@/components/studio/ProfileMenu";
 import SavedLooks from "@/components/studio/SavedLooks";
 import OccasionPacks from "@/components/studio/OccasionPacks";
+import ClosetBackdrop from "@/components/studio/ClosetBackdrop";
 import { OCCASIONS, PROMPT_IDEAS, type Occasion } from "@/lib/occasions";
 import type { Gender, GeneratedLook, GenerateResponse } from "@/lib/types";
 
@@ -167,7 +168,7 @@ export default function Studio({
 
   return (
     <main className="relative min-h-screen">
-      <div className="studio-light pointer-events-none fixed inset-0 z-0" />
+      <ClosetBackdrop />
 
       <div className="relative z-10">
         {/* Top bar */}
@@ -177,7 +178,9 @@ export default function Studio({
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-sm shadow ring-1 ring-white/10">
                 ✨
               </span>
-              <span className="text-lg font-semibold tracking-tight">Looksy</span>
+              <span className="bg-gradient-to-r from-violet-300 via-fuchsia-200 to-cyan-300 bg-clip-text text-lg font-bold tracking-tight text-transparent">
+                Looksy
+              </span>
             </div>
 
             <div className="flex items-center gap-4">
@@ -209,7 +212,7 @@ export default function Studio({
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
           {/* Masthead */}
           <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
-            <h1 className="font-display text-3xl font-medium tracking-tight sm:text-4xl">
+            <h1 className="bg-gradient-to-r from-violet-200 via-white to-cyan-200 bg-clip-text font-display text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
               Create a look
             </h1>
             <button
@@ -287,7 +290,7 @@ export default function Studio({
                 type="button"
                 onClick={generate}
                 disabled={!canGenerate}
-                className="group relative shrink-0 overflow-hidden rounded-full bg-cta px-7 py-3 text-base font-medium text-black shadow-[0_0_50px_-12px_rgba(232,227,207,0.5)] ring-1 ring-champagne-deep/40 transition duration-300 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
+                className="group relative shrink-0 overflow-hidden rounded-full bg-cta px-7 py-3 text-base font-medium text-black shadow-[0_0_50px_-12px_rgba(167,139,250,0.5)] ring-1 ring-champagne-deep/40 transition duration-300 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
               >
                 <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
                 <span className="relative">

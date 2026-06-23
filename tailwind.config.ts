@@ -5,16 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Georgia", "serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
       },
       colors: {
         ink: "#0a0a0f",
         panel: "#15151f",
         line: "#262633",
-        // Single champagne-gold accent token — the whole design leans on this.
-        champagne: { DEFAULT: "#ecd6a3", deep: "#c9a85f" },
-        cta: "#efe6cf",
+        champagne: { DEFAULT: "#c4b5fd", deep: "#a78bfa" },
+        cta: "#e0d8ff",
       },
       keyframes: {
         shimmer: {
