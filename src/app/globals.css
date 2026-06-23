@@ -31,23 +31,50 @@ body {
 
 /* ── Maison Lumière — virtual fitting room ───────────────────────── */
 
-/* Deep showroom ambience: warm centre column, rich violet corner depth,
-   three-point studio lighting with floor pedestal glow. */
+/* Electric showroom ambience: bright white centre, deep electric-indigo
+   corner depth, purple/cyan side mirrors, teal floor glow. */
 .fitting-room {
   background:
-    radial-gradient(24% 95% at 50% 15%, rgba(255, 248, 220, 0.19), transparent 60%),
-    radial-gradient(36% 30% at 50% -4%, rgba(255, 252, 238, 0.26), transparent 50%),
-    radial-gradient(15% 74% at -4% 34%, rgba(240, 215, 150, 0.10), transparent 66%),
-    radial-gradient(15% 74% at 104% 34%, rgba(240, 215, 150, 0.10), transparent 66%),
-    radial-gradient(48% 24% at 50% 108%, rgba(215, 182, 100, 0.17), transparent 62%),
-    radial-gradient(68% 70% at -8% 5%, rgba(48, 22, 108, 0.62), transparent 60%),
-    radial-gradient(68% 70% at 108% 5%, rgba(48, 22, 108, 0.62), transparent 60%),
-    radial-gradient(38% 30% at 0% 0%, rgba(15, 10, 55, 0.52), transparent 50%),
-    radial-gradient(38% 30% at 100% 0%, rgba(15, 10, 55, 0.52), transparent 50%),
-    radial-gradient(26% 36% at 10% 94%, rgba(0, 148, 158, 0.055), transparent 62%),
-    radial-gradient(26% 36% at 90% 94%, rgba(0, 148, 158, 0.055), transparent 62%),
-    radial-gradient(148% 135% at 50% 0%, transparent 34%, rgba(0, 0, 0, 0.88) 100%);
+    radial-gradient(22% 98% at 50% 12%, rgba(255, 252, 245, 0.22), transparent 58%),
+    radial-gradient(34% 28% at 50% -4%, rgba(255, 255, 255, 0.30), transparent 48%),
+    radial-gradient(72% 74% at -8% 4%, rgba(68, 8, 186, 0.72), transparent 60%),
+    radial-gradient(72% 74% at 108% 4%, rgba(68, 8, 186, 0.72), transparent 60%),
+    radial-gradient(36% 28% at 0% 0%, rgba(8, 4, 42, 0.62), transparent 50%),
+    radial-gradient(36% 28% at 100% 0%, rgba(8, 4, 42, 0.62), transparent 50%),
+    radial-gradient(58% 30% at 50% 112%, rgba(0, 200, 220, 0.10), transparent 62%),
+    radial-gradient(14% 72% at -4% 34%, rgba(140, 80, 255, 0.09), transparent 68%),
+    radial-gradient(14% 72% at 104% 34%, rgba(0, 180, 240, 0.09), transparent 68%),
+    radial-gradient(150% 138% at 50% 0%, transparent 32%, rgba(0, 0, 0, 0.90) 100%);
   animation: room-breathe 13s ease-in-out infinite;
+}
+
+/* Drifting jewel-tone orbs — purple, cyan, magenta */
+.vibe-a {
+  background: radial-gradient(ellipse 42% 52% at 16% 36%, rgba(140, 0, 255, 0.14), transparent 70%);
+  animation: vibe-drift-a 18s ease-in-out infinite;
+}
+.vibe-b {
+  background: radial-gradient(ellipse 42% 52% at 84% 36%, rgba(0, 210, 255, 0.12), transparent 70%);
+  animation: vibe-drift-b 22s ease-in-out infinite;
+}
+.vibe-c {
+  background: radial-gradient(ellipse 52% 32% at 50% 94%, rgba(220, 0, 160, 0.08), transparent 68%);
+  animation: vibe-drift-c 28s ease-in-out infinite;
+}
+
+@keyframes vibe-drift-a {
+  0%, 100% { opacity: 0.65; transform: translate(0, 0) scale(1); }
+  35% { opacity: 1; transform: translate(4%, 7%) scale(1.12); }
+  70% { opacity: 0.50; transform: translate(-5%, -4%) scale(0.93); }
+}
+@keyframes vibe-drift-b {
+  0%, 100% { opacity: 0.60; transform: translate(0, 0) scale(1); }
+  40% { opacity: 1; transform: translate(-5%, 5%) scale(1.10); }
+  72% { opacity: 0.45; transform: translate(6%, -5%) scale(0.94); }
+}
+@keyframes vibe-drift-c {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.85; }
 }
 
 /* Ceiling coffers — architectural vertical lines fading downward. */
