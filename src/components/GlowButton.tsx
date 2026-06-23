@@ -12,7 +12,7 @@ export default function GlowButton({
   return (
     <Link
       href={href}
-      className="inline-flex items-center justify-center bg-vermilion px-7 py-4 font-sans text-sm font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink active:translate-y-px"
+      className="inline-flex items-center justify-center bg-vermilion px-7 py-4 font-sans text-sm font-medium uppercase tracking-wide text-paper shadow-[0_10px_40px_-10px_rgba(229,52,27,0.5)] transition hover:bg-vermilion-ink active:translate-y-px"
     >
       {children}
     </Link>

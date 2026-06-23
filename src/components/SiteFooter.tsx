@@ -1,15 +1,23 @@
 import Link from "next/link";
+import { issueLabel } from "@/lib/issue";
 
 /**
- * Shared colophon footer with the legal/brand nav + affiliate disclosure.
- * Renders with no outer max-width — drop it inside a width-constrained column.
+ * Shared colophon footer. Opens with the one animated iridescent hairline —
+ * the page closes on the exact palette the liquid hero opened with. Adapts to
+ * the surrounding theme (bone-on-black under the landing's night column, ink on
+ * paper elsewhere). No outer max-width — drop it inside a constrained column.
  */
-export default function SiteFooter() {
+export default function SiteFooter({ issue }: { issue?: string }) {
+  const iss = issue ?? issueLabel();
   return (
-    <footer className="border-t border-ink/15 px-5 py-10 sm:px-8">
+    <footer className="px-5 pb-10 sm:px-8">
+      <div className="rule-iris rule-iris--live mb-8" />
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-          <span className="font-display text-base text-ink">Looksy</span>
+          <span className="flex items-center gap-2 font-display text-lg text-ink">
+            <span className="h-1.5 w-1.5 rounded-full bg-vermilion" aria-hidden />
+            Looksy
+          </span>
           <nav className="flex items-center gap-5 text-sm text-ink-60">
             <Link href="/about" className="transition hover:text-vermilion">
               About
@@ -22,9 +30,11 @@ export default function SiteFooter() {
             </Link>
           </nav>
         </div>
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-30">
+          AI Fashion Weekly · {iss} · Shot in India
+        </p>
         <p className="font-serif text-sm italic text-ink-60">
-          An AI fashion weekly. Shot in India. Stocked at Myntra · Flipkart ·
-          Ajio · Amazon.
+          Stocked at Myntra · Flipkart · Ajio · Amazon.
         </p>
         <p className="text-[11px] leading-relaxed text-ink-30">
           Some links are affiliated — Looksy may earn a commission when you buy,

@@ -198,6 +198,53 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* ── Dark-luxe sections (below the liquid hero) ──────────────────────
+   The page descends into a warm-black "pressing" — these tie it back to
+   the hero's iridescent shader without shouting. */
+
+/* An iridescent hairline pulled from the shader's palette. Static by
+   default; only the footer bookend animates (.rule-iris--live). */
+.rule-iris {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(124, 77, 255, 0.5),
+    rgba(255, 85, 200, 0.45),
+    rgba(240, 230, 160, 0.5),
+    rgba(20, 180, 170, 0.5),
+    transparent
+  );
+  background-size: 200% 100%;
+}
+.rule-iris--live {
+  animation: iris-pan 18s linear infinite;
+}
+@keyframes iris-pan {
+  to { background-position: 200% 0; }
+}
+
+/* A slow, blurred liquid wash behind the closing pull-quote — the hero's
+   palette, sub-10%, breathing in open negative space. */
+.liquid-wash {
+  background:
+    radial-gradient(40% 50% at 24% 82%, rgba(124, 77, 255, 0.12), transparent 70%),
+    radial-gradient(46% 56% at 76% 58%, rgba(255, 85, 200, 0.10), transparent 72%),
+    radial-gradient(42% 46% at 56% 100%, rgba(20, 180, 170, 0.10), transparent 70%);
+  filter: blur(40px);
+  animation: wash-drift 50s ease-in-out infinite;
+}
+@keyframes wash-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(2%, -3%, 0) scale(1.08); }
+}
+
+/* Oversized contents numerals, screened back. */
+.numeral-ghost {
+  color: rgb(var(--c-ink) / 0.2);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -211,7 +258,9 @@ body {
   .animate-typeset,
   .issue-flip,
   .lw-float,
-  .animate-stamp {
+  .animate-stamp,
+  .rule-iris--live,
+  .liquid-wash {
     animation: none !important;
   }
 }

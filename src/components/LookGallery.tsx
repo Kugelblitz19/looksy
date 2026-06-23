@@ -1,28 +1,35 @@
 import HoloCard from "@/components/HoloCard";
 
 const GALLERY = [
-  { id: "streetwear", label: "Streetwear", price: "₹2,449" },
-  { id: "oldmoney", label: "Old Money", price: "₹6,990" },
-  { id: "party", label: "Party Wear", price: "₹3,499" },
   { id: "festive", label: "Festive", price: "₹4,250" },
+  { id: "oldmoney", label: "Old Money", price: "₹6,990" },
+  { id: "streetwear", label: "Streetwear", price: "₹2,449" },
+  { id: "party", label: "Party Wear", price: "₹3,499" },
   { id: "techwear", label: "Techwear", price: "₹2,899" },
   { id: "casual", label: "Everyday", price: "₹1,299" },
 ];
 
 /**
- * This week's plates — a living wall of AI covers: each gently drifts (the
- * archive feels alive) and turns to glossy holographic stock under your cursor.
+ * This week's plates — a living wall of AI covers, lit like photographic
+ * plates on black: the first is featured (a magazine-spread anchor), each
+ * gently drifts and turns to glossy holographic stock under the cursor.
+ * 6 items tile cleanly: 2-col on mobile (3 rows); 3-col on sm with a 2×2
+ * featured (9 cells, no ragged gap).
  */
 export default function LookGallery() {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
       {GALLERY.map((g, i) => (
         <div
           key={g.id}
-          className="lw-float"
-          style={{ animationDelay: `${i * 0.6}s`, animationDuration: `${6 + (i % 3)}s` }}
+          className={`lw-float ${i === 0 ? "sm:col-span-2 sm:row-span-2" : ""}`}
+          style={{ animationDelay: `${i * 0.6}s`, animationDuration: `${(i === 0 ? 10 : 6) + (i % 3)}s` }}
         >
-          <HoloCard className="group border border-ink/12 bg-paper-2 p-2">
+          <HoloCard className="group h-full border border-white/10 bg-[#16120D] p-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.85)]">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-white/10"
+            />
             <div className="relative overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -32,9 +39,14 @@ export default function LookGallery() {
                 className="aspect-[3/4] w-full object-cover"
               />
             </div>
-            <div className="mt-2 flex items-baseline justify-between gap-2 border-t border-ink/10 pt-2">
-              <span className="text-[12px] text-ink">{g.label}</span>
-              <span className="font-mono text-[11px] text-ink-60">
+            <div className="mt-2 flex items-baseline justify-between gap-2 border-t border-white/10 pt-2">
+              <span className="flex items-baseline gap-2">
+                <span className="font-mono text-[10px] text-ink-30">
+                  №{String(7 + i * 13).padStart(2, "0")}
+                </span>
+                <span className="text-[12px] text-ink">{g.label}</span>
+              </span>
+              <span className="font-mono text-[11px] text-ink-60 transition-colors group-hover:text-vermilion">
                 {g.price} &rarr;
               </span>
             </div>
