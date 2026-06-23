@@ -24,6 +24,7 @@ export default function LookCard({
   const [lookScore, setLookScore] = useState<number | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [removing, setRemoving] = useState(false);
+  const [filed, setFiled] = useState(false);
 
   const labels = look.aesthetics
     .map(getAesthetic)
@@ -98,6 +99,7 @@ export default function LookCard({
   }
 
   async function share() {
+    setFiled(true);
     const caption = `My ${labels[0] || "new"} cover, shot by Looksy — The Issue ${issue}`;
     try {
       const resp = await fetch(look.imageUrl);
@@ -180,6 +182,14 @@ export default function LookCard({
           <span className="absolute bottom-3 left-3 bg-paper/85 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-ink-60">
             Demo
           </span>
+        )}
+
+        {filed && (
+          <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
+            <span className="animate-stamp select-none rounded-sm border-[3px] border-vermilion px-4 py-2 font-mono text-xl font-bold uppercase tracking-[0.15em] text-vermilion opacity-90">
+              Filed {plate}
+            </span>
+          </div>
         )}
       </div>
 

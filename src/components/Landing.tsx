@@ -5,6 +5,8 @@ import Reveal from "@/components/Reveal";
 import GlowButton from "@/components/GlowButton";
 import SiteFooter from "@/components/SiteFooter";
 import LandingNav from "@/components/LandingNav";
+import HoloCard from "@/components/HoloCard";
+import Typeset from "@/components/Typeset";
 import { issueLabel } from "@/lib/issue";
 
 const CONTENTS = [
@@ -34,7 +36,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
           <div className="relative z-10 lg:col-span-7">
             <p className="kicker mb-6">An AI fashion weekly · Shot in India</p>
             <h1 className="font-display font-medium leading-[0.92] tracking-tight text-[clamp(3rem,10vw,7.5rem)]">
-              <span className="block">Try on</span>
+              <Typeset text="Try on" className="block" />
               <RotatingWord />
             </h1>
             <p className="mt-7 max-w-md font-serif text-lg leading-relaxed text-ink-60">
@@ -58,8 +60,8 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
 
           {/* The one full cover — the only colour on the page */}
           <div className="relative z-10 lg:col-span-5">
-            <div className="relative border border-ink/15 bg-paper-2 p-2">
-              <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
+            <HoloCard className="border border-ink/15 bg-paper-2 p-2">
+              <div className="absolute left-4 top-4 z-30 flex items-center gap-2">
                 <span className="bg-paper/85 px-2 py-0.5 font-display text-xs tracking-tight">
                   LOOKSY
                 </span>
@@ -76,7 +78,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
               <p className="mt-2 px-1 font-serif text-sm italic text-ink-60">
                 The Cover — styled in three taps.
               </p>
-            </div>
+            </HoloCard>
           </div>
         </section>
 

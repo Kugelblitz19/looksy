@@ -143,6 +143,50 @@ body {
   background-size: 800px 100%;
 }
 
+/* ── Signature interactions ──────────────────────────────────────── */
+
+/* Hot-metal typesetting — letters drop and settle into place on load. */
+@keyframes typeset {
+  0% { opacity: 0; transform: translateY(-0.4em); filter: blur(4px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-typeset {
+  display: inline-block;
+  animation: typeset 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* The live issue number flips up like an odometer on load. */
+@keyframes issue-flip {
+  0% { opacity: 0; transform: rotateX(-90deg); }
+  100% { opacity: 1; transform: rotateX(0); }
+}
+.issue-flip {
+  display: inline-block;
+  transform-origin: 50% 0;
+  animation: issue-flip 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Living cover wall — plates breathe with a gentle drift. */
+@keyframes lw-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.lw-float {
+  animation: lw-float 7s ease-in-out infinite;
+}
+
+/* Ink-stamp — a vermilion rubber stamp thuds onto the cover. */
+@keyframes stamp {
+  0% { opacity: 0; transform: rotate(-20deg) scale(2.3); }
+  55% { opacity: 1; }
+  70% { transform: rotate(-9deg) scale(0.93); }
+  100% { opacity: 1; transform: rotate(-9deg) scale(1); }
+}
+.animate-stamp {
+  animation: stamp 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -152,7 +196,11 @@ body {
   .animate-float,
   .animate-float-slow,
   .animate-marquee,
-  .animate-ping {
+  .animate-ping,
+  .animate-typeset,
+  .issue-flip,
+  .lw-float,
+  .animate-stamp {
     animation: none !important;
   }
 }
