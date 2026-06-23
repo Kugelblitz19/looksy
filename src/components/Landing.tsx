@@ -3,6 +3,7 @@ import RotatingWord from "@/components/RotatingWord";
 import LookGallery from "@/components/LookGallery";
 import Reveal from "@/components/Reveal";
 import GlowButton from "@/components/GlowButton";
+import SiteFooter from "@/components/SiteFooter";
 import { issueLabel } from "@/lib/issue";
 
 const CONTENTS = [
@@ -174,15 +175,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         </section>
 
         {/* Colophon */}
-        <footer className="border-t border-ink/15 px-5 py-10 sm:px-8">
-          <div className="flex flex-col items-start justify-between gap-3 text-sm text-ink-60 sm:flex-row sm:items-center">
-            <span className="font-display text-base text-ink">Looksy</span>
-            <p className="font-serif italic">
-              An AI fashion weekly. Shot in India. Stocked at Myntra · Flipkart ·
-              Ajio · Amazon.
-            </p>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
     </main>
   );

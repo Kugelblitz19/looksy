@@ -149,6 +149,62 @@ body {
   }
 }
 
+/* Editorial running copy for legal / about / contact pages. */
+.prose-editorial .lead {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: rgb(var(--c-ink));
+  margin-bottom: 1.5rem;
+}
+.prose-editorial h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: rgb(var(--c-ink));
+  margin-top: 2.25rem;
+  margin-bottom: 0.65rem;
+}
+.prose-editorial p {
+  font-family: var(--font-serif), Georgia, serif;
+  color: rgb(var(--c-ink-60));
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+.prose-editorial ul {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+}
+.prose-editorial li {
+  position: relative;
+  font-family: var(--font-serif), Georgia, serif;
+  color: rgb(var(--c-ink-60));
+  line-height: 1.7;
+  padding-left: 1.3rem;
+  margin-bottom: 0.4rem;
+}
+.prose-editorial li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: rgb(var(--c-vermilion));
+}
+.prose-editorial a {
+  color: rgb(var(--c-ink));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+.prose-editorial a:hover {
+  color: rgb(var(--c-vermilion));
+}
+.prose-editorial strong {
+  color: rgb(var(--c-ink));
+  font-weight: 600;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
