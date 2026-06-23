@@ -370,6 +370,14 @@ export default function LookCard({
             ))}
           </ul>
         )}
+
+        {!loadingShop && garments.length > 0 && (
+          <p className="mt-4 text-[10px] leading-relaxed text-ink-30">
+            Some links are affiliated — Looksy may earn a small commission when
+            you buy, at no extra cost to you. Prices &amp; availability are set
+            by the retailer.
+          </p>
+        )}
       </div>
     </div>
   );
