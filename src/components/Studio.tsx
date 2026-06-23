@@ -193,10 +193,10 @@ export default function Studio({
     document.getElementById("saved-looks")?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <main className="min-h-screen bg-paper text-ink">
+    <main data-theme="night" className="min-h-screen bg-[#0E0B08] text-ink">
       <div className="mx-auto max-w-5xl edge-rules">
         {/* Masthead */}
-        <header className="sticky top-0 z-40 bg-paper/85 backdrop-blur-sm">
+        <header className="sticky top-0 z-40 bg-[#0E0B08]/85 backdrop-blur-sm">
           <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
             <div className="flex items-baseline gap-3">
               <span className="font-display text-2xl font-semibold tracking-tight">
@@ -225,7 +225,7 @@ export default function Studio({
               />
             </div>
           </div>
-          <div className="h-px w-full bg-ink/15" />
+          <div className="rule-iris opacity-50" />
         </header>
 
         {/* The Layout Desk */}
@@ -396,11 +396,11 @@ export default function Studio({
       {/* Photo modal */}
       {photoOpen && (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm"
           onClick={() => setPhotoOpen(false)}
         >
           <div
-            className="w-full max-w-md animate-fade-up border border-ink/15 bg-paper p-6"
+            className="w-full max-w-md animate-fade-up border border-white/10 bg-[#16120D] p-6 shadow-[0_24px_70px_-30px_rgba(0,0,0,0.9)]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-5 flex items-center justify-between">

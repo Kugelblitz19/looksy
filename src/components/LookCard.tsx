@@ -153,9 +153,13 @@ export default function LookCard({
   }
 
   return (
-    <div className="group animate-fade-up border border-ink/15 bg-paper-2 p-2.5">
+    <div className="group relative animate-fade-up border border-white/10 bg-[#16120D] p-2.5 shadow-[0_24px_70px_-30px_rgba(0,0,0,0.9)]">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-white/10"
+      />
       {/* The plate — develops like a cover going to print */}
-      <div className="rule-sweep relative overflow-hidden border border-ink/10">
+      <div className="rule-sweep relative overflow-hidden border border-white/10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={look.imageUrl}
@@ -328,7 +332,7 @@ export default function LookCard({
                         href={p.buyUrl}
                         target="_blank"
                         rel="noopener noreferrer nofollow sponsored"
-                        className="relative w-24 shrink-0 overflow-hidden border border-ink/12 bg-paper transition hover:border-ink"
+                        className="relative w-24 shrink-0 overflow-hidden border border-white/10 bg-white/[0.03] transition hover:border-white/40"
                       >
                         {p.mrp && p.price && p.mrp > p.price && (
                           <span className="absolute left-1 top-1 z-10 bg-vermilion px-1 py-0.5 font-mono text-[9px] font-bold text-paper">
