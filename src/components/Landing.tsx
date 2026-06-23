@@ -4,6 +4,7 @@ import LookGallery from "@/components/LookGallery";
 import Reveal from "@/components/Reveal";
 import GlowButton from "@/components/GlowButton";
 import SiteFooter from "@/components/SiteFooter";
+import LandingNav from "@/components/LandingNav";
 import { issueLabel } from "@/lib/issue";
 
 const CONTENTS = [
@@ -19,37 +20,8 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
   return (
     <main className="min-h-screen bg-paper text-ink">
       <div className="mx-auto max-w-6xl edge-rules">
-        {/* Masthead strip */}
-        <header className="sticky top-0 z-40 bg-paper/85 backdrop-blur-sm">
-          <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
-            <Link href="/" className="font-display text-2xl font-semibold tracking-tight">
-              Looksy
-            </Link>
-            <div className="flex items-center gap-5">
-              <span className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-vermilion sm:inline">
-                The Issue {issue} · ₹Free
-              </span>
-              {isAuthed ? (
-                <Link href="/studio" className="text-sm text-ink-60 transition hover:text-vermilion">
-                  Open Studio →
-                </Link>
-              ) : (
-                <nav className="flex items-center gap-5 text-sm">
-                  <Link href="/login" className="text-ink-60 transition hover:text-vermilion">
-                    Log in
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="bg-vermilion px-3.5 py-2 text-xs font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink"
-                  >
-                    Subscribe
-                  </Link>
-                </nav>
-              )}
-            </div>
-          </div>
-          <div className="h-px w-full bg-ink/15" />
-        </header>
+        {/* Masthead nav */}
+        <LandingNav isAuthed={isAuthed} issue={issue} primaryHref={primaryHref} />
 
         {/* Cover */}
         <section className="relative isolate grid grid-cols-1 gap-8 overflow-hidden px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-12 lg:gap-6 lg:pb-24 lg:pt-16">
@@ -111,7 +83,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         <div className="h-px w-full bg-ink/15" />
 
         {/* Contents */}
-        <section className="px-5 py-14 sm:px-8">
+        <section id="contents" className="scroll-mt-20 px-5 py-14 sm:px-8">
           <p className="kicker mb-6">Contents</p>
           <ul>
             {CONTENTS.map((c) => (
@@ -135,7 +107,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
         <div className="h-px w-full bg-ink/15" />
 
         {/* This week's covers */}
-        <section className="px-5 py-16 sm:px-8">
+        <section id="gallery" className="scroll-mt-20 px-5 py-16 sm:px-8">
           <Reveal>
             <div className="mb-8 flex items-end justify-between">
               <div>

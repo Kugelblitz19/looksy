@@ -31,6 +31,10 @@
   --c-rule: 237 232 223;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
   background-color: rgb(var(--c-paper));
@@ -140,11 +144,15 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   .cover-develop,
   .rule-sweep::after,
   .animate-float,
   .animate-float-slow,
-  .animate-marquee {
+  .animate-marquee,
+  .animate-ping {
     animation: none !important;
   }
 }
