@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateStyledImage } from "@/lib/gemini";
 import { generateFreeImage } from "@/lib/freeImage";
 import { buildPrompt } from "@/lib/stylist";
+import { isEthnicity } from "@/lib/ethnicity";
 import { placeholderDataUrl } from "@/lib/placeholder";
 import { isAuthenticated } from "@/lib/auth/current";
 import type { GeneratedLook } from "@/lib/types";
@@ -23,6 +24,8 @@ export async function POST(req: NextRequest) {
     const genderRaw = (form.get("gender") as string) || "";
     const gender =
       genderRaw === "man" || genderRaw === "woman" ? genderRaw : undefined;
+    const ethnicityRaw = (form.get("ethnicity") as string) || "";
+    const ethnicity = isEthnicity(ethnicityRaw) ? ethnicityRaw : "indian";
     let aestheticIds: string[] = [];
     try {
       aestheticIds = JSON.parse((form.get("aesthetics") as string) || "[]");
@@ -65,6 +68,7 @@ export async function POST(req: NextRequest) {
           userPrompt,
           hasPhotos: images.length > 0,
           gender,
+          ethnicity,
           variation: i,
         });
 
@@ -76,6 +80,7 @@ export async function POST(req: NextRequest) {
             userPrompt,
             hasPhotos: false,
             gender,
+            ethnicity,
             variation: i,
           });
           // Stagger calls — the free API rate-limits concurrent requests.

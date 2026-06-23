@@ -1,5 +1,6 @@
 import { getAesthetic } from "./aesthetics";
-import type { Gender } from "./types";
+import { ethnicityDescriptor } from "./ethnicity";
+import type { Ethnicity, Gender } from "./types";
 
 /**
  * Slightly varies framing/angle between variations so a single request returns
@@ -18,6 +19,8 @@ interface BuildPromptOpts {
   hasPhotos: boolean;
   /** Who to style — used only when there's no photo to take identity from. */
   gender?: Gender;
+  /** Which model to cast — used only when there's no photo. */
+  ethnicity?: Ethnicity;
   variation?: number;
 }
 
@@ -31,6 +34,7 @@ export function buildPrompt({
   userPrompt,
   hasPhotos,
   gender,
+  ethnicity = "indian",
   variation = 0,
 }: BuildPromptOpts): string {
   const styleDescriptors = aestheticIds
@@ -49,12 +53,12 @@ export function buildPrompt({
     );
   } else {
     // No photo → text-to-image picks the model. State gender explicitly
-    // (otherwise it defaults to a woman every time) and Indian ethnicity, since
-    // Looksy is India-first — without this the model defaults to Western.
+    // (otherwise it defaults to a woman every time) and the chosen cast
+    // (Indian by default, since Looksy is India-first).
     const who =
       gender === "man" ? "man" : gender === "woman" ? "woman" : "person";
     parts.push(
-      `Generate a photorealistic full-body fashion photograph of a stylish young Indian ${who} model with South Asian features and warm brown skin.`,
+      `Generate a photorealistic full-body fashion photograph of ${ethnicityDescriptor(ethnicity, who)}.`,
     );
   }
 

@@ -10,7 +10,8 @@ import SavedLooks from "@/components/studio/SavedLooks";
 import OccasionPacks from "@/components/studio/OccasionPacks";
 import { OCCASIONS, PROMPT_IDEAS, type Occasion } from "@/lib/occasions";
 import { issueLabel } from "@/lib/issue";
-import type { Gender, GeneratedLook, GenerateResponse } from "@/lib/types";
+import { ETHNICITY_OPTIONS } from "@/lib/ethnicity";
+import type { Ethnicity, Gender, GeneratedLook, GenerateResponse } from "@/lib/types";
 
 const COUNT_OPTIONS = [1, 2, 4];
 const GENDER_OPTIONS: { value: Gender; label: string }[] = [
@@ -36,6 +37,7 @@ export default function Studio({
   const [prompt, setPrompt] = useState("");
   const [count, setCount] = useState(2);
   const [gender, setGender] = useState<Gender>("woman");
+  const [ethnicity, setEthnicity] = useState<Ethnicity>("indian");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [looks, setLooks] = useState<GeneratedLook[]>([]);
@@ -58,13 +60,22 @@ export default function Studio({
 
   // Remember who the looks are styled for across visits.
   useEffect(() => {
-    const saved = localStorage.getItem("looksy:gender");
-    if (saved === "woman" || saved === "man") setGender(saved);
+    const savedG = localStorage.getItem("looksy:gender");
+    if (savedG === "woman" || savedG === "man") setGender(savedG);
+    const savedE = localStorage.getItem("looksy:ethnicity");
+    if (savedE && ETHNICITY_OPTIONS.some((o) => o.value === savedE)) {
+      setEthnicity(savedE as Ethnicity);
+    }
   }, []);
 
   const chooseGender = (g: Gender) => {
     setGender(g);
     localStorage.setItem("looksy:gender", g);
+  };
+
+  const chooseEthnicity = (e: Ethnicity) => {
+    setEthnicity(e);
+    localStorage.setItem("looksy:ethnicity", e);
   };
 
   async function handlePhotoChange(next: UploadedPhoto[]) {
@@ -113,6 +124,7 @@ export default function Studio({
       form.set("aesthetics", JSON.stringify(opts.aesthetics));
       form.set("count", String(opts.count));
       form.set("gender", gender);
+      form.set("ethnicity", ethnicity);
       for (const p of photos) form.append("photos", p.file);
 
       const res = await fetch("/api/generate", {
@@ -282,7 +294,7 @@ export default function Studio({
             {/* Control deck */}
             <div className="flex flex-col gap-6 border-t border-ink/15 pt-7 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-                <Control label="Model">
+                <Control label="Gender">
                   {GENDER_OPTIONS.map((g) => (
                     <Pill
                       key={g.value}
@@ -292,6 +304,20 @@ export default function Studio({
                       {g.label}
                     </Pill>
                   ))}
+                </Control>
+                <Control label="Cast">
+                  <select
+                    value={ethnicity}
+                    onChange={(e) => chooseEthnicity(e.target.value as Ethnicity)}
+                    aria-label="Model cast"
+                    className="border-b border-ink/20 bg-transparent py-1.5 pr-5 font-sans text-sm text-ink transition focus:border-vermilion focus:outline-none"
+                  >
+                    {ETHNICITY_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
                 </Control>
                 <Control label="Plates">
                   {COUNT_OPTIONS.map((n) => (

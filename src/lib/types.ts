@@ -11,6 +11,17 @@ export interface Aesthetic {
 /** Who the look is styled for — drives the model in demo mode and shop queries. */
 export type Gender = "woman" | "man";
 
+/** Which model to cast in demo mode (no-photo text-to-image). India-first. */
+export type Ethnicity =
+  | "indian"
+  | "south-asian"
+  | "east-asian"
+  | "black"
+  | "white"
+  | "middle-eastern"
+  | "latino"
+  | "any";
+
 export interface GeneratedLook {
   id: string;
   /** Data URL of the generated (or placeholder) image. */
