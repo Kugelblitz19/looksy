@@ -6,7 +6,6 @@ import PhotoUpload, { type UploadedPhoto } from "@/components/PhotoUpload";
 import AestheticPicker from "@/components/AestheticPicker";
 import LookCard from "@/components/LookCard";
 import ProfileMenu from "@/components/studio/ProfileMenu";
-import SavedLooks from "@/components/studio/SavedLooks";
 import OccasionPacks from "@/components/studio/OccasionPacks";
 import { OCCASIONS, PROMPT_IDEAS, type Occasion } from "@/lib/occasions";
 import { issueLabel } from "@/lib/issue";
@@ -42,7 +41,6 @@ export default function Studio({
   const [error, setError] = useState<string | null>(null);
   const [looks, setLooks] = useState<GeneratedLook[]>([]);
   const [photoOpen, setPhotoOpen] = useState(false);
-  const [savedReload, setSavedReload] = useState(0);
   const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const issue = issueLabel();
@@ -65,6 +63,20 @@ export default function Studio({
     const savedE = localStorage.getItem("looksy:ethnicity");
     if (savedE && ETHNICITY_OPTIONS.some((o) => o.value === savedE)) {
       setEthnicity(savedE as Ethnicity);
+    }
+  }, []);
+
+  // "Re-style" from the Saved Looks page hands a look back here to tweak.
+  useEffect(() => {
+    const raw = sessionStorage.getItem("looksy:remix");
+    if (!raw) return;
+    sessionStorage.removeItem("looksy:remix");
+    try {
+      const r = JSON.parse(raw);
+      if (typeof r.prompt === "string") setPrompt(r.prompt);
+      if (Array.isArray(r.aesthetics)) setAesthetics(r.aesthetics);
+    } catch {
+      /* ignore malformed remix payload */
     }
   }, []);
 
@@ -161,12 +173,6 @@ export default function Studio({
     runGenerate({ prompt: look.prompt, aesthetics: look.aesthetics, count: 1 });
   };
 
-  const remix = (look: GeneratedLook) => {
-    setPrompt(look.prompt);
-    setAesthetics(look.aesthetics);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const applyOccasion = (o: Occasion) => {
     setAesthetics(o.aesthetics);
     setPrompt(o.prompt);
@@ -189,8 +195,7 @@ export default function Studio({
     router.refresh();
   }
 
-  const scrollToSaved = () =>
-    document.getElementById("saved-looks")?.scrollIntoView({ behavior: "smooth" });
+  const openSaved = () => router.push("/studio/saved");
 
   return (
     <main data-theme="night" className="min-h-screen bg-[#0E0B08] text-ink">
@@ -220,7 +225,7 @@ export default function Studio({
                 realGeneration={realGeneration}
                 avatarUrl={selfieUrl}
                 onOpenPhoto={() => setPhotoOpen(true)}
-                onScrollToSaved={scrollToSaved}
+                onScrollToSaved={openSaved}
                 onLogout={logout}
               />
             </div>
@@ -381,16 +386,12 @@ export default function Studio({
                   key={look.id}
                   look={look}
                   saveable={supabaseAuth}
-                  onSaved={() => setSavedReload((x) => x + 1)}
                   onVariation={makeVariation}
                 />
               ))}
             </div>
           )}
         </div>
-
-        {/* Contents (saved looks) */}
-        {supabaseAuth && <SavedLooks reloadToken={savedReload} onRemix={remix} />}
       </div>
 
       {/* Photo modal */}
