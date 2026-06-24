@@ -20,7 +20,7 @@ export async function generateFreeImage(opts: {
   const url = `${ENDPOINT}${encodeURIComponent(opts.prompt)}?${params}`;
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 40000);
+  const timeout = setTimeout(() => controller.abort(), 30000);
   try {
     const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) throw new Error(`Pollinations ${res.status}`);

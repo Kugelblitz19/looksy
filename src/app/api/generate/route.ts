@@ -8,7 +8,7 @@ import { isAuthenticated } from "@/lib/auth/current";
 import type { GeneratedLook } from "@/lib/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const MAX_PHOTOS = 4;
 
@@ -83,9 +83,12 @@ export async function POST(req: NextRequest) {
             ethnicity,
             variation: i,
           });
-          // Stagger calls — the free API rate-limits concurrent requests.
-          if (i > 0) await new Promise((r) => setTimeout(r, i * 5000));
-          for (let attempt = 0; attempt < 2; attempt++) {
+          // Small stagger to avoid a burst rate-limit, then run in parallel —
+          // not a 5s-per-image queue (that made a 4-up take a minute+).
+          if (i > 0) await new Promise((r) => setTimeout(r, i * 800));
+          // Retry hard so every requested look comes back real, not a
+          // placeholder, even when the free API throttles.
+          for (let attempt = 0; attempt < 4; attempt++) {
             try {
               const dataUrl = await generateFreeImage({
                 prompt: demoPrompt,
@@ -100,7 +103,7 @@ export async function POST(req: NextRequest) {
                 demo: true,
               };
             } catch {
-              if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
+              await new Promise((r) => setTimeout(r, 1200 + attempt * 1200));
             }
           }
           return {
