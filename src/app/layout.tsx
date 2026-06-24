@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter_Tight, Newsreader, Azeret_Mono } from "next/font/google";
 import Pressroom from "@/components/Pressroom";
+import PWARegister from "@/components/PWARegister";
 import "./globals.css";
 
 // Fraunces — the high-contrast bracketed serif masthead. Instant Condé-Nast.
@@ -54,12 +55,18 @@ export const metadata: Metadata = {
     title: "Looksy — The Issue",
     description: "Your selfie. This week's cover. One tap to post, one tap to cop.",
   },
+  appleWebApp: {
+    capable: true,
+    title: "Looksy",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: "#FBFAF7",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -73,6 +80,7 @@ export default function RootLayout({
       className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}
     >
       <body className="font-sans antialiased">
+        <PWARegister />
         <Pressroom />
         {children}
       </body>

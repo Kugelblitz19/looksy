@@ -14,7 +14,10 @@ function isPublicPath(pathname: string): boolean {
     // Metadata image routes must be reachable by social/crawler bots (no auth).
     pathname.startsWith("/opengraph-image") ||
     pathname.startsWith("/twitter-image") ||
-    pathname.startsWith("/icon")
+    pathname.startsWith("/icon") ||
+    // PWA: the manifest + service worker must load without auth.
+    pathname === "/manifest.webmanifest" ||
+    pathname === "/sw.js"
   );
 }
 
