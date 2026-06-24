@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter_Tight, Newsreader, Azeret_Mono } from "next/font/google";
 import Pressroom from "@/components/Pressroom";
 import PWARegister from "@/components/PWARegister";
+import InstallPrompt from "@/components/InstallPrompt";
 import "./globals.css";
 
 // Fraunces — the high-contrast bracketed serif masthead. Instant Condé-Nast.
@@ -83,6 +84,7 @@ export default function RootLayout({
         <PWARegister />
         <Pressroom />
         {children}
+        <InstallPrompt />
       </body>
     </html>
   );

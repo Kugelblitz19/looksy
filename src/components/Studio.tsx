@@ -7,6 +7,7 @@ import AestheticPicker from "@/components/AestheticPicker";
 import LookCard from "@/components/LookCard";
 import ProfileMenu from "@/components/studio/ProfileMenu";
 import OccasionPacks from "@/components/studio/OccasionPacks";
+import RatingPrompt from "@/components/RatingPrompt";
 import { OCCASIONS, PROMPT_IDEAS, type Occasion } from "@/lib/occasions";
 import { issueLabel } from "@/lib/issue";
 import { ETHNICITY_OPTIONS } from "@/lib/ethnicity";
@@ -426,6 +427,9 @@ export default function Studio({
           </div>
         </div>
       )}
+
+      {/* Ask for a rating once they've made something */}
+      <RatingPrompt show={looks.length > 0} />
     </main>
   );
 }
