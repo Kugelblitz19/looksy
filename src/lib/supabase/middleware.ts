@@ -17,7 +17,9 @@ function isPublicPath(pathname: string): boolean {
     pathname.startsWith("/icon") ||
     // PWA: the manifest + service worker must load without auth.
     pathname === "/manifest.webmanifest" ||
-    pathname === "/sw.js"
+    pathname === "/sw.js" ||
+    // Android TWA verification file (Play Store).
+    pathname.startsWith("/.well-known")
   );
 }
 

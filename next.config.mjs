@@ -6,6 +6,13 @@ const nextConfig = {
       bodySizeLimit: "12mb",
     },
   },
+  // Serve the Android TWA verification file from an env-driven route, so the
+  // Play Store app can be verified without a code change (just set env vars).
+  async rewrites() {
+    return [
+      { source: "/.well-known/assetlinks.json", destination: "/api/assetlinks" },
+    ];
+  },
   // Don't let the dev watcher recompile when the file-based user store writes.
   webpack: (config) => {
     config.watchOptions = {
