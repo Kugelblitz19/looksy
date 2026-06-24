@@ -9,6 +9,8 @@ const ENDPOINT = "https://image.pollinations.ai/prompt/";
 export async function generateFreeImage(opts: {
   prompt: string;
   seed: number;
+  /** Client/request abort signal so a "Stop" actually cancels the fetch. */
+  signal?: AbortSignal;
 }): Promise<string> {
   const params = new URLSearchParams({
     width: "768",
@@ -19,8 +21,12 @@ export async function generateFreeImage(opts: {
   });
   const url = `${ENDPOINT}${encodeURIComponent(opts.prompt)}?${params}`;
 
+  // Abort on either our timeout or the caller's signal — fail fast so a stalled
+  // request retries (or falls back) inside the function budget.
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  const onAbort = () => controller.abort();
+  opts.signal?.addEventListener("abort", onAbort, { once: true });
+  const timeout = setTimeout(() => controller.abort(), 12000);
   try {
     const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) throw new Error(`Pollinations ${res.status}`);
@@ -30,5 +36,6 @@ export async function generateFreeImage(opts: {
     return `data:${mime};base64,${buf.toString("base64")}`;
   } finally {
     clearTimeout(timeout);
+    opts.signal?.removeEventListener("abort", onAbort);
   }
 }

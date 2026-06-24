@@ -39,11 +39,13 @@ export default function LookCard({
   // Auto-detect what the person is wearing and surface buy links inline.
   useEffect(() => {
     let active = true;
+    const ctrl = new AbortController();
     (async () => {
       try {
         const res = await fetch("/api/shop", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: ctrl.signal,
           body: JSON.stringify({
             imageDataUrl: look.imageUrl,
             aesthetics: look.aesthetics,
@@ -57,13 +59,14 @@ export default function LookCard({
           if (typeof data.lookMatch === "number") setLookScore(data.lookMatch);
         }
       } catch {
-        /* leave list empty on failure */
+        /* aborted on unmount, or failed — leave list empty */
       } finally {
         if (active) setLoadingShop(false);
       }
     })();
     return () => {
       active = false;
+      ctrl.abort();
     };
   }, [look]);
 

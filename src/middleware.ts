@@ -14,8 +14,10 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Run on every path except static assets and image files.
+     * Run on every path except static assets, image/font files, and the heavy
+     * API routes that already enforce auth themselves (avoids a second
+     * getUser() on the hot path).
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/generate|api/shop|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff|woff2|ttf)$).*)",
   ],
 };

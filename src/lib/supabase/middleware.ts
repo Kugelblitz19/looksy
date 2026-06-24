@@ -50,9 +50,15 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // A Supabase outage must not throw here and 500 every request — treat a
+  // failed lookup as signed out (page-level guards still gate protected pages).
+  let user = null;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data.user;
+  } catch {
+    user = null;
+  }
 
   if (!user && !isPublicPath(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone();

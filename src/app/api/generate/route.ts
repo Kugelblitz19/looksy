@@ -8,14 +8,37 @@ import { isAuthenticated } from "@/lib/auth/current";
 import type { GeneratedLook } from "@/lib/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+// Vercel Hobby hard-caps serverless functions at 60s — stay under it so a slow
+// 4-up returns gracefully instead of being killed mid-flight (which hung the client).
+export const maxDuration = 55;
 
 const MAX_PHOTOS = 4;
+
+// Best-effort in-memory rate limit (per warm instance) — smooths abuse and
+// protects the free Pollinations quota + Hobby's concurrency slots.
+const RL_WINDOW_MS = 60_000;
+const RL_MAX = 5;
+const rlHits = new Map<string, number[]>();
+function rateLimited(key: string): boolean {
+  const now = Date.now();
+  const recent = (rlHits.get(key) || []).filter((t) => now - t < RL_WINDOW_MS);
+  recent.push(now);
+  rlHits.set(key, recent);
+  return recent.length > RL_MAX;
+}
 
 export async function POST(req: NextRequest) {
   try {
     if (!(await isAuthenticated())) {
       return NextResponse.json({ error: "Please log in first." }, { status: 401 });
+    }
+
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+    if (rateLimited(ip)) {
+      return NextResponse.json(
+        { error: "You're generating very fast — give it a few seconds." },
+        { status: 429 },
+      );
     }
 
     const form = await req.formData();
@@ -86,13 +109,15 @@ export async function POST(req: NextRequest) {
           // Small stagger to avoid a burst rate-limit, then run in parallel —
           // not a 5s-per-image queue (that made a 4-up take a minute+).
           if (i > 0) await new Promise((r) => setTimeout(r, i * 800));
-          // Retry hard so every requested look comes back real, not a
-          // placeholder, even when the free API throttles.
-          for (let attempt = 0; attempt < 4; attempt++) {
+          // Retry to get a real image, but stay well within the 55s budget:
+          // 2 attempts × ~12s timeout + short backoff. The client's Stop
+          // (req.signal) cancels the in-flight fetch.
+          for (let attempt = 0; attempt < 2; attempt++) {
             try {
               const dataUrl = await generateFreeImage({
                 prompt: demoPrompt,
                 seed: (stamp % 1_000_000) + i * 7919 + attempt * 131,
+                signal: req.signal,
               });
               return {
                 id: `${stamp}-${i}`,
@@ -103,7 +128,7 @@ export async function POST(req: NextRequest) {
                 demo: true,
               };
             } catch {
-              await new Promise((r) => setTimeout(r, 1200 + attempt * 1200));
+              await new Promise((r) => setTimeout(r, 800 + attempt * 800));
             }
           }
           return {

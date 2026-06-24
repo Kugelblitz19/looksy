@@ -17,13 +17,14 @@ export default function HoloCard({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const sheen = useRef<HTMLDivElement>(null);
+  const coords = useRef({ px: 0.5, py: 0.5 });
+  const raf = useRef(0);
 
-  function move(e: React.MouseEvent) {
+  function apply() {
+    raf.current = 0;
     const el = ref.current;
     if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width; // 0..1
-    const py = (e.clientY - r.top) / r.height;
+    const { px, py } = coords.current;
     el.style.transform = `perspective(900px) rotateX(${((0.5 - py) * 9).toFixed(2)}deg) rotateY(${((px - 0.5) * 9).toFixed(2)}deg) scale(1.02)`;
     if (sheen.current) {
       const x = (px * 100).toFixed(0);
@@ -33,7 +34,23 @@ export default function HoloCard({
     }
   }
 
+  function move(e: React.MouseEvent) {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    coords.current = {
+      px: (e.clientX - r.left) / r.width,
+      py: (e.clientY - r.top) / r.height,
+    };
+    // Coalesce to one DOM write per frame instead of per pointer event.
+    if (!raf.current) raf.current = requestAnimationFrame(apply);
+  }
+
   function reset() {
+    if (raf.current) {
+      cancelAnimationFrame(raf.current);
+      raf.current = 0;
+    }
     if (ref.current) ref.current.style.transform = "";
     if (sheen.current) sheen.current.style.opacity = "0";
   }

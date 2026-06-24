@@ -151,6 +151,18 @@ export default function LiquidHero({
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
+    // Only animate while the hero is on-screen — no GPU/battery drain once the
+    // user scrolls into the dark sections below.
+    let visible = true;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const wasVisible = visible;
+        visible = entry.isIntersecting;
+        if (visible && !wasVisible && !reduce) raf = requestAnimationFrame(draw);
+      },
+      { threshold: 0.01 },
+    );
+    io.observe(canvas);
     const draw = (ms: number) => {
       mouse[0] += (target[0] - mouse[0]) * 0.05;
       mouse[1] += (target[1] - mouse[1]) * 0.05;
@@ -158,12 +170,13 @@ export default function LiquidHero({
       gl.uniform1f(uTime, reduce ? 8 : ms * 0.001);
       gl.uniform2f(uMouse, mouse[0], mouse[1]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
-      if (!reduce) raf = requestAnimationFrame(draw);
+      if (!reduce && visible) raf = requestAnimationFrame(draw);
     };
     draw(0);
 
     return () => {
       cancelAnimationFrame(raf);
+      io.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
     };

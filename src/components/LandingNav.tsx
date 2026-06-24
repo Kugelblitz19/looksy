@@ -27,7 +27,22 @@ export default function LandingNav({
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      // Functional update → React bails out when the value is unchanged, so
+      // we don't re-render on every scroll tick, only when crossing 8px.
+      setScrolled((prev) => {
+        const next = window.scrollY > 8;
+        return next === prev ? prev : next;
+      });
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
