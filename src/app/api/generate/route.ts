@@ -5,6 +5,8 @@ import { buildPrompt } from "@/lib/stylist";
 import { isEthnicity } from "@/lib/ethnicity";
 import { placeholderDataUrl } from "@/lib/placeholder";
 import { isAuthenticated } from "@/lib/auth/current";
+import { rateLimit } from "@/lib/ratelimit";
+import { screenPrompt } from "@/lib/moderation";
 import type { GeneratedLook } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -13,19 +15,7 @@ export const runtime = "nodejs";
 export const maxDuration = 55;
 
 const MAX_PHOTOS = 4;
-
-// Best-effort in-memory rate limit (per warm instance) — smooths abuse and
-// protects the free Pollinations quota + Hobby's concurrency slots.
-const RL_WINDOW_MS = 60_000;
-const RL_MAX = 5;
-const rlHits = new Map<string, number[]>();
-function rateLimited(key: string): boolean {
-  const now = Date.now();
-  const recent = (rlHits.get(key) || []).filter((t) => now - t < RL_WINDOW_MS);
-  recent.push(now);
-  rlHits.set(key, recent);
-  return recent.length > RL_MAX;
-}
+const MAX_PHOTO_BYTES = 8 * 1024 * 1024; // 8 MB per uploaded photo
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,7 +24,8 @@ export async function POST(req: NextRequest) {
     }
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
-    if (rateLimited(ip)) {
+    const { limited } = await rateLimit(`gen:${ip}`, { max: 5, windowMs: 60_000 });
+    if (limited) {
       return NextResponse.json(
         { error: "You're generating very fast — give it a few seconds." },
         { status: 429 },
@@ -67,6 +58,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const screen = screenPrompt(userPrompt);
+    if (!screen.ok) {
+      return NextResponse.json({ error: screen.reason }, { status: 400 });
+    }
+
     const files = form
       .getAll("photos")
       .filter((f): f is File => f instanceof File)
@@ -75,6 +71,13 @@ export async function POST(req: NextRequest) {
     const images: { mimeType: string; base64: string }[] = [];
     for (const f of files) {
       const buf = Buffer.from(await f.arrayBuffer());
+      if (buf.length > MAX_PHOTO_BYTES) {
+        return NextResponse.json(
+          { error: "Each photo must be under 8 MB." },
+          { status: 400 },
+        );
+      }
+      if (!(f.type || "").startsWith("image/")) continue;
       images.push({
         mimeType: f.type || "image/jpeg",
         base64: buf.toString("base64"),

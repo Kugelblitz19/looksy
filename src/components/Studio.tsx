@@ -186,12 +186,8 @@ export default function Studio({
     applyOccasion(OCCASIONS[Math.floor(Math.random() * OCCASIONS.length)]);
 
   async function logout() {
-    if (supabaseAuth) {
-      const { createClient } = await import("@/lib/supabase/client");
-      await createClient().auth.signOut();
-    } else {
-      await fetch("/api/auth/logout", { method: "POST" });
-    }
+    const { createClient } = await import("@/lib/supabase/client");
+    await createClient().auth.signOut();
     router.push("/login");
     router.refresh();
   }

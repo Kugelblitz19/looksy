@@ -1,20 +1,23 @@
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import type { User } from "@supabase/supabase-js";
 
 /**
- * True if the current request has an authenticated user — via Supabase when
- * configured, otherwise via the built-in fallback session. Used to guard the
- * image/shop APIs so they work under whichever auth system is active.
+ * The current authenticated user (Supabase), or null. Looksy uses Supabase Auth
+ * exclusively — there is no fallback session, so an unconfigured/absent Supabase
+ * simply means "not authenticated". This removes any locally-forgeable session
+ * as a path to access.
  */
-export async function isAuthenticated(): Promise<boolean> {
-  if (isSupabaseConfigured) {
-    const { createClient } = await import("@/lib/supabase/server");
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    return Boolean(user);
-  }
+export async function currentUser(): Promise<User | null> {
+  if (!isSupabaseConfigured) return null;
+  const { createClient } = await import("@/lib/supabase/server");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+}
 
-  const { getSessionUser } = await import("@/lib/auth/session");
-  return Boolean(await getSessionUser());
+/** Convenience boolean guard for API routes. */
+export async function isAuthenticated(): Promise<boolean> {
+  return Boolean(await currentUser());
 }

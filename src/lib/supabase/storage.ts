@@ -6,11 +6,13 @@ export const SELFIES_BUCKET = "selfies";
 export const PUBLIC_BUCKET = "public-looks";
 const SIGNED_TTL = 60 * 60; // 1 hour
 
+// Allowlisted raster types only — no SVG (SVG can carry script if ever served
+// inline). Anything else is rejected by uploadDataUrl.
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB
 const EXT: Record<string, string> = {
   "image/png": "png",
   "image/jpeg": "jpg",
   "image/webp": "webp",
-  "image/svg+xml": "svg",
 };
 
 /** A stored value is a Storage path (not an http/data URL). */
@@ -30,8 +32,10 @@ export async function uploadDataUrl(
   const match = dataUrl.match(/^data:(.*?);base64,(.*)$/s);
   if (!match) throw new Error("Not a data URL");
   const mime = match[1];
+  const ext = EXT[mime];
+  if (!ext) throw new Error("Unsupported image type");
   const bytes = Buffer.from(match[2], "base64");
-  const ext = EXT[mime] ?? "png";
+  if (bytes.length > MAX_UPLOAD_BYTES) throw new Error("Image too large");
   const path = `${userId}/${randomUUID()}.${ext}`;
 
   const admin = createAdminClient();

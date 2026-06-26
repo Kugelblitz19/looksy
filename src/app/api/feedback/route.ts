@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { rateLimit } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 
@@ -8,6 +9,15 @@ export const runtime = "nodejs";
  *  the user is attached when signed in. Writes via the service role. */
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+    const { limited } = await rateLimit(`fb:${ip}`, { max: 10, windowMs: 60_000 });
+    if (limited) {
+      return NextResponse.json(
+        { error: "Too many submissions — please try again shortly." },
+        { status: 429 },
+      );
+    }
+
     const body = await req.json();
     const rating = Number(body?.rating);
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
