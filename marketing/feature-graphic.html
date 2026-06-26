@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Looksy — Feature Graphic 1024×500</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter+Tight:wght@400;500;600&family=Azeret+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root{ --paper:#FBFAF7; --paper2:#F2EFE8; --ink:#14110F; --ink60:#6b655d; --rule:#d9d4c8; --verm:#E5341B; }
+  *{ box-sizing:border-box; margin:0; }
+  body{ background:#3a3a3a; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; font-family:"Inter Tight",sans-serif; }
+  /* EXACT Google Play feature-graphic size. Screenshot just this frame. */
+  .canvas{ width:1024px; height:500px; background:var(--paper); position:relative; overflow:hidden; color:var(--ink); }
+  .frame{ position:absolute; inset:18px; border:1.5px solid var(--ink); pointer-events:none; }
+  .frame:before{ content:""; position:absolute; inset:6px; border:0.75px solid var(--rule); }
+  .pad{ position:absolute; inset:54px; display:flex; }
+  .left{ width:58%; display:flex; flex-direction:column; justify-content:center; gap:18px; }
+  .kicker{ font-family:"Azeret Mono",monospace; font-size:14px; letter-spacing:.28em; text-transform:uppercase; color:var(--ink60); }
+  h1{ font-family:"Fraunces",serif; font-weight:600; font-size:92px; line-height:.92; letter-spacing:-.01em; }
+  h1 em{ font-style:italic; color:var(--verm); }
+  .sub{ font-size:21px; line-height:1.4; color:#3a352f; max-width:460px; }
+  .meta{ display:flex; align-items:center; gap:16px; margin-top:6px; }
+  .free{ background:var(--verm); color:var(--paper); font-weight:600; font-size:15px; letter-spacing:.14em; padding:7px 14px; text-transform:uppercase; }
+  .url{ font-family:"Azeret Mono",monospace; font-size:15px; letter-spacing:.04em; color:var(--ink); }
+  .right{ width:42%; display:flex; align-items:center; justify-content:center; }
+  .plate{ width:236px; height:330px; background:var(--paper2); border:1.5px solid var(--ink); position:relative; display:flex; flex-direction:column; }
+  .plate .top{ display:flex; align-items:baseline; justify-content:space-between; padding:14px 16px 0; }
+  .mast{ font-family:"Fraunces",serif; font-weight:600; font-size:26px; letter-spacing:-.01em; }
+  .iss{ font-family:"Azeret Mono",monospace; font-size:13px; color:var(--ink60); }
+  .plate .big{ flex:1; display:flex; align-items:center; justify-content:center; }
+  .plate .big span{ font-family:"Fraunces",serif; font-style:italic; font-weight:500; font-size:150px; color:var(--verm); line-height:1; }
+  .plate .foot{ font-family:"Azeret Mono",monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink60); text-align:center; padding:0 0 14px; }
+  .seal{ position:absolute; right:-22px; top:-22px; width:84px; height:84px; border-radius:50%; background:var(--verm); color:var(--paper); display:flex; align-items:center; justify-content:center; text-align:center; font-family:"Azeret Mono",monospace; font-size:10px; letter-spacing:.12em; line-height:1.25; transform:rotate(-8deg); }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="frame"></div>
+    <div class="pad">
+      <div class="left">
+        <div class="kicker">An AI fashion weekly · Shot in India</div>
+        <h1>Be the<br/><em>cover.</em></h1>
+        <div class="sub">Pick a vibe. Get a cover-quality look in seconds — then shop every single piece.</div>
+        <div class="meta">
+          <span class="free">Free</span>
+          <span class="url">looksy-lemon.vercel.app</span>
+        </div>
+      </div>
+      <div class="right">
+        <div class="plate">
+          <div class="seal">LOOKSY<br/>EST · INDIA</div>
+          <div class="top"><span class="mast">Looksy</span><span class="iss">№26</span></div>
+          <div class="big"><span>L</span></div>
+          <div class="foot">The Issue · Shoppable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

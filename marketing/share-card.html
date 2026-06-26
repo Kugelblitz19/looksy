@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Looksy — Story Share Card 1080×1920</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter+Tight:wght@400;500;600&family=Azeret+Mono:wght@500&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{ --paper:#FBFAF7; --paper2:#F2EFE8; --ink:#14110F; --ink60:#6b655d; --rule:#d9d4c8; --verm:#E5341B; }
+  *{ box-sizing:border-box; margin:0; }
+  body{ background:#3a3a3a; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; font-family:"Inter Tight",sans-serif; }
+  /* EXACT Instagram Story / WhatsApp Status size. Screenshot just this frame. */
+  .canvas{ width:1080px; height:1920px; background:var(--paper); position:relative; overflow:hidden; color:var(--ink); }
+  .frame{ position:absolute; inset:40px; border:2px solid var(--ink); pointer-events:none; }
+  .frame:before{ content:""; position:absolute; inset:12px; border:1px solid var(--rule); }
+  .pad{ position:absolute; inset:110px; display:flex; flex-direction:column; }
+  .kicker{ font-family:"Azeret Mono",monospace; font-size:24px; letter-spacing:.34em; text-transform:uppercase; color:var(--ink60); text-align:center; }
+  .mast{ font-family:"Fraunces",serif; font-weight:600; font-size:150px; letter-spacing:-.02em; text-align:center; line-height:.9; margin-top:18px; }
+  .rule{ height:2px; background:var(--ink); margin:46px 0; }
+  h1{ font-family:"Fraunces",serif; font-weight:600; font-size:104px; line-height:.98; text-align:center; letter-spacing:-.01em; }
+  h1 em{ font-style:italic; color:var(--verm); }
+  .sub{ font-size:34px; line-height:1.45; color:#3a352f; text-align:center; max-width:760px; margin:40px auto 0; }
+  .spacer{ flex:1; }
+  .qrwrap{ display:flex; flex-direction:column; align-items:center; gap:26px; }
+  #qr{ background:var(--paper); padding:22px; border:2px solid var(--ink); }
+  #qr img, #qr canvas{ display:block; }
+  .scan{ font-family:"Azeret Mono",monospace; font-size:24px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink60); }
+  .url{ font-family:"Azeret Mono",monospace; font-size:38px; letter-spacing:.02em; color:var(--ink); }
+  .free{ display:inline-block; background:var(--verm); color:var(--paper); font-weight:600; font-size:28px; letter-spacing:.16em; padding:14px 28px; text-transform:uppercase; margin-top:14px; }
+  .foot{ font-family:"Azeret Mono",monospace; font-size:20px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink60); text-align:center; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="frame"></div>
+    <div class="pad">
+      <div class="kicker">An AI fashion weekly · Shot in India</div>
+      <div class="mast">Looksy</div>
+      <div class="rule"></div>
+      <h1>Be the<br/><em>cover.</em></h1>
+      <div class="sub">Pick a vibe → get a cover-quality look → shop every piece. Free, on your phone.</div>
+      <div class="spacer"></div>
+      <div class="qrwrap">
+        <div id="qr"></div>
+        <div class="scan">Scan to open</div>
+        <div class="url">looksy-lemon.vercel.app</div>
+        <div class="free">Free · Installs like an app</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="foot">№26 · Stocked at Myntra · Flipkart · Ajio · Amazon</div>
+    </div>
+  </div>
+  <script>
+    function draw(){
+      if (!window.QRCode){ return setTimeout(draw, 120); }
+      new QRCode(document.getElementById("qr"), {
+        text: "https://looksy-lemon.vercel.app",
+        width: 300, height: 300,
+        colorDark: "#14110F", colorLight: "#FBFAF7",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+    draw();
+  </script>
+</body>
+</html>
