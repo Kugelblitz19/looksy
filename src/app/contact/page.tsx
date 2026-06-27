@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact — Looksy",
   description: "Get in touch with the Looksy team — support, feedback, press and partnerships.",
 };
-
-const CONTACT_EMAIL = "hello@looksy.app"; // TODO: replace with your real contact address
 
 export default function ContactPage() {
   return (

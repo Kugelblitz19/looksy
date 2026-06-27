@@ -8,6 +8,13 @@ function isPublicPath(pathname: string): boolean {
     // The Studio is reachable logged-out for the one-look guest trial; the
     // generate API enforces the limit and saved-looks stays gated.
     pathname === "/studio" ||
+    // Public info + legal pages — must be reachable logged-out (app stores
+    // require a public privacy policy; the footer links here).
+    pathname === "/about" ||
+    pathname === "/privacy" ||
+    pathname === "/contact" ||
+    pathname === "/terms" ||
+    pathname === "/refund" ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||
     pathname.startsWith("/forgot-password") ||

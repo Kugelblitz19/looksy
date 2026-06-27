@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Looksy",
   description:
     "How Looksy collects, uses and protects your data — account info, photos, generated looks, and affiliate links.",
 };
-
-const CONTACT_EMAIL = "hello@looksy.app"; // TODO: replace with your real contact address
 
 export default function PrivacyPage() {
   return (

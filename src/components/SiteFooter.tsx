@@ -18,12 +18,18 @@ export default function SiteFooter({ issue }: { issue?: string }) {
             <span className="h-1.5 w-1.5 rounded-full bg-vermilion" aria-hidden />
             Looksy
           </span>
-          <nav className="flex items-center gap-5 text-sm text-ink-60">
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-60">
             <Link href="/about" className="transition hover:text-vermilion">
               About
             </Link>
             <Link href="/privacy" className="transition hover:text-vermilion">
               Privacy
+            </Link>
+            <Link href="/terms" className="transition hover:text-vermilion">
+              Terms
+            </Link>
+            <Link href="/refund" className="transition hover:text-vermilion">
+              Refund
             </Link>
             <Link href="/contact" className="transition hover:text-vermilion">
               Contact
