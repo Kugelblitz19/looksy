@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import AuthShell from "@/components/auth/AuthShell";
 import GoogleIcon from "@/components/auth/GoogleIcon";
 import { Field, Submit, Notice } from "@/components/auth/fields";
+import EmailOtp from "@/components/auth/EmailOtp";
 
 export default function SupabaseAuthForm({
   mode,
@@ -27,6 +28,7 @@ export default function SupabaseAuthForm({
   // Supabase — avoids the "provider is not enabled" dead-end. Auto-appears the
   // moment Google is switched on in the dashboard.
   const [googleEnabled, setGoogleEnabled] = useState(false);
+  const [view, setView] = useState<"main" | "emailotp">("main");
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -110,6 +112,9 @@ export default function SupabaseAuthForm({
         </>
       }
     >
+      {view === "emailotp" ? (
+        <EmailOtp onBack={() => setView("main")} />
+      ) : (
       <div className="space-y-4">
         {googleEnabled && (
           <>
@@ -179,9 +184,18 @@ export default function SupabaseAuthForm({
           </Submit>
         </form>
 
+        <button
+          type="button"
+          onClick={() => setView("emailotp")}
+          className="w-full text-center text-sm font-medium text-ink-60 underline-offset-4 transition hover:text-vermilion hover:underline"
+        >
+          Email me a login code
+        </button>
+
         {notice && <Notice kind="success">{notice}</Notice>}
         {error && <Notice kind="error">{error}</Notice>}
       </div>
+      )}
     </AuthShell>
   );
 }
