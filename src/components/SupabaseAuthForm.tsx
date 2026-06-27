@@ -8,6 +8,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import GoogleIcon from "@/components/auth/GoogleIcon";
 import { Field, Submit, Notice } from "@/components/auth/fields";
 import EmailOtp from "@/components/auth/EmailOtp";
+import { track } from "@vercel/analytics";
 
 export default function SupabaseAuthForm({
   mode,
@@ -41,6 +42,7 @@ export default function SupabaseAuthForm({
   }, []);
 
   function done() {
+    track("signup", { method: "email", mode });
     router.push("/studio");
     router.refresh();
   }
@@ -84,6 +86,7 @@ export default function SupabaseAuthForm({
 
   const signInWithGoogle = () =>
     withLoading(async () => {
+      track("signup", { method: "google", mode });
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {

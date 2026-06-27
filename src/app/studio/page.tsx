@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth/current";
 import Studio from "@/components/Studio";
 
@@ -8,7 +7,13 @@ export default async function StudioPage() {
   const realGeneration = Boolean(process.env.GEMINI_API_KEY);
 
   const user = await currentUser();
-  if (!user) redirect("/login");
+
+  // Guest trial: let a logged-out visitor shoot ONE free look before signing up
+  // (huge conversion lift vs. forcing signup first). The generate API enforces
+  // the one-look limit; saving and "make more" require an account.
+  if (!user) {
+    return <Studio guest userEmail="" realGeneration={realGeneration} />;
+  }
 
   const name = (user.user_metadata?.full_name as string) || undefined;
   return (

@@ -8,6 +8,7 @@ import LookCard from "@/components/LookCard";
 import ProfileMenu from "@/components/studio/ProfileMenu";
 import OccasionPacks from "@/components/studio/OccasionPacks";
 import RatingPrompt from "@/components/RatingPrompt";
+import { track } from "@vercel/analytics";
 import { OCCASIONS, PROMPT_IDEAS, type Occasion } from "@/lib/occasions";
 import { issueLabel } from "@/lib/issue";
 import { ETHNICITY_OPTIONS } from "@/lib/ethnicity";
@@ -24,18 +25,21 @@ export default function Studio({
   userName,
   supabaseAuth = false,
   realGeneration = false,
+  guest = false,
 }: {
   userEmail: string;
   userName?: string;
   supabaseAuth?: boolean;
   realGeneration?: boolean;
+  guest?: boolean;
 }) {
   const router = useRouter();
 
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [aesthetics, setAesthetics] = useState<string[]>([]);
   const [prompt, setPrompt] = useState("");
-  const [count, setCount] = useState(2);
+  const [count, setCount] = useState(guest ? 1 : 2);
+  const [needSignup, setNeedSignup] = useState(false);
   const [gender, setGender] = useState<Gender>("woman");
   const [ethnicity, setEthnicity] = useState<Ethnicity>("indian");
   const [loading, setLoading] = useState(false);
@@ -145,10 +149,17 @@ export default function Studio({
         body: form,
         signal: ctrl.signal,
       });
-      const data: GenerateResponse = await res.json();
+      const data = (await res.json()) as GenerateResponse & {
+        needAuth?: boolean;
+      };
+      if (res.status === 401 || data.needAuth) {
+        setNeedSignup(true);
+        return;
+      }
       if (!res.ok || data.error)
         throw new Error(data.error || "Generation failed.");
       setLooks((prev) => [...(data.looks ?? []), ...prev]);
+      track("look_generated", { guest, count: opts.count });
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {
         /* user stopped the shoot — no error */
@@ -163,7 +174,7 @@ export default function Studio({
 
   const generate = () => {
     if (!canGenerate) return;
-    runGenerate({ prompt, aesthetics, count });
+    runGenerate({ prompt, aesthetics, count: guest ? 1 : count });
   };
 
   const stop = () => abortRef.current?.abort();
@@ -216,15 +227,32 @@ export default function Studio({
                 />
                 {realGeneration ? "Real face" : "Demo"}
               </span>
-              <ProfileMenu
-                userName={userName}
-                userEmail={userEmail}
-                realGeneration={realGeneration}
-                avatarUrl={selfieUrl}
-                onOpenPhoto={() => setPhotoOpen(true)}
-                onScrollToSaved={openSaved}
-                onLogout={logout}
-              />
+              {guest ? (
+                <div className="flex items-center gap-2.5">
+                  <a
+                    href="/login"
+                    className="text-sm text-ink-60 transition hover:text-ink"
+                  >
+                    Log in
+                  </a>
+                  <a
+                    href="/signup"
+                    className="bg-vermilion px-4 py-2 text-sm font-medium text-paper transition hover:bg-vermilion-ink"
+                  >
+                    Sign up free
+                  </a>
+                </div>
+              ) : (
+                <ProfileMenu
+                  userName={userName}
+                  userEmail={userEmail}
+                  realGeneration={realGeneration}
+                  avatarUrl={selfieUrl}
+                  onOpenPhoto={() => setPhotoOpen(true)}
+                  onScrollToSaved={openSaved}
+                  onLogout={logout}
+                />
+              )}
             </div>
           </div>
           <div className="rule-iris opacity-50" />
@@ -321,13 +349,15 @@ export default function Studio({
                     ))}
                   </select>
                 </Control>
-                <Control label="Plates">
-                  {COUNT_OPTIONS.map((n) => (
-                    <Pill key={n} active={count === n} onClick={() => setCount(n)} round>
-                      {n}
-                    </Pill>
-                  ))}
-                </Control>
+                {!guest && (
+                  <Control label="Plates">
+                    {COUNT_OPTIONS.map((n) => (
+                      <Pill key={n} active={count === n} onClick={() => setCount(n)} round>
+                        {n}
+                      </Pill>
+                    ))}
+                  </Control>
+                )}
               </div>
 
               <div className="flex flex-col items-start gap-2 sm:items-end">
@@ -365,6 +395,23 @@ export default function Studio({
             )}
             {error && (
               <p className="text-center text-sm text-vermilion-ink">{error}</p>
+            )}
+
+            {guest && (looks.length > 0 || needSignup) && (
+              <div className="mx-auto max-w-xl border border-vermilion/40 bg-vermilion/5 p-5 text-center">
+                <p className="font-serif text-base italic text-ink">
+                  {needSignup
+                    ? "That was your free look. Sign up free to save it and shoot unlimited covers."
+                    : "Love it? Sign up free to save this cover and make more."}
+                </p>
+                <a
+                  href="/signup"
+                  onClick={() => track("signup_cta", { needSignup })}
+                  className="mt-3 inline-block bg-vermilion px-6 py-3 text-sm font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink"
+                >
+                  Sign up free →
+                </a>
+              </div>
             )}
           </div>
 
@@ -425,7 +472,7 @@ export default function Studio({
       )}
 
       {/* Ask for a rating once they've made something */}
-      <RatingPrompt show={looks.length > 0} />
+      <RatingPrompt show={!guest && looks.length > 0} />
     </main>
   );
 }

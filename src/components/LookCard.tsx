@@ -5,6 +5,7 @@ import { getAesthetic } from "@/lib/aesthetics";
 import { issueLabel, plateLabel } from "@/lib/issue";
 import type { GeneratedLook } from "@/lib/types";
 import type { ShoppableGarment, ShopResponse } from "@/lib/garments";
+import { track } from "@vercel/analytics";
 
 export default function LookCard({
   look,
@@ -152,6 +153,7 @@ export default function LookCard({
   const bundleTotal = cheapest.reduce((s, p) => s + (p.price ?? 0), 0);
 
   function openAll() {
+    track("shop_click", { bundle: true, pieces: cheapest.length });
     cheapest.forEach((p) => window.open(p.buyUrl, "_blank", "noopener"));
   }
 
@@ -335,6 +337,7 @@ export default function LookCard({
                         href={p.buyUrl}
                         target="_blank"
                         rel="noopener noreferrer nofollow sponsored"
+                        onClick={() => track("shop_click", { merchant: p.merchant })}
                         className="relative w-24 shrink-0 overflow-hidden border border-white/10 bg-white/[0.03] transition hover:border-white/40"
                       >
                         {p.mrp && p.price && p.mrp > p.price && (
@@ -376,6 +379,7 @@ export default function LookCard({
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer nofollow sponsored"
+                        onClick={() => track("shop_click", { merchant: link.merchant })}
                         className="border border-ink/15 px-3 py-1.5 text-xs text-ink-60 transition hover:border-ink hover:text-ink"
                       >
                         {link.merchant}

@@ -8,11 +8,11 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 // 'unsafe-eval' and a websocket, so those are added only outside production.
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
+  `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  `connect-src 'self' ${supabaseUrl} https://*.supabase.co wss://*.supabase.co${isProd ? "" : " ws: http://localhost:*"}`,
+  `connect-src 'self' ${supabaseUrl} https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com${isProd ? "" : " ws: http://localhost:*"}`,
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "frame-ancestors 'none'",

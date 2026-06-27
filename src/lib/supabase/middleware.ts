@@ -5,6 +5,9 @@ import { NextResponse, type NextRequest } from "next/server";
 function isPublicPath(pathname: string): boolean {
   return (
     pathname === "/" ||
+    // The Studio is reachable logged-out for the one-look guest trial; the
+    // generate API enforces the limit and saved-looks stays gated.
+    pathname === "/studio" ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||
     pathname.startsWith("/forgot-password") ||

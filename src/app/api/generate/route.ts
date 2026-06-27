@@ -19,8 +19,17 @@ const MAX_PHOTO_BYTES = 8 * 1024 * 1024; // 8 MB per uploaded photo
 
 export async function POST(req: NextRequest) {
   try {
-    if (!(await isAuthenticated())) {
-      return NextResponse.json({ error: "Please log in first." }, { status: 401 });
+    const authed = await isAuthenticated();
+    let isGuest = false;
+    if (!authed) {
+      // Guest trial: one free look before signup, gated by a cookie.
+      if (req.cookies.get("looksy_trial")?.value === "used") {
+        return NextResponse.json(
+          { error: "That was your free look — sign up free to keep going.", needAuth: true },
+          { status: 401 },
+        );
+      }
+      isGuest = true;
     }
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
@@ -50,6 +59,8 @@ export async function POST(req: NextRequest) {
       Math.max(parseInt((form.get("count") as string) || "2", 10) || 2, 1),
       4,
     );
+    // Guests get exactly one look per trial.
+    const effectiveCount = isGuest ? 1 : count;
 
     if (!userPrompt.trim() && aestheticIds.length === 0) {
       return NextResponse.json(
@@ -88,7 +99,7 @@ export async function POST(req: NextRequest) {
     const stamp = Date.now();
 
     const looks = await Promise.all(
-      Array.from({ length: count }).map(async (_, i): Promise<GeneratedLook> => {
+      Array.from({ length: effectiveCount }).map(async (_, i): Promise<GeneratedLook> => {
         const prompt = buildPrompt({
           aestheticIds,
           userPrompt,
@@ -155,7 +166,17 @@ export async function POST(req: NextRequest) {
       }),
     );
 
-    return NextResponse.json({ looks, demo: !hasKey });
+    const response = NextResponse.json({ looks, demo: !hasKey, guest: isGuest });
+    if (isGuest) {
+      response.cookies.set("looksy_trial", "used", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
+    return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Generation failed.";
     return NextResponse.json({ error: message }, { status: 500 });
