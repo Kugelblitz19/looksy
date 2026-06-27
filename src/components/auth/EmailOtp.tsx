@@ -1,58 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Field, Submit, Notice } from "@/components/auth/fields";
 
 /**
- * Passwordless email login — Supabase sends a 6-digit code, the user types it
- * back. Free (no SMS), no extra service. For the code to appear in the email,
- * the Supabase "Magic Link" template must include {{ .Token }}.
+ * Passwordless email login via a magic link. Uses Supabase's DEFAULT email
+ * template (no template editing / custom SMTP required) and the same
+ * /auth/callback the Google OAuth flow already uses. Free, no SMS, no new deps.
  */
 export default function EmailOtp({ onBack }: { onBack: () => void }) {
-  const router = useRouter();
   const supabase = createClient();
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [step, setStep] = useState<"email" | "code">("email");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
-  async function sendCode() {
+  async function sendLink() {
     setLoading(true);
     setError(null);
-    setNotice(null);
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
-        options: { shouldCreateUser: true },
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/studio`,
+        },
       });
       if (error) throw error;
-      setStep("code");
-      setNotice(`We emailed a 6-digit code to ${email.trim()}.`);
+      setSent(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Couldn't send the code.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function verifyCode() {
-    setLoading(true);
-    setError(null);
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        email: email.trim(),
-        token: code.trim(),
-        type: "email",
-      });
-      if (error) throw error;
-      router.push("/studio");
-      router.refresh();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Wrong or expired code.");
+      setError(e instanceof Error ? e.message : "Couldn't send the link.");
     } finally {
       setLoading(false);
     }
@@ -60,11 +38,16 @@ export default function EmailOtp({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="space-y-4">
-      {step === "email" ? (
+      {sent ? (
+        <Notice kind="success">
+          Check your inbox — we sent a login link to {email.trim()}. Open it on
+          this device to log in. (Check spam if it&apos;s not there in a minute.)
+        </Notice>
+      ) : (
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            sendCode();
+            sendLink();
           }}
           className="space-y-3"
         >
@@ -77,36 +60,7 @@ export default function EmailOtp({ onBack }: { onBack: () => void }) {
             autoComplete="email"
             required
           />
-          <Submit loading={loading}>Email me a code</Submit>
-        </form>
-      ) : (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            verifyCode();
-          }}
-          className="space-y-3"
-        >
-          <Field
-            label="6-digit code"
-            type="text"
-            value={code}
-            onChange={setCode}
-            placeholder="123456"
-            autoComplete="one-time-code"
-            required
-          />
-          <Submit loading={loading}>Verify &amp; log in</Submit>
-          <button
-            type="button"
-            onClick={() => {
-              setStep("email");
-              setCode("");
-            }}
-            className="text-xs text-ink-60 underline-offset-4 hover:text-vermilion hover:underline"
-          >
-            Use a different email
-          </button>
+          <Submit loading={loading}>Email me a login link</Submit>
         </form>
       )}
 
@@ -118,7 +72,6 @@ export default function EmailOtp({ onBack }: { onBack: () => void }) {
         ← Other ways to log in
       </button>
 
-      {notice && <Notice kind="success">{notice}</Notice>}
       {error && <Notice kind="error">{error}</Notice>}
     </div>
   );

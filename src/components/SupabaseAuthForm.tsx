@@ -189,7 +189,7 @@ export default function SupabaseAuthForm({
           onClick={() => setView("emailotp")}
           className="w-full text-center text-sm font-medium text-ink-60 underline-offset-4 transition hover:text-vermilion hover:underline"
         >
-          Email me a login code
+          Email me a login link
         </button>
 
         {notice && <Notice kind="success">{notice}</Notice>}
