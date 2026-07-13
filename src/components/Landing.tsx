@@ -14,7 +14,9 @@ const CONTENTS = [
 ];
 
 export default function Landing({ isAuthed }: { isAuthed: boolean }) {
-  const primaryHref = isAuthed ? "/studio" : "/signup";
+  // Always route the primary CTA to the Studio — logged-out visitors get the
+  // guest one-look trial there, logged-in users get their full Studio.
+  const primaryHref = "/studio";
   const issue = issueLabel();
 
   return (
