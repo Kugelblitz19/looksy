@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter_Tight, Newsreader, Azeret_Mono } from "next/font/google";
+import { Fraunces, Inter_Tight } from "next/font/google";
 import Pressroom from "@/components/Pressroom";
 import PWARegister from "@/components/PWARegister";
 import InstallPrompt from "@/components/InstallPrompt";
@@ -18,23 +18,6 @@ const display = Fraunces({
 const body = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-body",
-  display: "swap",
-});
-
-// Newsreader — editorial running copy: captions, credits, the style note.
-const serif = Newsreader({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "500"],
-  variable: "--font-serif",
-  display: "swap",
-});
-
-// Azeret Mono — the ticket-stub texture, reserved for issue/plate numbers + prices.
-const mono = Azeret_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-mono",
   display: "swap",
 });
 
@@ -79,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}
+      className={`${display.variable} ${body.variable}`}
     >
       <body className="font-sans antialiased">
         <PWARegister />

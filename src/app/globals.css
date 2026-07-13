@@ -19,6 +19,10 @@
   --c-rule: 26 23 20;         /* #1A1714 */
   --c-vermilion: 229 52 27;   /* #E5341B */
   --c-vermilion-ink: 184 38 16; /* #B82610 */
+  /* Serif + mono fall back to system faces — Newsreader + Azeret Mono were
+     dropped to trim the webfont payload; Fraunces + Inter Tight carry the brand. */
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 [data-theme="night"] {
