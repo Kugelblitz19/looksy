@@ -21,13 +21,23 @@ export async function POST(req: NextRequest) {
   try {
     const authed = await isAuthenticated();
     let isGuest = false;
+    let guestUsed = 0;
     if (!authed) {
-      // Guest trial: one free look before signup, gated by a cookie.
-      if (req.cookies.get("looksy_trial")?.value === "used") {
-        return NextResponse.json(
-          { error: "That was your free look — sign up free to keep going.", needAuth: true },
-          { status: 401 },
-        );
+      // Guest trial: 1 free look, +2 more once they share (viral loop), then
+      // signup. Best-effort cookie gating; the per-IP rate limit backs it up.
+      guestUsed = parseInt(req.cookies.get("looksy_used")?.value || "0", 10) || 0;
+      const shared = req.cookies.get("looksy_shared")?.value === "1";
+      const allowance = shared ? 3 : 1;
+      if (guestUsed >= allowance) {
+        return shared
+          ? NextResponse.json(
+              { error: "That's your free looks — sign up free to keep going.", needAuth: true },
+              { status: 401 },
+            )
+          : NextResponse.json(
+              { error: "Share your look to unlock 2 more free looks.", needShare: true },
+              { status: 401 },
+            );
       }
       isGuest = true;
     }
@@ -168,7 +178,7 @@ export async function POST(req: NextRequest) {
 
     const response = NextResponse.json({ looks, demo: !hasKey, guest: isGuest });
     if (isGuest) {
-      response.cookies.set("looksy_trial", "used", {
+      response.cookies.set("looksy_used", String(guestUsed + 1), {
         httpOnly: true,
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",

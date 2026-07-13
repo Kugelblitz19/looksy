@@ -40,6 +40,7 @@ export default function Studio({
   const [prompt, setPrompt] = useState("");
   const [count, setCount] = useState(guest ? 1 : 2);
   const [needSignup, setNeedSignup] = useState(false);
+  const [sharedBonus, setSharedBonus] = useState(false);
   const [gender, setGender] = useState<Gender>("woman");
   const [ethnicity, setEthnicity] = useState<Ethnicity>("indian");
   const [loading, setLoading] = useState(false);
@@ -151,7 +152,12 @@ export default function Studio({
       });
       const data = (await res.json()) as GenerateResponse & {
         needAuth?: boolean;
+        needShare?: boolean;
       };
+      if (data.needShare) {
+        setError(data.error || "Share your look to unlock 2 more free looks.");
+        return;
+      }
       if (res.status === 401 || data.needAuth) {
         setNeedSignup(true);
         return;
@@ -201,6 +207,43 @@ export default function Studio({
     await createClient().auth.signOut();
     router.push("/login");
     router.refresh();
+  }
+
+  // Guest viral loop: share the look (surfacing the Looksy link) to unlock 2
+  // more free looks — no signup. Grants on share intent (delivery isn't verifiable).
+  async function shareToUnlock() {
+    const look = looks[0];
+    const link =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://looksy-lemon.vercel.app";
+    const caption = `Made this on Looksy ✨ free AI stylist — pick a vibe, get a cover-quality look. Try it: ${link}`;
+    try {
+      if (look) {
+        const resp = await fetch(look.imageUrl);
+        const blob = await resp.blob();
+        const file = new File([blob], "looksy-cover.png", {
+          type: blob.type || "image/png",
+        });
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], text: caption });
+        } else if (navigator.share) {
+          await navigator.share({ text: caption });
+        } else {
+          window.open(
+            `https://wa.me/?text=${encodeURIComponent(caption)}`,
+            "_blank",
+            "noopener",
+          );
+        }
+      }
+    } catch {
+      /* share sheet dismissed — still grant; the link was already surfaced */
+    }
+    await fetch("/api/trial/share", { method: "POST" }).catch(() => {});
+    track("share_unlock", {});
+    setSharedBonus(true);
+    setError(null);
   }
 
   const openSaved = () => router.push("/studio/saved");
@@ -399,18 +442,36 @@ export default function Studio({
 
             {guest && (looks.length > 0 || needSignup) && (
               <div className="mx-auto max-w-xl border border-vermilion/40 bg-vermilion/5 p-5 text-center">
-                <p className="font-serif text-base italic text-ink">
-                  {needSignup
-                    ? "That was your free look. Sign up free to save it and shoot unlimited covers."
-                    : "Love it? Sign up free to save this cover and make more."}
-                </p>
-                <a
-                  href="/signup"
-                  onClick={() => track("signup_cta", { needSignup })}
-                  className="mt-3 inline-block bg-vermilion px-6 py-3 text-sm font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink"
-                >
-                  Sign up free →
-                </a>
+                {!sharedBonus ? (
+                  <>
+                    <p className="font-serif text-base italic text-ink">
+                      🔓 Love it? Share your look to unlock{" "}
+                      <strong>2 more free looks</strong> — no signup needed.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={shareToUnlock}
+                      className="mt-3 inline-block bg-vermilion px-6 py-3 text-sm font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink"
+                    >
+                      Share to unlock →
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-serif text-base italic text-ink">
+                      {needSignup
+                        ? "That's your free looks — sign up free to keep going."
+                        : "Love it? Sign up free to save this cover and make more."}
+                    </p>
+                    <a
+                      href="/signup"
+                      onClick={() => track("signup_cta", { needSignup })}
+                      className="mt-3 inline-block bg-vermilion px-6 py-3 text-sm font-medium uppercase tracking-wide text-paper transition hover:bg-vermilion-ink"
+                    >
+                      Sign up free →
+                    </a>
+                  </>
+                )}
               </div>
             )}
           </div>
