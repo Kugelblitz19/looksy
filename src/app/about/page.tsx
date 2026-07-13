@@ -4,34 +4,33 @@ import PageShell from "@/components/PageShell";
 export const metadata: Metadata = {
   title: "About — Looksy",
   description:
-    "Looksy is an AI fashion weekly: upload a selfie, pick a vibe, get a cover-quality look of yourself — instantly shoppable across India's top stores.",
+    "Looksy is an AI fashion weekly: pick a vibe, get a cover-quality look — every piece instantly shoppable across India's top stores.",
 };
 
 export default function AboutPage() {
   return (
-    <PageShell kicker="About" title="A fashion magazine that shoots you.">
+    <PageShell kicker="About" title="A fashion magazine that shoots a cover for you.">
       <p className="lead">
-        Looksy turns a selfie and a vibe into a cover-quality photo of you in a
-        whole new look — and makes every piece on it instantly shoppable.
+        Looksy turns a vibe into a cover-quality fashion look — and makes every
+        piece on it instantly shoppable.
       </p>
 
       <p>
         Getting dressed for the big stuff — a Sangeet, a reception, a first day
         at work, a night out — usually means a hundred open tabs and a guess at
-        what actually suits you. Looksy collapses that into three taps: add your
-        selfie, pick a vibe, and see yourself on the cover before you spend a
-        rupee.
+        what actually suits you. Looksy collapses that into a few taps: pick a
+        vibe, shoot the cover, and see the whole look before you spend a rupee.
       </p>
 
       <h2>How it works</h2>
       <ul>
         <li>
-          <strong>Add your selfie</strong> — or skip it, and we’ll cast a model
-          for the look instead.
-        </li>
-        <li>
           <strong>Pick a vibe</strong> — streetwear, old money, Sangeet,
           techwear, Contemporary Desi and more, or write your own style note.
+        </li>
+        <li>
+          <strong>Shoot the cover</strong> — the AI develops a cover-quality
+          look in seconds.
         </li>
         <li>
           <strong>Post &amp; cop</strong> — share the finished cover, then shop

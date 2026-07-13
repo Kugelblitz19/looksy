@@ -66,7 +66,7 @@ export default async function PublicLookPage({
 
         <div className="mt-10 border-t border-ink/15 pt-8 text-center">
           <p className="mb-4 kicker text-ink-30">
-            Made with Looksy — see yourself in any look
+            Made with Looksy — pick a vibe, shop the look
           </p>
           <Link
             href="/signup"

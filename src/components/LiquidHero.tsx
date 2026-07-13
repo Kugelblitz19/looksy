@@ -203,8 +203,8 @@ export default function LiquidHero({
           </span>
         </h1>
         <p className="mt-8 max-w-md font-serif text-lg leading-relaxed text-white/80">
-          Upload a selfie. Pick a vibe. Get a cover so good it’s basically a
-          personality — instantly shoppable. Free.
+          Pick a vibe. Get a cover so good it’s basically a personality — every
+          piece instantly shoppable. Free.
         </p>
         <div className="mt-10 flex items-center gap-6">
           <Link

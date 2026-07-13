@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Looksy — See yourself in any look";
+export const alt = "Looksy — Your weekly fashion cover";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -58,7 +58,7 @@ export default function OpengraphImage() {
             color: "rgba(255,255,255,0.92)",
           }}
         >
-          See yourself in any look.
+          Your weekly fashion cover.
         </div>
         <div
           style={{
@@ -67,7 +67,7 @@ export default function OpengraphImage() {
             color: "rgba(255,255,255,0.55)",
           }}
         >
-          Your selfie, restyled by AI — and instantly shoppable.
+          Pick a vibe, get the look — every piece shoppable.
         </div>
       </div>
     ),

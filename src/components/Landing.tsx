@@ -115,7 +115,7 @@ export default function Landing({ isAuthed }: { isAuthed: boolean }) {
                 </span>
                 <h2 className="font-display text-5xl font-medium leading-[1.0] tracking-tight text-ink [text-shadow:0_2px_40px_rgba(0,0,0,0.5)] sm:text-7xl">
                   Your next cover is{" "}
-                  <span className="italic text-vermilion">one selfie</span> away.
+                  <span className="italic text-vermilion">one tap</span> away.
                 </h2>
                 <div className="rule-iris mt-10 max-w-xs opacity-70" />
                 <div className="mt-8">

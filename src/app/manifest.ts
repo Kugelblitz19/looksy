@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Looksy — The Issue",
     short_name: "Looksy",
     description:
-      "Upload a selfie, pick a vibe, get a cover so good it's basically a personality — instantly shoppable.",
+      "Pick a vibe, get a cover so good it's basically a personality — every piece instantly shoppable.",
     start_url: "/",
     scope: "/",
     display: "standalone",

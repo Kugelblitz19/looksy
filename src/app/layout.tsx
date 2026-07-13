@@ -27,18 +27,18 @@ export const metadata: Metadata = {
   ),
   title: "Looksy — The Issue",
   description:
-    "Upload a selfie, pick a vibe, get a cover so good it's basically a personality — instantly shoppable. An AI fashion weekly, shot in India.",
+    "Pick a vibe, get a cover so good it's basically a personality — every piece instantly shoppable. An AI fashion weekly, shot in India. Free.",
   openGraph: {
     title: "Looksy — The Issue",
     description:
-      "Your selfie. This week's cover. One tap to post, one tap to cop. An AI fashion weekly.",
+      "Pick a vibe. This week's cover. One tap to post, one tap to cop. An AI fashion weekly.",
     siteName: "Looksy",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Looksy — The Issue",
-    description: "Your selfie. This week's cover. One tap to post, one tap to cop.",
+    description: "Pick a vibe. This week's cover. One tap to post, one tap to cop.",
   },
   appleWebApp: {
     capable: true,

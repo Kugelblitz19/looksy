@@ -63,7 +63,7 @@ export default async function LookOgImage({
             </div>
             <div style={{ fontSize: 56, fontWeight: 800, letterSpacing: -1 }}>Looksy</div>
           </div>
-          <div style={{ fontSize: 40, fontWeight: 600 }}>See yourself in any look.</div>
+          <div style={{ fontSize: 40, fontWeight: 600 }}>Make your own on Looksy.</div>
           <div style={{ fontSize: 24, marginTop: 14, color: "rgba(255,255,255,0.55)" }}>
             AI-styled & instantly shoppable.
           </div>
