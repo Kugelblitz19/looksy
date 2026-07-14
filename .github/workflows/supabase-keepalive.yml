@@ -1,0 +1,39 @@
+name: Supabase keep-alive
+
+# Free Supabase projects auto-pause after ~7 days of no activity, which takes
+# down auth (signup/login) and the database. This workflow makes a tiny query
+# twice a week so the project never goes idle while Looksy is pre-launch. Once
+# real users are signing up, their traffic keeps it awake and this is redundant.
+#
+# Setup (one time): add two repo secrets under
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#     SUPABASE_URL       = https://<your-project>.supabase.co
+#     SUPABASE_ANON_KEY  = your anon (public) key, same as NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+on:
+  schedule:
+    - cron: "17 6 * * 1,4" # Mondays & Thursdays at 06:17 UTC (~3-4 day gaps)
+  workflow_dispatch: {} # lets you run it manually to test
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase (registers activity)
+        run: |
+          if [ -z "${{ secrets.SUPABASE_URL }}" ] || [ -z "${{ secrets.SUPABASE_ANON_KEY }}" ]; then
+            echo "::error::Missing SUPABASE_URL or SUPABASE_ANON_KEY repo secret."
+            exit 1
+          fi
+          code=$(curl -sS -m 30 -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "Supabase responded: HTTP $code"
+          # 2xx-4xx all mean the server answered (RLS may return an empty list) =
+          # real activity. Only a 5xx or a failed connection (000) is a problem.
+          if [ "$code" -lt 200 ] || [ "$code" -ge 500 ]; then
+            echo "::error::Keep-alive ping failed (HTTP $code) — project paused or secrets wrong."
+            exit 1
+          fi
+          echo "Keep-alive OK — project will stay awake."
