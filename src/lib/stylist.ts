@@ -7,10 +7,13 @@ import type { Ethnicity, Gender } from "./types";
  * a diverse set of looks rather than near-duplicates.
  */
 const VARIATIONS = [
-  "full-body, straight-on, eye-level, standing",
-  "full-body, three-quarter angle, relaxed confident pose",
-  "full-body, slight low camera angle, walking toward camera",
-  "full-body, turning toward the camera",
+  // Mix full-body (shows the whole outfit) with three-quarter-length crops
+  // (from the thigh/knee up) — the closer crops give the face far more pixels,
+  // so it renders fresh instead of warped.
+  "full-body, straight-on, eye-level, standing, the face clear and in focus",
+  "three-quarter length from mid-thigh up, relaxed confident pose, face clearly in frame and in sharp focus",
+  "full-body, slight low camera angle, walking toward camera, the face clear and in focus",
+  "three-quarter length from the knees up, turning toward the camera, face clearly in frame and in sharp focus",
 ];
 
 interface BuildPromptOpts {

@@ -13,9 +13,12 @@ export async function generateFreeImage(opts: {
   signal?: AbortSignal;
 }): Promise<string> {
   const params = new URLSearchParams({
-    width: "768",
-    height: "1024",
-    model: "flux",
+    // Higher resolution → more pixels on the (small, full-body) face → less
+    // warping. Model is env-overridable so you can switch (e.g. to "sana") if
+    // Pollinations deprecates "flux" — no code change needed.
+    width: "896",
+    height: "1152",
+    model: process.env.POLLINATIONS_MODEL || "flux",
     nologo: "true",
     seed: String(opts.seed),
   });
