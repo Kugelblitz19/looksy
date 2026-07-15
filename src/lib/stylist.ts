@@ -58,7 +58,7 @@ export function buildPrompt({
     const who =
       gender === "man" ? "man" : gender === "woman" ? "woman" : "person";
     parts.push(
-      `Generate a photorealistic full-body fashion photograph of ${ethnicityDescriptor(ethnicity, who)}.`,
+      `Generate a photorealistic full-body fashion photograph of ${ethnicityDescriptor(ethnicity, who)} with a fresh, natural, symmetrical face and clear, realistic skin.`,
     );
   }
 
@@ -77,7 +77,7 @@ export function buildPrompt({
   }
 
   parts.push(
-    `Show the complete outfit head-to-toe on the person. Composition: ${framing}. High-end editorial fashion photography, realistic fabric drape and fit, natural lighting, sharp focus. Exactly one person, full body in frame. No text, watermarks, logos or borders.`,
+    `Show the complete outfit head-to-toe on the person. Composition: ${framing}. High-end editorial fashion photography shot on an 85mm lens, realistic fabric drape and fit, soft natural lighting, sharp focus throughout. The face must be fresh, natural and symmetrical, with clear undistorted features, detailed eyes and flawless realistic skin — absolutely no warping, melting or artifacts on the face. Ultra-detailed, high resolution. Exactly one person, full body in frame, face clearly visible. No text, watermarks, logos or borders.`,
   );
 
   return parts.join(" ");
