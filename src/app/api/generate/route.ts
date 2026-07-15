@@ -134,8 +134,8 @@ export async function POST(req: NextRequest) {
           // not a 5s-per-image queue (that made a 4-up take a minute+).
           if (i > 0) await new Promise((r) => setTimeout(r, i * 800));
           // Retry to get a real image, but stay well within the 55s budget:
-          // 2 attempts × ~12s timeout + short backoff. The client's Stop
-          // (req.signal) cancels the in-flight fetch.
+          // 2 attempts × ~18s timeout + short backoff (a 4-up worst case is
+          // ~39s, under the cap). The client's Stop (req.signal) cancels it.
           for (let attempt = 0; attempt < 2; attempt++) {
             try {
               const dataUrl = await generateFreeImage({
