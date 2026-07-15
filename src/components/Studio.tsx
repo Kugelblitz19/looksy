@@ -321,24 +321,16 @@ export default function Studio({
 
           {/* Composer */}
           <div className="mx-auto mt-12 max-w-xl space-y-10">
-            <Group label="The Edit">
-              <OccasionPacks onPick={applyOccasion} />
-            </Group>
-
-            <Group label="Vibe">
-              <AestheticPicker selected={aesthetics} onToggle={toggleAesthetic} />
-            </Group>
-
-            <Group label="Style note — optional">
+            <Group label="Describe your look">
               <div className="flex items-baseline gap-2 border-b border-ink/20 focus-within:border-vermilion">
                 <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.15em] text-ink-30">
-                  Note —
+                  Look —
                 </span>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   rows={2}
-                  placeholder="black tailored blazer, ivory silk, city evening…"
+                  placeholder="red silk saree with a gold border for a wedding, or an oversized linen summer fit…"
                   style={{ caretColor: "rgb(var(--c-vermilion))" }}
                   className="w-full resize-none border-0 bg-transparent px-0 py-2 font-serif text-base italic leading-relaxed text-ink placeholder:not-italic placeholder:text-ink-30 focus:outline-none focus:ring-0"
                 />
@@ -362,6 +354,14 @@ export default function Studio({
                   </button>
                 ))}
               </div>
+            </Group>
+
+            <Group label="Or a quick occasion">
+              <OccasionPacks onPick={applyOccasion} />
+            </Group>
+
+            <Group label="Or pick a vibe">
+              <AestheticPicker selected={aesthetics} onToggle={toggleAesthetic} />
             </Group>
 
             {/* Control deck */}
@@ -425,7 +425,7 @@ export default function Studio({
                 </div>
                 {!canGenerate && !loading && (
                   <p className="text-[12px] text-ink-30">
-                    Pick a vibe, or write a style note.
+                    Describe a look, or pick a vibe.
                   </p>
                 )}
               </div>
